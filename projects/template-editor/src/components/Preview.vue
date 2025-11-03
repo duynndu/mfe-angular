@@ -135,7 +135,7 @@ export default {
   emits: ['update:template'],
   data() {
     const rootId = '123456'
-    const rootNode = new VirtualNode('root', { 'c-id': rootId });
+    let rootNode = VirtualHTMLParser.parseToTree(this.template, 'Root', { 'c-id': rootId });
     rootNode.innerHTML = this.template;
     return {
       app: null,

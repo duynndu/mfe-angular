@@ -499,6 +499,15 @@ export class VirtualNode {
     return clone;
   }
 
+  toObject() {
+    return {
+      tagName: this.tagName,
+      attributes: this.attributes,
+      childNodes: this.childNodes.map(child => child.toObject()),
+      textContent: this.textContent
+    };
+  }
+
   genComponentId() {
     const genCID = (node: VirtualNode) => {
       node.setAttribute('c-id', Math.random().toString(36).substring(2, 9));

@@ -3,13 +3,30 @@ import { VirtualNode } from './VirtualNode';
 
 export class VirtualHTMLParser {
   static closingTags = [
-    'area', 'base', 'br', 'col',
-    'embed', 'hr', 'img', 'input',
-    'link', 'meta', 'param', 'source',
-    'track', 'wbr', 'Textarea', 'InputOTP'
+    'area',
+    'base',
+    'br',
+    'col',
+    'embed',
+    'hr',
+    'img',
+    'input',
+    'link',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr',
+    'Textarea',
+    'InputOTP',
   ];
-  static parseToTree(htmlString) {
-    const root = new VirtualNode('Root');
+  static parseToTree(
+    htmlString: string,
+    rootTagName: string = 'Root',
+    rootAttributes: Record<string, string> = { 'c-id': '123456' }
+  ) {
+    const root = new VirtualNode(rootTagName);
+    root.attributes = rootAttributes;
     let currentParent = root;
     const stack = [root];
 
@@ -59,9 +76,46 @@ export class VirtualHTMLParser {
     return root;
   }
 
-  static parseToElement(htmlString) {
+  static parseToElement(htmlString: string) {
     const root = this.parseToTree(htmlString);
     return root.childNodes[0];
+  }
+
+  static parseFromObject(obj: any): VirtualNode {
+    if (!obj || typeof obj !== 'object') {
+      throw new Error('Input must be a valid object');
+    }
+
+    if (obj.tagName === '#text') {
+      const textNode = new VirtualNode('#text');
+      textNode.textContent = obj.textContent || '';
+      return textNode;
+    }
+
+    const tagName = obj.tagName || 'div';
+    const attributes = obj.attributes || {};
+    const node = new VirtualNode(tagName, attributes);
+
+    node.textContent = obj.textContent;
+    node.isClosingTag = obj.isClosingTag;
+
+    if (Array.isArray(obj.childNodes)) {
+      obj.childNodes.forEach((childObj: any) => {
+        const childNode = this.parseFromObject(childObj);
+        node.appendChild(childNode);
+      });
+    }
+
+    return node;
+  }
+
+  static parseFromJSON(jsonString: string): VirtualNode {
+    try {
+      const obj = JSON.parse(jsonString);
+      return this.parseFromObject(obj);
+    } catch (error) {
+      throw new Error(`Invalid JSON: ${error.message}`);
+    }
   }
 
   static _parseAttributes(attributeString) {
