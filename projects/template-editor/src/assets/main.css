@@ -1,0 +1,45 @@
+@import url("./grid.css");
+@import url("./spacing.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css");
+
+.fa-solid {
+  color: #2c3e50;
+}
+
+#app {
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+#print-container {
+  visibility: hidden;
+}
+
+.border-dashed {
+  border: 1px dashed #ccc;
+}
+
+.empty-placeholder {
+  border: 1px dashed #ccc;
+  padding: 10px;
+}
+
+@media print {
+  body {
+    position: relative;
+  }
+  body, html {
+    margin: 0;
+    padding: 0;
+  }
+  body > *:not(#print-container) {
+    display: none;
+  }
+  
+  #print-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: visible;
+  }
+}

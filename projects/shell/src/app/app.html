@@ -1,0 +1,31 @@
+<!-- navbar.component.html -->
+<nav class="navbar">
+  <div class="container">
+    <h3 class="logo">Angular Microfrontends</h3>
+    
+    <ul [class.active]="menuOpen" class="nav-links">
+      <li>
+        <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          Home
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" routerLink="/firstMf" routerLinkActive="active">
+          First MF
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" routerLink="/template-editor" routerLinkActive="active">
+          Vue template editor
+        </a>
+      </li>
+    </ul>
+
+    <div class="hamburger" (click)="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</nav>
+<router-outlet></router-outlet>
