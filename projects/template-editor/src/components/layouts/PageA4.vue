@@ -24,11 +24,10 @@ export default {
   width: 210mm;
   height: 297mm;
   padding: 3mm 15mm 3mm 15mm;
-  box-shadow: 0 0 5mm rgba(0, 0, 0, 0.1);
   background: white;
   box-sizing: border-box;
   margin: 10px;
-  border: 1px solid;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
 @media print {

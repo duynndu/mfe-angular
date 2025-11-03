@@ -100,10 +100,10 @@
 </template>
 
 <script lang="ts">
-import { nextTick, createApp } from 'vue/dist/vue.esm-bundler.js';
-import PageA4 from './PageA4.vue';
-import Textarea from './Textarea.vue';
-import InputOTP from './InputOTP.vue';
+import { createApp } from 'vue/dist/vue.esm-bundler.js';
+import PageA4 from './layouts/PageA4.vue';
+import Textarea from './forms/Textarea.vue';
+import InputOTP from './forms/InputOTP.vue';
 import { VirtualHTMLParser } from '@/utils/fake-dom/VirtualHTMLParser';
 import EditElementPanel from './EditElementPanel.vue';
 import { printElement } from '@/helpers';
@@ -135,7 +135,7 @@ export default {
   data() {
     const rootId = '123456'
     const rootNode = new VirtualNode('root', { 'c-id': rootId });
-    rootNode.innerHTML = this.template
+    rootNode.innerHTML = this.template;
     return {
       app: null,
       rootId: '123456',
