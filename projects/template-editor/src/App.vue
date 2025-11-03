@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       data: { name: 'Nguyen Van A', age: "30" },
-      template: `<PageA4>
+      template: `<PageA4 style="padding: 3mm 15mm 3mm 15mm;">
   <div>{{ data.name }}</div>
   <p>Tuổi: {{ data.age }}</p>
   <Textarea

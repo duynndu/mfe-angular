@@ -24,6 +24,22 @@
   padding: 10px;
 }
 
+/* Element highlight */
+.element-highlight {
+  position: relative!important;
+}
+
+.element-highlight::before {
+  z-index: 1;
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: 0 0 0 1px #3498db;
+  background-color: #3498db2b;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
 @media print {
   body {
     position: relative;

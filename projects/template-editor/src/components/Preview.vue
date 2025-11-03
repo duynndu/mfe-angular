@@ -111,7 +111,6 @@ import { printElement } from '@/helpers';
 import { ContextMenu } from '@imengyu/vue3-context-menu';
 import { ContextMenuItem } from '@imengyu/vue3-context-menu';
 import { componentRegistry, ComponentRegistry } from '@/utils/componentRegistry';
-import { VirtualNode } from '@/utils/fake-dom/VirtualNode';
 
 export default {
   name: 'Preview',
@@ -409,7 +408,6 @@ export default {
 
 .content-root {
   background: #ecf0f1;
-  min-height: 100%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   min-height: 148mm;
   padding: 10px;
@@ -433,10 +431,5 @@ export default {
 
 .print-btn:hover {
   background: #2980b9;
-}
-
-/* Element highlight */
-:deep(.element-highlight) {
-  box-shadow: 0 0 0 1px #3498db;
 }
 </style>

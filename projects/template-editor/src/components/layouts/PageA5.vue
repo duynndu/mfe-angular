@@ -31,7 +31,6 @@ export default {
   font-family: 'Times New Roman', Times, serif;
   width: 148mm;
   height: 210mm;
-  padding: 3mm 15mm;
   background: white;
   box-sizing: border-box;
   margin: 10px;

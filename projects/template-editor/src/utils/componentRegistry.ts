@@ -28,7 +28,12 @@ export const componentRegistry: ComponentRegistry = {
       'page-a4': {
         label: 'A4 Page',
         icon: 'fa-solid fa-file',
-        template: '<PageA4>New Page Content</div></PageA4>',
+        template: '<PageA4 style="padding: 3mm 15mm 3mm 15mm;">New Page Content</div></PageA4>',
+      },
+      'page-a5': {
+        label: 'A5 Page',
+        icon: 'fa-solid fa-file',
+        template: '<PageA5 style="padding: 3mm 15mm 3mm 15mm;">New Page Content</div></PageA5>',
       },
       // Grid Layouts
       'grid-2-cols': {

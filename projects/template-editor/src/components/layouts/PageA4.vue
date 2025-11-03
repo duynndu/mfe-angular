@@ -16,7 +16,7 @@ export default {
   props: {
     style: {
       type: [Object, String] as PropType<Record<string, string> | string>,
-      default: () => ({}),
+      default: () => ({'padding': ''}),
     },
     landscape: {
       type: Boolean,
@@ -31,7 +31,6 @@ export default {
   font-family: 'Times New Roman', Times, serif;
   width: 210mm;
   height: 297mm;
-  padding: 3mm 15mm;
   background: white;
   box-sizing: border-box;
   margin: 10px;
