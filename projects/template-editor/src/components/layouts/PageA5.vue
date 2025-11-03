@@ -1,6 +1,6 @@
 <template>
   <div
-    class="page-a4"
+    class="page-a5"
     :class="{ 'landscape': landscape }"
     :style="style"
   >
@@ -12,7 +12,7 @@
 import { PropType } from 'vue';
 
 export default {
-  name: 'PageA4',
+  name: 'PageA5',
   props: {
     style: {
       type: [Object, String] as PropType<Record<string, string> | string>,
@@ -27,10 +27,10 @@ export default {
 </script>
 
 <style scoped>
-.page-a4 {
+.page-a5 {
   font-family: 'Times New Roman', Times, serif;
-  width: 210mm;
-  height: 297mm;
+  width: 148mm;
+  height: 210mm;
   padding: 3mm 15mm;
   background: white;
   box-sizing: border-box;
@@ -38,13 +38,13 @@ export default {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 
-.page-a4.landscape {
-  width: 297mm;
-  height: 210mm;
+.page-a5.landscape {
+  width: 210mm;
+  height: 148mm;
 }
 
 @media print {
-  .page-a4 {
+  .page-a5 {
     margin: 0;
     box-shadow: none;
   }

@@ -102,6 +102,7 @@
 <script lang="ts">
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
 import PageA4 from './layouts/PageA4.vue';
+import PageA5 from './layouts/PageA5.vue';
 import Textarea from './forms/Textarea.vue';
 import InputOTP from './forms/InputOTP.vue';
 import { VirtualHTMLParser } from '@/utils/fake-dom/VirtualHTMLParser';
@@ -202,6 +203,7 @@ export default {
         contentEl.innerHTML = '';
         this.app = createApp(DynamicComponent)
           .component('PageA4', PageA4)
+          .component('PageA5', PageA5)
           .component('Textarea', Textarea)
           .component('InputOTP', InputOTP);
 
