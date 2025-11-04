@@ -2,8 +2,9 @@
   "name": "mf-angular-20",
   "version": "0.0.0",
   "scripts": {
-    "start:template-editor": "vite projects/template-editor",
-    "serve:template-editor": "npx serve projects/template-editor/dist -l 3000",
+    "build:template-editor": "cd projects/template-editor && vite build",
+    "start:template-editor": "cd projects/template-editor && vite",
+    "serve:template-editor": "cd projects/template-editor/dist && npx serve -l 3000",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

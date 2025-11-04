@@ -13,6 +13,8 @@ export class VueWrapper implements AfterViewInit {
   ) {}
 
   async ngAfterViewInit() {
-    this.vueLoader.mountVue('#vue-container');
+    const app = this.vueLoader.module?.create();
+    app.mount('#vue-container');
+    
   }
 }

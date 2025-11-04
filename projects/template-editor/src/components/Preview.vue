@@ -382,7 +382,7 @@ export default {
 }
 
 .preview {
-  height: 400px;
+  height: 800px;
   overflow: auto;
   border: 1px solid;
   scrollbar-width: thin;

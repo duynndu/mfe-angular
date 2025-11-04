@@ -1,6 +1,5 @@
 
-export interface VueEntry {
-  mountVue: (selector: string) => void;
-  unmountVue?: () => void;
+export interface VueModule {
+  create: any;
   [key: string]: any;
 }

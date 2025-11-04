@@ -1,5 +1,5 @@
-import './assets/main.css'
-import { mountVue } from './vue-entry';
+import { create } from './vue-entry';
 
-mountVue('#app');
+const app = create();
+app.mount('#app');
 

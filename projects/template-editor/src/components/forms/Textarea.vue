@@ -11,8 +11,8 @@
     <!-- Textarea nhập -->
     <textarea
       ref="textarea"
-      class="hs-textarea-line no-print"
-      :class="{ 'hs-textarea-line-none': !line }"
+      class="textarea-line no-print"
+      :class="{ 'textarea-line-none': !line }"
       v-model="input"
       :style="{ ...textareaStyleComputed, textIndent: labelSpanWidth + 'px' }"
       :placeholder="placeholder"
@@ -29,7 +29,7 @@
     <!-- Bản in -->
     <template v-if="!input">
       <div
-        class="hs-textarea-line yes-print"
+        class="textarea-line yes-print"
         :style="{ ...textareaStyleComputed, textIndent: labelSpanWidth + 'px', height: textareaHeight + 'px' }"
       ></div>
     </template>
@@ -37,7 +37,7 @@
       <div
         v-for="(lineText, i) in splitString(input)"
         :key="i"
-        class="hs-textarea-line yes-print"
+        class="textarea-line yes-print"
         :style="{ ...textareaStyleComputed, textIndent: i === 0 ? labelSpanWidth + 'px' : '0px' }"
       >
         {{ lineText }}
@@ -156,7 +156,7 @@ export default {
   position: relative;
   height: auto;
 }
-.hs-textarea-line-none {
+.textarea-line-none {
   background: none !important;
 }
 .hs-label-span {
@@ -165,7 +165,7 @@ export default {
   line-height: 1;
   bottom: calc(100% - 20px);
 }
-.hs-textarea-line {
+.textarea-line {
   outline: none;
   background: url(@/assets/img/icon/bg-line-textarea.png);
   background-position-y: 1px;
@@ -178,7 +178,7 @@ export default {
   display: block;
   overflow: hidden;
 }
-.hs-textarea-line.yes-print {
+.textarea-line.yes-print {
   white-space: pre-wrap;
   padding: 2px;
   display: none;

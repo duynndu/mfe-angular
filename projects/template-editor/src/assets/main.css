@@ -11,10 +11,6 @@
   padding: 0 2rem;
 }
 
-#print-container {
-  visibility: hidden;
-}
-
 .border-dashed {
   border: 1px dashed #ccc;
 }
@@ -38,24 +34,4 @@
   background-color: #3498db2b;
   pointer-events: none;
   border-radius: inherit;
-}
-
-@media print {
-  body {
-    position: relative;
-  }
-  body, html {
-    margin: 0;
-    padding: 0;
-  }
-  body > *:not(#print-container) {
-    display: none;
-  }
-  
-  #print-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    visibility: visible;
-  }
 }

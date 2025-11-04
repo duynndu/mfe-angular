@@ -1,6 +1,6 @@
 <template>
   <Preview v-model:template="template" :data="data"/>
-  <Codemirror v-model:value="template" :options="{ mode: 'text/html', theme: 'default', tabSize: 2 }" height="400px" :border="true" />
+  <!-- <Codemirror v-model:value="template" :options="{ mode: 'text/html', theme: 'default', tabSize: 2 }" height="400px" :border="true" /> -->
 </template>
 
 <script lang="ts">
