@@ -1,5 +1,5 @@
 
 export interface VueModule {
-  create: any;
+  createPreview: any;
   [key: string]: any;
 }

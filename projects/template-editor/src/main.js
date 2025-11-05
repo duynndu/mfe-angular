@@ -1,5 +1,10 @@
-import { create } from './vue-entry';
+import { createApp, getCurrentInstance } from "vue";
+import App from "./App.vue";
+import { InstallCodeMirror } from "codemirror-editor-vue3";
+import ContextMenu from "@imengyu/vue3-context-menu";
+import "./assets/main.css";
 
-const app = create();
-app.mount('#app');
-
+createApp(App)
+  .use(InstallCodeMirror)
+  .use(ContextMenu)
+  .mount("#app");

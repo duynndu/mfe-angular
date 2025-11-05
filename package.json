@@ -2,12 +2,14 @@
   "name": "mf-angular-20",
   "version": "0.0.0",
   "scripts": {
-    "build:template-editor": "cd projects/template-editor && vite build",
+    "start:shell": "ng s shell",
     "start:template-editor": "cd projects/template-editor && vite",
-    "serve:template-editor": "cd projects/template-editor/dist && npx serve -l 3000",
+    "build:template-editor": "cd projects/template-editor && vite build",
+    "serve:template-editor": "cd projects/template-editor/dist && npx serve -l 3000 --cors",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "s": "concurrently \"ng serve shell --port 4200\" \"npm run serve:template-editor\"",
     "start": "concurrently \"ng serve shell --port 4200\" \"ng serve first-mf --port 4201\""
   },
   "private": true,

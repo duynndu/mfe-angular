@@ -4,7 +4,7 @@
 </template>
 
 <script lang="ts">
-import Preview from './components/Preview.vue';
+import Preview from './components/preview/Preview.vue';
 import "codemirror/mode/htmlmixed/htmlmixed.js"
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
 

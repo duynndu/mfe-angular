@@ -101,13 +101,13 @@
 
 <script lang="ts">
 import { createApp } from 'vue/dist/vue.esm-bundler.js';
-import PageA4 from './layouts/PageA4.vue';
-import PageA5 from './layouts/PageA5.vue';
-import Textarea from './forms/Textarea.vue';
-import InputOTP from './forms/InputOTP.vue';
+import PageA4 from '../layouts/PageA4.vue';
+import PageA5 from '../layouts/PageA5.vue';
+import Textarea from '../forms/Textarea.vue';
+import InputOTP from '../forms/InputOTP.vue';
 import { VirtualHTMLParser } from '@/utils/fake-dom/VirtualHTMLParser';
-import EditElementPanel from './EditElementPanel.vue';
-import { printElement } from '@/helpers';
+import EditElementPanel from '../EditElementPanel.vue';
+import { handlePrint, printElement } from '@/helpers';
 import { ContextMenu } from '@imengyu/vue3-context-menu';
 import { ContextMenuItem } from '@imengyu/vue3-context-menu';
 import { componentRegistry, ComponentRegistry } from '@/utils/componentRegistry';
@@ -174,9 +174,11 @@ export default {
     }
   },
   mounted() {
+    document.addEventListener('keydown', handlePrint);
     this.processTemplate();
   },
   beforeUnmount() {
+    document.removeEventListener('keydown', handlePrint);
   },
   methods: {
     processTemplate() {

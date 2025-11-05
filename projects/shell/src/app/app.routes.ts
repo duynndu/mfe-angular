@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/native-federation';
 import { Home } from './pages/home/home';
-import { VueWrapper } from './components/vue-wrapper/vue-wrapper';
+import { TemplateEditor } from './components/template-editor/template-editor';
 import { VueLoader } from './services/vue-loader';
 
 export const routes: Routes = [
@@ -14,7 +14,7 @@ export const routes: Routes = [
   {
     path: 'template-editor',
     loadComponent: async () =>
-      VueLoader.initVueModule().then((_) => VueWrapper),
+      VueLoader.initVueModule().then((_) => TemplateEditor),
   },
   { path: '**', component: Home },
 ];
