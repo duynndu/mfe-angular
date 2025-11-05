@@ -48,16 +48,7 @@ export class TemplateEditor implements OnInit, OnDestroy {
   constructor(private vueLoader: VueLoader) {}
 
   ngOnInit(): void {
-    this.initApp();
-  }
-
-  onChangeTemplate(value: string) {
-    this.vm.$emit('update:template', value);
-  }
-
-  initApp() {
-    this.app = this.vueLoader.module
-      ?.createPreview();
+    this.app = this.vueLoader.createPreview();
     this.vm = this.app.mount('#template-editor');
     this.data = this._data;
     this.template = this._template;
