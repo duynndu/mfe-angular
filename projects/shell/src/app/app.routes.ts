@@ -5,7 +5,10 @@ import { TemplateEditor } from './components/template-editor/template-editor';
 import { VueLoader } from './services/vue-loader';
 
 export const routes: Routes = [
-  { path: '', component: Home },
+  {
+    path: '',
+    loadComponent: async () => VueLoader.initVueModule().then((_) => Home),
+  },
   {
     path: 'firstMf',
     loadComponent: () =>

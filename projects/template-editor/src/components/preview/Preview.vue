@@ -138,6 +138,7 @@ export default {
     rootNode.innerHTML = this.template;
     return {
       app: null,
+      vm: null,
       rootId: '123456',
       rootNode,
       selectedNode: null,
@@ -208,7 +209,7 @@ export default {
           .component('Textarea', Textarea)
           .component('InputOTP', InputOTP);
 
-        this.app.mount(contentEl);
+        this.vm = this.app.mount(contentEl);
 
         this.attachContextMenuListeners(contentEl);
 
