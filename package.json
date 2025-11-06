@@ -24,6 +24,7 @@
     "@originjs/vite-plugin-federation": "^1.4.1",
     "@softarc/native-federation-node": "^2.0.10",
     "es-module-shims": "^1.5.12",
+    "js-beautify": "^1.15.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
@@ -35,6 +36,7 @@
     "@angular/cli": "^20.0.2",
     "@angular/compiler-cli": "^20.0.0",
     "@types/jasmine": "~5.1.0",
+    "@types/js-beautify": "^1.14.3",
     "concurrently": "^9.1.2",
     "jasmine-core": "~5.7.0",
     "karma": "~6.4.0",

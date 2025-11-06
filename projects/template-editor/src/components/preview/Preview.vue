@@ -105,12 +105,13 @@ import PageA4 from '../layouts/PageA4.vue';
 import PageA5 from '../layouts/PageA5.vue';
 import Textarea from '../forms/Textarea.vue';
 import InputOTP from '../forms/InputOTP.vue';
-import { VirtualHTMLParser } from '@/utils/fake-dom/VirtualHTMLParser';
+import { VirtualHTMLParser } from 'shared/utils';
 import EditElementPanel from '../EditElementPanel.vue';
-import { handlePrint, printElement } from '@/helpers';
+import { handlePrint, printElement } from 'shared/helpers';
 import { ContextMenu } from '@imengyu/vue3-context-menu';
 import { ContextMenuItem } from '@imengyu/vue3-context-menu';
-import { componentRegistry, ComponentRegistry } from '@/utils/componentRegistry';
+import { componentRegistry } from 'shared/constants';
+import { ComponentRegistry } from 'shared/types';
 
 export default {
   name: 'Preview',

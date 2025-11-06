@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { loadRemoteModule } from '../../helpers';
+import { loadRemoteModule } from 'shared/helpers';
 import { environment } from '../../environments/environment';
-import { VueModule } from '../interfaces/vue-entry.interface';
+import { VueModule } from 'shared/types';
 @Injectable({ providedIn: 'root' })
 export class VueLoader {
   static vueModule: VueModule | null = null;

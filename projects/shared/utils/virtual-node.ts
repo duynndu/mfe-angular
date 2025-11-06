@@ -1,4 +1,5 @@
-import { VirtualHTMLParser } from './VirtualHTMLParser';
+import { NodeObject } from '../types/node-object';
+import { VirtualHTMLParser } from './virtual-html-parser';
 
 export class VirtualNode {
   tagName: string;
@@ -6,7 +7,7 @@ export class VirtualNode {
   childNodes: VirtualNode[];
   parentNode: null | VirtualNode;
   textContent: string;
-  isClosingTag: boolean
+  isClosingTag!: boolean
   constructor(tagName = '', attributes = {}) {
     this.tagName = tagName;
     this.attributes = attributes;
@@ -15,7 +16,7 @@ export class VirtualNode {
     this.textContent = '';
   }
 
-  get innerHTML() {
+  get innerHTML(): string {
     if (this.tagName === '#text') {
       return VirtualHTMLParser.vueBeautify(this.textContent);
     }
@@ -68,17 +69,17 @@ export class VirtualNode {
   }
 
   // DOM methods
-  querySelector(selector) {
+  querySelector(selector: string) {
     const results = this._querySelectorAll(selector, true);
     return results.length > 0 ? results[0] : null;
   }
 
-  querySelectorAll(selector) {
+  querySelectorAll(selector: string) {
     return this._querySelectorAll(selector, false);
   }
 
-  _querySelectorAll(selector, firstOnly = false) {
-    const results = [];
+  _querySelectorAll(selector: string, firstOnly = false) {
+    const results: VirtualNode[] = [];
 
     if (selector.startsWith('.')) {
       // Class selector: .className
@@ -122,7 +123,7 @@ export class VirtualNode {
     return results;
   }
 
-  _collectByTagName(tagName, results, firstOnly) {
+  _collectByTagName(tagName: string, results: VirtualNode[], firstOnly: boolean) {
     if (this.tagName === tagName) {
       results.push(this);
       if (firstOnly) return true;
@@ -137,9 +138,9 @@ export class VirtualNode {
     return false;
   }
 
-  _collectByClassName(className, results, firstOnly) {
+  _collectByClassName(className: string, results: VirtualNode[], firstOnly: boolean) {
     const classAttr = this.getAttribute('class') || '';
-    const classes = classAttr.split(' ').filter((c) => c.trim());
+    const classes = classAttr.split(' ').filter((c: string) => c.trim());
 
     if (classes.includes(className)) {
       results.push(this);
@@ -155,7 +156,7 @@ export class VirtualNode {
     return false;
   }
 
-  _collectById(id, results, firstOnly) {
+  _collectById(id: string, results: VirtualNode[], firstOnly: boolean) {
     if (this.getAttribute('id') === id) {
       results.push(this);
       if (firstOnly) return true;
@@ -170,10 +171,10 @@ export class VirtualNode {
     return false;
   }
 
-  _collectByTagAndClass(tagName, className, results, firstOnly) {
+  _collectByTagAndClass(tagName: string, className: string, results: VirtualNode[], firstOnly: boolean) {
     if (this.tagName === tagName) {
       const classAttr = this.getAttribute('class') || '';
-      const classes = classAttr.split(' ').filter((c) => c.trim());
+      const classes = classAttr.split(' ').filter((c: string) => c.trim());
 
       if (classes.includes(className)) {
         results.push(this);
@@ -195,7 +196,7 @@ export class VirtualNode {
     return false;
   }
 
-  _collectByTagAndId(tagName, id, results, firstOnly) {
+  _collectByTagAndId(tagName: string, id: string, results: VirtualNode[], firstOnly: boolean) {
     if (this.tagName === tagName && this.getAttribute('id') === id) {
       results.push(this);
       if (firstOnly) return true;
@@ -210,7 +211,7 @@ export class VirtualNode {
     return false;
   }
 
-  _collectByAttribute(attributeSelector, results, firstOnly) {
+  _collectByAttribute(attributeSelector: string, results: VirtualNode[], firstOnly: boolean) {
     const attributeMatch = this._parseAttributeSelector(attributeSelector);
     if (attributeMatch && this._matchesAttribute(attributeMatch)) {
       results.push(this);
@@ -230,7 +231,7 @@ export class VirtualNode {
     return false;
   }
 
-  _collectByTagAndAttribute(tagName, attributeSelector, results, firstOnly) {
+  _collectByTagAndAttribute(tagName: string, attributeSelector: string, results: VirtualNode[], firstOnly: boolean) {
     if (this.tagName === tagName) {
       const attributeMatch = this._parseAttributeSelector(attributeSelector);
       if (attributeMatch && this._matchesAttribute(attributeMatch)) {
@@ -253,7 +254,7 @@ export class VirtualNode {
     return false;
   }
 
-  _parseAttributeSelector(selector) {
+  _parseAttributeSelector(selector: string) {
     // Remove brackets: [attr=value] -> attr=value
     const content = selector.slice(1, -1).trim();
 
@@ -290,7 +291,7 @@ export class VirtualNode {
     return { attributeName, operator, value };
   }
 
-  _matchesAttribute(attributeMatch) {
+  _matchesAttribute(attributeMatch: { attributeName: string; operator: string; value: string }) {
     const { attributeName, operator, value } = attributeMatch;
     const attrValue = this.getAttribute(attributeName);
 
@@ -308,8 +309,8 @@ export class VirtualNode {
     if (operator === '~=') {
       const words = (attrValue || '')
         .split(' ')
-        .map((w) => w.trim())
-        .filter((w) => w);
+        .map((w: string) => w.trim())
+        .filter((w: string) => w);
       return words.includes(value);
     }
 
@@ -339,20 +340,20 @@ export class VirtualNode {
     return false;
   }
 
-  getElementById(id) {
+  getElementById(id: string) {
     return this.querySelector(`#${id}`);
   }
 
-  getElementsByTagName(tagName) {
+  getElementsByTagName(tagName: string) {
     return this.querySelectorAll(tagName);
   }
 
-  getElementsByClassName(className) {
+  getElementsByClassName(className: string) {
     return this.querySelectorAll(`.${className}`);
   }
 
   // Collection methods
-  _collectElementsByTagName(tagName, results) {
+  _collectElementsByTagName(tagName: string, results: VirtualNode[]) {
     if (this.tagName === tagName) {
       results.push(this);
     }
@@ -364,7 +365,7 @@ export class VirtualNode {
     }
   }
 
-  _collectElementsById(id, results) {
+  _collectElementsById(id: string, results: VirtualNode[]) {
     if (this.attributes.id === id) {
       results.push(this);
     }
@@ -376,7 +377,7 @@ export class VirtualNode {
     }
   }
 
-  _collectElementsByClassName(className, results) {
+  _collectElementsByClassName(className: string, results: VirtualNode[]) {
     const classAttr = this.attributes.class || '';
     if (classAttr.split(' ').includes(className)) {
       results.push(this);
@@ -390,32 +391,32 @@ export class VirtualNode {
   }
 
   // Attribute methods
-  getAttribute(name) {
+  getAttribute(name: string) {
     return this.attributes[name];
   }
 
-  setAttribute(name, value) {
+  setAttribute(name: string, value: string) {
     this.attributes[name] = value;
     return this;
   }
 
-  removeAttribute(name) {
+  removeAttribute(name: string) {
     delete this.attributes[name];
     return this;
   }
 
-  hasAttribute(name) {
+  hasAttribute(name: string) {
     return name in this.attributes;
   }
 
   // Node manipulation methods
-  appendChild(child) {
+  appendChild(child: VirtualNode) {
     child.parentNode = this;
     this.childNodes.push(child);
     return child;
   }
 
-  insertBefore(newNode, referenceNode) {
+  insertBefore(newNode: VirtualNode, referenceNode: VirtualNode) {
     const index = this.childNodes.indexOf(referenceNode);
     if (index === -1) {
       throw new Error('Reference node not found');
@@ -426,7 +427,7 @@ export class VirtualNode {
     return newNode;
   }
 
-  insertAfter(newNode, referenceNode) {
+  insertAfter(newNode: VirtualNode, referenceNode: VirtualNode) {
     const index = this.childNodes.indexOf(referenceNode);
     if (index === -1) {
       throw new Error('Reference node not found');
@@ -438,6 +439,7 @@ export class VirtualNode {
   }
 
   remove() {
+    if (!this.parentNode) return null;
     const index = this.parentNode.childNodes.indexOf(this);
     if (index > -1) {
       return this.parentNode.childNodes.splice(index, 1)[0];
@@ -445,7 +447,7 @@ export class VirtualNode {
     return null;
   }
 
-  removeChild(child) {
+  removeChild(child: VirtualNode) {
     const index = this.childNodes.indexOf(child);
     if (index > -1) {
       child.parentNode = null;
@@ -454,7 +456,7 @@ export class VirtualNode {
     return null;
   }
 
-  replaceChild(newChild, oldChild) {
+  replaceChild(newChild: VirtualNode, oldChild: VirtualNode) {
     const index = this.childNodes.indexOf(oldChild);
     if (index > -1) {
       oldChild.parentNode = null;
@@ -474,13 +476,13 @@ export class VirtualNode {
     return this.childNodes[this.childNodes.length - 1] || null;
   }
 
-  get nextSibling() {
+  get nextSibling(): VirtualNode | null {
     if (!this.parentNode) return null;
     const index = this.parentNode.childNodes.indexOf(this);
     return this.parentNode.childNodes[index + 1] || null;
   }
 
-  get previousSibling() {
+  get previousSibling(): VirtualNode | null {
     if (!this.parentNode) return null;
     const index = this.parentNode.childNodes.indexOf(this);
     return this.parentNode.childNodes[index - 1] || null;
@@ -499,7 +501,7 @@ export class VirtualNode {
     return clone;
   }
 
-  toObject() {
+  toObject(): NodeObject {
     return {
       tagName: this.tagName,
       attributes: this.attributes,

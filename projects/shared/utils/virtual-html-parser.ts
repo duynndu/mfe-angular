@@ -1,5 +1,5 @@
 import { html_beautify } from 'js-beautify';
-import { VirtualNode } from './VirtualNode';
+import { VirtualNode } from './virtual-node';
 
 export class VirtualHTMLParser {
   static closingTags = [
@@ -113,13 +113,13 @@ export class VirtualHTMLParser {
     try {
       const obj = JSON.parse(jsonString);
       return this.parseFromObject(obj);
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(`Invalid JSON: ${error.message}`);
     }
   }
 
-  static _parseAttributes(attributeString) {
-    const attrs = {};
+  static _parseAttributes(attributeString: string) {
+    const attrs: Record<string, string> = {};
     if (!attributeString.trim()) return attrs;
 
     const attrRegex = /([a-zA-Z-:@]+)(?:\s*=\s*"([^"]*)"|\s*=\s*'([^']*)')?/g;
@@ -131,7 +131,7 @@ export class VirtualHTMLParser {
 
       if (key && key.trim()) {
         const cleanKey = key.trim();
-        let value = true;
+        let value: any = true;
 
         if (doubleQuotedValue !== undefined) {
           value = doubleQuotedValue;
@@ -147,7 +147,7 @@ export class VirtualHTMLParser {
     return attrs;
   }
 
-  static vueBeautify(htmlString, indent = 2) {
+  static vueBeautify(htmlString: string, indent: number = 2) {
     let result = htmlString;
     result = html_beautify(result, {
       indent_size: indent,
