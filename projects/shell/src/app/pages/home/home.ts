@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
-export class Home implements AfterViewInit{
+export class Home{
   @ViewChild(TemplateEditor) templateEditor!: TemplateEditor;
   template = `<PageA4 style="padding: 3mm 15mm 3mm 15mm;">
   <div>{{ data.name }}</div>
@@ -33,8 +33,4 @@ export class Home implements AfterViewInit{
 
 </PageA4>`
   data: any = { name: 'duynnz' }
-
-  ngAfterViewInit(): void {
-    this.data = this.templateEditor.vm.data; // apply setter for data
-  }
 }

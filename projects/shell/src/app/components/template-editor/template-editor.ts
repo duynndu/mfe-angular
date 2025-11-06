@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectorRef, output, Output, EventEmitter } from '@angular/core';
 import { VueLoader } from '../../services/vue-loader';
 import { FormsModule } from '@angular/forms';
 
@@ -8,43 +8,35 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule],
   template: `<div id="template-editor"></div>`,
 })
-export class TemplateEditor implements OnInit, OnDestroy {
+export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
   app: any = null;
   vm: any = null;
   
-  private _template = '';
+  @Input('template') template = '';
+  @Output() templateChange = new EventEmitter<string>();
   
-  @Input('template')
-  get template(): string {
-    return this._template;
-  }
-  set template(value: string) {
-    this._template = value;
-    if (this.vm) {
-      this.vm.template = value;
-    }
-  }
-  
-  private _data: any = {};
-  
-  @Input('data')
-  get data(): any {
-    return this._data;
-  }
-  set data(value: any) {
-    this._data = value;
-    if (this.vm) {
-      this.vm.data = value;
-    }
-  }
+  @Input('data') data = {};
+  @Output() dataChange = new EventEmitter<any>();
 
   constructor(private vueLoader: VueLoader) {}
 
   ngOnInit(): void {
     this.app = this.vueLoader.createPreview();
     this.vm = this.app.mount('#template-editor');
-    this.vm.data = this._data;
-    this.vm.template = this._template;
+    this.vm.data = this.data;
+    this.vm.template = this.template;
+    this.dataChange.emit(this.vm.data);
+    this.vm.$watch('template', (newVal: any) => {
+      this.templateChange.emit(newVal);
+    });
+    
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!this.vm) return;
+    if (changes['template']) {
+      this.vm.template = this.template;
+    }
   }
 
   ngOnDestroy(): void {
