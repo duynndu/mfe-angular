@@ -1,2 +1,2 @@
 export * from './vue-entry.interface';
-export * from './component';
+export * from './template';

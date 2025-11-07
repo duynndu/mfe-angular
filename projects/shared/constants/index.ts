@@ -1,1 +1,1 @@
-export * from './component-registry'
+export * from './template-categories';

@@ -63,13 +63,13 @@
     <!-- Insert Template Menu -->
     <ContextMenu v-model:show="insertMenuVisible" :options="insertMenuOption">
       <context-menu-group 
-        v-for="(category, categoryKey) in availableComponents" 
-        :key="categoryKey"
-        :label="category.name"
+        v-for="(category, categoryIndex) in templateCategories" 
+        :key="categoryIndex"
+        :label="category.label"
       >
         <context-menu-item 
-          v-for="(component, componentKey) in category.templates" 
-          :key="componentKey"
+          v-for="(component, componentIndex) in category.templates" 
+          :key="componentIndex"
           :label="component.label"
           @click="insertElement(component)"
         >
@@ -110,8 +110,7 @@ import EditElementPanel from '../EditElementPanel.vue';
 import { handlePrint, printElement } from 'shared/helpers';
 import { ContextMenu } from '@imengyu/vue3-context-menu';
 import { ContextMenuItem } from '@imengyu/vue3-context-menu';
-import { componentRegistry } from 'shared/constants';
-import { ComponentRegistry } from 'shared/types';
+import { templateCategories } from 'shared/constants';
 
 export default {
   name: 'Preview',
@@ -124,10 +123,6 @@ export default {
       required: true
     },
     data: {
-      type: Object,
-      default: () => ({})
-    },
-    additionalTemplates: {
       type: Object,
       default: () => ({})
     }
@@ -157,16 +152,9 @@ export default {
         y: 0,
         minWidth: 180
       },
-      htmlCopy: ''
+      htmlCopy: '',
+      templateCategories: templateCategories
     };
-  },
-  computed: {
-    availableComponents(): ComponentRegistry {
-      return {
-        ...componentRegistry,
-        ...this.additionalTemplates
-      };
-    }
   },
   watch: {
     template: {
