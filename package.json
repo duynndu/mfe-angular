@@ -5,7 +5,7 @@
     "start:shell": "ng s shell",
     "start:template-editor": "cd projects/template-editor && vite",
     "build:template-editor": "cd projects/template-editor && vite build",
-    "serve:template-editor": "cd projects/template-editor/dist && npx serve -l 3000 --cors",
+    "serve:template-editor": "cd dist/template-editor && npx serve -l 3000 --cors",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

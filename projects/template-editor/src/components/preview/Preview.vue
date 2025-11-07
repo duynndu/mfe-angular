@@ -32,7 +32,7 @@
           <i class="fa-solid fa-copy"></i>
         </template>
       </context-menu-item>
-      <context-menu-group v-if="htmlCopy" label="Paste">
+      <context-menu-group v-if="elementCopied" label="Paste">
         <template #icon>
           <i class="fa-solid fa-paste"></i>
         </template>
@@ -105,7 +105,7 @@ import PageA4 from '../layouts/PageA4.vue';
 import PageA5 from '../layouts/PageA5.vue';
 import Textarea from '../forms/Textarea.vue';
 import InputOTP from '../forms/InputOTP.vue';
-import { VirtualHTMLParser } from 'shared/utils';
+import { VirtualHTMLParser, VirtualNode } from 'shared/utils';
 import EditElementPanel from '../EditElementPanel.vue';
 import { handlePrint, printElement } from 'shared/helpers';
 import { ContextMenu } from '@imengyu/vue3-context-menu';
@@ -152,7 +152,7 @@ export default {
         y: 0,
         minWidth: 180
       },
-      htmlCopy: '',
+      elementCopied: null,
       templateCategories: templateCategories
     };
   },
@@ -287,9 +287,9 @@ export default {
     copyElement(e) {
       if (!this.selectedCid) return;
 
-      const selectedElement = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`);
+      const selectedElement = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`) as VirtualNode;
       if (!selectedElement) return;
-      this.htmlCopy = selectedElement.outerHTML;
+      this.elementCopied = selectedElement.cloneNode(true);
     },
 
     pasteElement(pastePosition) {
@@ -298,14 +298,13 @@ export default {
       const selectedElement = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`);
       if (!selectedElement) return;
       const parent = selectedElement.parentNode;
-      const elementCopied = VirtualHTMLParser.parseToElement(this.htmlCopy)
-      if (!elementCopied) return;
+      if (!this.elementCopied) return;
       if (pastePosition === 'before' && parent) {
-        parent.insertBefore(elementCopied, selectedElement);
+        parent.insertBefore(this.elementCopied, selectedElement);
       } else if (pastePosition === 'after' && parent) {
-        parent.insertAfter(elementCopied, selectedElement);
+        parent.insertAfter(this.elementCopied, selectedElement);
       } else if (pastePosition === 'inside') {
-        selectedElement.appendChild(elementCopied);
+        selectedElement.appendChild(this.elementCopied);
       }
       this.updateTemplate();
     },

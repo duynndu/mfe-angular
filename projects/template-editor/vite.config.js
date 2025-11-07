@@ -31,4 +31,9 @@ export default defineConfig({
       'shared/constants': path.resolve(__dirname, '../shared/constants'),
     },
   },
+
+  build: {
+    outDir: path.resolve(__dirname, '../../dist/template-editor'),
+    target: 'esnext'
+  }
 })
