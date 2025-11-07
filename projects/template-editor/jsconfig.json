@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "shared/helpers": ["../shared/helpers"],
+      "shared/types": ["../shared/types"],
+      "shared/utils": ["../shared/utils"],
+      "shared/constants": ["../shared/constants"]
     }
   },
   "exclude": ["node_modules", "dist"]
