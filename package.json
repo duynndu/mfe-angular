@@ -3,14 +3,19 @@
   "version": "0.0.0",
   "scripts": {
     "start:shell": "ng s shell",
+    "build:shell": "ng build shell",
+    "serve:shell": "cd dist/shell/browser && npx serve -l 4200 --cors",
+
+    "start:first-mf": "ng s first-mf",
+    "build:first-mf": "ng build first-mf",
+    "serve:first-mf": "cd dist/first-mf/browser && npx serve -l 4201 --cors",
+
     "start:template-editor": "cd projects/template-editor && vite",
     "build:template-editor": "cd projects/template-editor && vite build",
-    "serve:template-editor": "cd dist/template-editor && npx serve -l 3000 --cors",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "s": "concurrently \"ng serve shell --port 4200\" \"npm run serve:template-editor\"",
-    "start": "concurrently \"ng serve shell --port 4200\" \"ng serve first-mf --port 4201\""
+    "serve:template-editor": "cd dist/template-editor && npx serve -l 4202 --cors",
+
+    "build:all": "concurrently \"npm run build:shell\" \"npm run build:first-mf\" \"npm run build:template-editor\"",
+    "serve:all": "concurrently \"npm run serve:shell\" \"npm run serve:first-mf\" \"npm run serve:template-editor\""
   },
   "private": true,
   "dependencies": {
