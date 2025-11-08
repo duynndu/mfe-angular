@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  vueRemoteEntry: 'http://localhost:4202/assets/remoteEntry.js',
+  vueRemoteEntry: '/mfe-angular/template-editor/assets/remoteEntry.js',
+  // vueRemoteEntry: 'http://localhost:4202/assets/remoteEntry.js',
 };
