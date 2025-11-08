@@ -149,6 +149,10 @@
 						"production": {
 							"target": "first-mf:esbuild:production"
 						},
+						"demo": {
+							"target": "first-mf:esbuild:production",
+							"baseHref": "/mfe-angular/first-mf/"
+						},
 						"development": {
 							"target": "first-mf:esbuild:development",
 							"dev": true

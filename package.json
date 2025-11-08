@@ -17,7 +17,7 @@
     "build:all": "concurrently \"npm run build:shell\" \"npm run build:first-mf\" \"npm run build:template-editor\"",
     "serve:all": "concurrently \"npm run serve:shell\" \"npm run serve:first-mf\" \"npm run serve:template-editor\"",
 
-    "build:all:demo": "concurrently \"ng build shell --configuration=demo\" \"ng build first-mf --base-href /mfe-angular/first-mf/\" \"cd projects/template-editor && vite build --mode demo\""
+    "build:all:demo": "concurrently \"ng build shell --configuration=demo\" \"ng build first-mf --configuration=demo\" \"cd projects/template-editor && vite build --mode demo\""
   },
   "private": true,
   "dependencies": {
