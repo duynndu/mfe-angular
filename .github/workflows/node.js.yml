@@ -32,6 +32,11 @@ jobs:
       working-directory: ./projects/template-editor
       run: npm ci
 
+    - name: Replace environment file with demo version
+      working-directory: ./projects/shell
+      run: |
+        cat src/environments/environment.demo.ts > src/environments/environment.ts
+
     - name: Build all projects
       run: npm run build:all:demo
 
