@@ -4,6 +4,6 @@ export const environment = {
     templateEditor: '/mfe-angular/template-editor/assets/remoteEntry.js',
   },
   federationRemotes: {
-    federationRemotes: "/mfe-angular/first-mf/remoteEntry.json",
+    firstMf: "/mfe-angular/first-mf/remoteEntry.json",
   }
 };
