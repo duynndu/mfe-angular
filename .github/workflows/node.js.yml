@@ -33,7 +33,7 @@ jobs:
       run: npm ci
 
     - name: Build all projects
-      run: npm run build:all
+      run: npm run build:all:gh-pages
 
     - name: Copy all built files to deploy folder
       run: |

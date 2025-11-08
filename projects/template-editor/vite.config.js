@@ -10,7 +10,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  base: mode === 'gh-pages' ? '/mfe-angular/template-editor/' : '/',
   plugins: [
     vue(),
     vueDevTools(),
@@ -38,4 +39,4 @@ export default defineConfig({
     emptyOutDir: true,
     chunkSizeWarningLimit: 10000,
   }
-})
+}))
