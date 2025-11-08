@@ -44,7 +44,7 @@ jobs:
 
         cp -r dist/shell/browser/* deploy/shell/
         cp -r dist/first-mf/browser/* deploy/first-mf/
-        cp -r projects/template-editor/dist/* deploy/template-editor/
+        cp -r dist/template-editor/* deploy/template-editor/
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
