@@ -1,11 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { TemplateEditor } from '../../components/template-editor/template-editor';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-shell-home',
-  imports: [FormsModule, TemplateEditor, CommonModule],
+  imports: [FormsModule, TemplateEditor],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
