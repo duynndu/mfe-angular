@@ -26,7 +26,6 @@
     "@angular/forms": "^20.0.0",
     "@angular/platform-browser": "^20.0.0",
     "@angular/router": "^20.0.0",
-    "@originjs/vite-plugin-federation": "^1.4.1",
     "@softarc/native-federation-node": "^2.0.10",
     "es-module-shims": "^1.5.12",
     "js-beautify": "^1.15.4",

@@ -28,6 +28,9 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
+    - name: Install template-editor dependencies
+      working-directory: ./projects/template-editor
+      run: npm ci
 
     - name: Build all projects
       run: npm run build:all
