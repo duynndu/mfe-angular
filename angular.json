@@ -21,6 +21,15 @@
 						"production": {
 							"target": "shell:esbuild:production"
 						},
+						"demo": {
+							"target": "shell:esbuild:production",
+							"fileReplacements": [
+								{
+									"replace": "projects/shell/src/environments/environment.ts",
+									"with": "projects/shell/src/environments/environment.demo.ts"
+								}
+							]
+						},
 						"development": {
 							"target": "shell:esbuild:development",
 							"dev": true

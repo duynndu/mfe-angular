@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: write   # cần quyền ghi để đẩy lên gh-pages
+  contents: write
 
 jobs:
   build-deploy:
@@ -33,7 +33,7 @@ jobs:
       run: npm ci
 
     - name: Build all projects
-      run: npm run build:all:gh-pages
+      run: npm run build:all:demo
 
     - name: Copy all built files to deploy folder
       run: |
