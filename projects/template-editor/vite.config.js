@@ -34,6 +34,8 @@ export default defineConfig({
 
   build: {
     outDir: path.resolve(__dirname, '../../dist/template-editor'),
-    target: 'esnext'
+    target: 'esnext',
+    emptyOutDir: true,
+    chunkSizeWarningLimit: 10000,
   }
 })
