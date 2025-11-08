@@ -1,0 +1,19 @@
+{
+  "imports": {
+    "@angular/common": "_angular_common.AuV6LVJvoS.js",
+    "@angular/common/http": "_angular_common_http.f9Os6cYe70.js",
+    "@angular/core": "_angular_core.AJiRp6XRfO.js",
+    "@angular/core/primitives/di": "_angular_core_primitives_di.griCdKicwo.js",
+    "@angular/core/primitives/signals": "_angular_core_primitives_signals.DQl2X0TkSu.js",
+    "@angular/platform-browser": "_angular_platform_browser.Iz5fNdg7Oy.js",
+    "@angular/router": "_angular_router.DGwtXQ41U6.js",
+    "rxjs": "rxjs.8h4QS_CIxQ.js",
+    "rxjs/operators": "rxjs_operators.s5Vfq9aevZ.js",
+    "tslib": "tslib.u3fIH10a5V.js",
+    "chunk-RQJ252K2.js": "chunk-RQJ252K2.js",
+    "chunk-LUJOJIVH.js": "chunk-LUJOJIVH.js",
+    "chunk-SUTR7LBN.js": "chunk-SUTR7LBN.js",
+    "chunk-TTBQUPVX.js": "chunk-TTBQUPVX.js",
+    "chunk-4CLCTAJ7.js": "chunk-4CLCTAJ7.js"
+  }
+}
