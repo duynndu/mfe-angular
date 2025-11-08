@@ -9,7 +9,7 @@ export class VueLoader {
     if (this.vueModule) return;
     try {
       this.vueModule = await loadRemoteModule({
-        remoteEntry: environment.vueRemoteEntry,
+        remoteEntry: environment.customRemotes.templateEditor,
         exposedModule: './VueEntry',
       });
     } catch (error) {

@@ -1,5 +1,9 @@
 export const environment = {
   production: false,
-  vueRemoteEntry: 'http://localhost:4202/assets/remoteEntry.js',
-  buildConfig: 'default',
+  customRemotes: {
+    templateEditor: 'http://localhost:4202/assets/remoteEntry.js',
+  },
+  federationRemotes: {
+    firstMf: "http://localhost:4201/remoteEntry.json",
+  }
 };
