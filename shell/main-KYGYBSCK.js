@@ -1,1 +1,0 @@
-import{b as n,d as r}from"./chunk-EM6YVXH7.js";console.log("Environment:",r.buildConfig);n("federation.manifest.json").catch(o=>console.error(o)).then(o=>import("./chunk-4SCIKGRG.js")).catch(o=>console.error(o));
