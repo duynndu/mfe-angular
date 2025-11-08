@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/native-federation';
 import { Home } from './pages/home/home';
-import { TemplateEditor } from './components/template-editor/template-editor';
 import { VueLoader } from './services/vue-loader';
 
 export const routes: Routes = [
@@ -10,14 +9,9 @@ export const routes: Routes = [
     loadComponent: async () => VueLoader.initVueModule().then((_) => Home),
   },
   {
-    path: 'firstMf',
+    path: 'first',
     loadComponent: () =>
       loadRemoteModule('firstMf', './Component').then((m) => m.App),
-  },
-  {
-    path: 'template-editor',
-    loadComponent: async () =>
-      VueLoader.initVueModule().then((_) => TemplateEditor),
   },
   { path: '**', component: Home },
 ];
