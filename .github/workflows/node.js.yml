@@ -3,6 +3,9 @@ name: Node.js CI/CD
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - '/assets/**'
   pull_request:
     branches: [ "main" ]
 

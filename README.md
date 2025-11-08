@@ -61,5 +61,9 @@ export class Home{
   [(data)]="data"
 ></template-editor>
 ```
+## 🔍 Preview
+![Context menu](./assets/context-menu1.png)
+![Context menu](./assets/context-menu2.png)
+![Context menu](./assets/menu-edit.png)
 
 🎯 Live Demo: https://duynndu.github.io/mfe-angular/shell/
