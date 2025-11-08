@@ -1,0 +1,50 @@
+name: Node.js CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: write   # cần quyền ghi để đẩy lên gh-pages
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.19.4]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build all projects
+      run: npm run build:all
+
+    - name: Copy all built files to deploy folder
+      run: |
+        mkdir deploy
+        mkdir deploy/shell
+        mkdir deploy/first-mf
+        mkdir deploy/template-editor
+
+        cp -r dist/shell/browser/* deploy/shell/
+        cp -r dist/first-mf/browser/* deploy/first-mf/
+        cp -r projects/template-editor/dist/* deploy/template-editor/
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./deploy
