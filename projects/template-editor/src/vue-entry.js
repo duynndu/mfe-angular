@@ -10,3 +10,7 @@ export function createPreview() {
   .use(InstallCodeMirror)
   .use(ContextMenu);
 }
+
+export function createVueApp() {
+  return createApp(App)
+}

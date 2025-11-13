@@ -11,17 +11,6 @@ Ensure you have initialized the Vue module before use.
 
 ---
 
-## 🛣️ Route Configuration
-
-When using with routing, you need to **initialize the Vue module** before loading the Angular component.
-
-```typescript
-{
-  path: '',
-  loadComponent: async () =>
-    VueLoader.initVueModule().then(() => Home),
-}
-```
 ## 💡 Example
 ```typescript
 import { Component, ViewChild } from '@angular/core';

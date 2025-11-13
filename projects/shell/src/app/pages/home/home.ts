@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './home.scss'
 })
 export class Home{
-  @ViewChild(TemplateEditor) templateEditor!: TemplateEditor;
   template = `<PageA4 style="padding: 3mm 15mm 3mm 15mm;">
   <div>{{ data.name }}</div>
   <p>Tuổi: {{ data.age }}</p>
