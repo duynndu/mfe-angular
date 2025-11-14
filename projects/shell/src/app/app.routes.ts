@@ -17,10 +17,10 @@ export const routes: Routes = [
       //   remoteName: 'templateEditor',
       //   exposedModule: './VueEntry',
       // }).then((m: VueModule) =>
-      //   createVueWrapperComponent(m.createVueApp)
+      //   createVueWrapperComponent(m.createApp)
       // ),
       loadRemoteModule('templateEditor', './VueEntry').then((m: VueModule) =>
-        createVueWrapperComponent(m.createVueApp)
+        createVueWrapperComponent(m.createApp)
       ),
   },
   {
