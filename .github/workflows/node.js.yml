@@ -39,6 +39,7 @@ jobs:
       working-directory: ./projects/shell
       run: |
         cat src/environments/environment.demo.ts > src/environments/environment.ts
+        cat public/federation.manifest.demo.json > public/federation.manifest.json
 
     - name: Build all projects
       run: npm run build:all:demo
