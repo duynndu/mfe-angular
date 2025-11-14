@@ -13,7 +13,7 @@ export const routes: Routes = [
     path: 'vue-page',
     loadComponent: () =>
       // loadRemoteModule({
-      //   // remoteName: 'templateEditor',
+      //   // remoteEntry: 'http://localhost:4202/assets/remoteEntry.js',
       //   remoteName: 'templateEditor',
       //   exposedModule: './VueEntry',
       // }).then((m: VueModule) =>
