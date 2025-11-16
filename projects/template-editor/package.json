@@ -25,6 +25,7 @@
     "ngx-build-plus": "^16.0.0",
     "typescript": "^5.1.6",
     "vite": "^7.1.11",
-    "vite-plugin-vue-devtools": "^8.0.3"
+    "vite-plugin-vue-devtools": "^8.0.3",
+    "vue-tsc": "^3.1.3"
   }
 }

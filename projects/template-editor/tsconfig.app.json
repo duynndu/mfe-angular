@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "types": [
+      "vite/client"
+    ],
+    "rootDir": "../",
+    "lib": ["ES2022", "dom"],
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "resolveJsonModule": true,
+    "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
+  },
+  "exclude": [
+    "out-tsc",
+    "dist",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.vue",
+    "src/**/*.test.vue"
+  ],
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "../shared/**/*.ts",
+    "../shared/**/*.js"
+  ]
+}

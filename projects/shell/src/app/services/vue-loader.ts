@@ -9,7 +9,7 @@ export class VueLoader {
     try {
       this.module = await loadRemoteModule({
         remoteName: 'templateEditor',
-        exposedModule: './VueEntry',
+        exposedModule: './component-factory',
       });
     } catch (error) {
       console.error('[VueLoader] Failed to load Vue remote module:', error);

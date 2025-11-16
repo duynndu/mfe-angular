@@ -11,7 +11,7 @@
         <label>Tag Name</label>
         <input
           type="text"
-          :value="selectedNode.tagName"
+          :value="selectedNode['tagName']"
           readonly
           class="readonly-input"
         />
@@ -21,15 +21,15 @@
       <div class="form-group" v-if="selectedNode.tagName != 'Root'">
         <label>Attributes</label>
         <template v-for="(value, key) in currentAttributes" :key="key">
-          <div class="attribute-row" v-if="key != 'c-id' && key != 'c-name'">
+          <div class="attribute-row" v-if="String(key) != 'c-id' && String(key) != 'c-name'">
             <span class="attribute-key">{{ key }}</span>
             <input
               type="text"
               :value="value"
-              @input="updateAttributeValue(key, ($event.target as HTMLInputElement).value)"
+              @input="updateAttributeValue(String(key), ($event.target as HTMLInputElement).value)"
               placeholder="Attribute value"
             />
-            <button @click="removeAttribute(key)" class="remove-btn">×</button>
+            <button @click="removeAttribute(String(key))" class="remove-btn">×</button>
           </div>
         </template>
 
@@ -40,7 +40,7 @@
       </div>
 
       <!-- Nội dung text (nếu có) -->
-      <div v-if="!selectedNode.isClosingTag" class="form-group">
+      <div v-if="!selectedNode['isClosingTag']" class="form-group">
         <label>Inner HTML</label>
         <Codemirror
           :value="innerHTML"
@@ -101,7 +101,7 @@
 </template>
 
 <script lang="ts">
-import { VirtualHTMLParser } from "@/utils/fake-dom/VirtualHTMLParser";
+import { VirtualNode } from 'shared/utils';
 
 export default {
   name: "EditElementPanel",
@@ -109,12 +109,12 @@ export default {
     selectedNode: {
       type: Object,
       default: null,
-    },
+    } as unknown as () => VirtualNode | null,
   },
   emits: ["close"],
   data() {
     return {
-      currentAttributes: {},
+      currentAttributes: {} as any,
       originalAttributes: {},
       showAttributeModal: false,
       newAttribute: {
@@ -140,20 +140,20 @@ export default {
     },
   },
   methods: {
-    loadNodeAttributes(fakeNode) {
+    loadNodeAttributes(fakeNode: VirtualNode) {
       this.currentAttributes = { ...fakeNode.attributes };
       this.originalAttributes = { ...fakeNode.attributes };
     },
 
-    updateAttributeValue(key, value) {
+    updateAttributeValue(key: string, value: string) {
       this.currentAttributes = {
         ...this.currentAttributes,
         [key]: value,
       };
     },
 
-    removeAttribute(key) {
-      const newAttributes = { ...this.currentAttributes };
+    removeAttribute(key: string) {
+      const newAttributes: any = { ...this.currentAttributes };
       delete newAttributes[key];
       this.currentAttributes = newAttributes;
     },
@@ -169,7 +169,7 @@ export default {
       }
     },
 
-    updateTextContent(text) {
+    updateTextContent(text: string) {
       this.innerHTML = text;
     },
 
@@ -179,18 +179,18 @@ export default {
       this.selectedNode.innerHTML = this.innerHTML;
       Object.keys(this.originalAttributes).forEach((key) => {
         if (!(key in this.currentAttributes)) {
-          this.selectedNode.removeAttribute(key);
+          this.selectedNode?.removeAttribute(key);
         }
       });
 
       Object.keys(this.currentAttributes).forEach((key) => {
-        this.selectedNode.setAttribute(key, this.currentAttributes[key]);
+        this.selectedNode?.setAttribute(key, this.currentAttributes[key]);
       });
       this.closePanel();
     },
 
     deleteElement() {
-      this.selectedNode.remove();
+      this.selectedNode?.remove();
       this.closePanel();
     },
 

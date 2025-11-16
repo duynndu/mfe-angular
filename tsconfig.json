@@ -1,27 +1,8 @@
 /* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
 /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
+  "extends": "./tsconfig.base.json",
   "compileOnSave": false,
-  "compilerOptions": {
-    "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "ES2022",
-    "module": "preserve",
-    "baseUrl": ".",
-    "paths": {
-      "shared/helpers": ["projects/shared/helpers"],
-      "shared/types": ["projects/shared/types"],
-      "shared/utils": ["projects/shared/utils"],
-      "shared/constants": ["projects/shared/constants"]
-    },
-  },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
@@ -42,6 +23,9 @@
     },
     {
       "path": "./projects/first-mf/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/template-editor"
     }
   ]
 }

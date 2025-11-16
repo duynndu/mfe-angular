@@ -1,4 +1,4 @@
-import { TemplateCategory } from '../types/template';
+import { TemplateCategory } from '../types/template.interface';
 
 export const templateCategories: TemplateCategory[] = [
   {

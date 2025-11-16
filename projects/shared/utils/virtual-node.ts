@@ -1,4 +1,4 @@
-import { NodeObject } from '../types/node-object';
+import { NodeObject } from '../types/node-object.interface';
 import { VirtualHTMLParser } from './virtual-html-parser';
 
 export class VirtualNode {

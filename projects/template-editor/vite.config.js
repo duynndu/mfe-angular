@@ -17,9 +17,9 @@ export default defineConfig(({ mode }) => ({
     vueDevTools(),
     federation({
       filename: 'remoteEntry.js',
-      name: 'VueEntry',
+      name: 'ComponentFactory',
       exposes: {
-        './VueEntry': './src/vue-entry.js',
+        './component-factory': './src/component-factory.ts',
       }
     })
   ],

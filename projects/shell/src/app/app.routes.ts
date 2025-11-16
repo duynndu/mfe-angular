@@ -15,11 +15,11 @@ export const routes: Routes = [
       // loadRemoteModule({
       //   // remoteEntry: 'http://localhost:4202/assets/remoteEntry.js',
       //   remoteName: 'templateEditor',
-      //   exposedModule: './VueEntry',
+      //   exposedModule: './component-factory',
       // }).then((m: VueModule) =>
       //   createVueWrapperComponent(m.createApp)
       // ),
-      loadRemoteModule('templateEditor', './VueEntry').then((m: VueModule) =>
+      loadRemoteModule('templateEditor', './component-factory').then((m: VueModule) =>
         createVueWrapperComponent(m.createApp)
       ),
   },

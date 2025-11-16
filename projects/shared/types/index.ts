@@ -1,2 +1,2 @@
-export * from './vue-entry.interface';
-export * from './template';
+export * from './component-factory.interface';
+export * from './template.interface';

@@ -111,6 +111,8 @@ import { handlePrint, printElement } from 'shared/helpers';
 import { ContextMenu } from '@imengyu/vue3-context-menu';
 import { ContextMenuItem } from '@imengyu/vue3-context-menu';
 import { templateCategories } from 'shared/constants';
+import { App, ComponentPublicInstance } from 'vue';
+import { TemplateItem } from 'shared/types';
 
 export default {
   name: 'Preview',
@@ -133,13 +135,14 @@ export default {
     let rootNode = VirtualHTMLParser.parseToTree(this.template, 'Root', { 'c-id': rootId });
     rootNode.innerHTML = this.template;
     return {
-      app: null,
-      vm: null,
+      app: null as App<any> | null,
+      vm: null as ComponentPublicInstance | null,
       rootId: '123456',
       rootNode,
-      selectedNode: null,
+      selectedNode: null as VirtualNode | null,
       processedTemplate: '',
-      selectedCid: null,
+      selectedCid: '',
+      insertPosition: '',
       ContextMenuVisible: false,
       contextMenuOption: {
         x: 0,
@@ -152,7 +155,7 @@ export default {
         y: 0,
         minWidth: 180
       },
-      elementCopied: null,
+      elementCopied: null as VirtualNode | null,
       templateCategories: templateCategories
     };
   },
@@ -180,7 +183,7 @@ export default {
     },
 
     renderPreview() {
-      const contentEl = this.$refs.content;
+      const contentEl = this.$refs['content'] as HTMLElement;
       if (!contentEl) return;
 
       if (this.app) this.app.unmount();
@@ -207,14 +210,14 @@ export default {
       }
     },
 
-    attachContextMenuListeners(rootEl) {
+    attachContextMenuListeners(rootEl: HTMLElement) {
       const elements = rootEl.querySelectorAll('[c-id]');
-
+      
       // Remove existing listeners
       rootEl.removeEventListener('contextmenu', this.contextMenuHandler);
-      elements.forEach(el => {
+      elements.forEach((el) => {
         el.classList.remove('empty-placeholder');
-        el.removeEventListener('contextmenu', this.contextMenuHandler);
+        el.removeEventListener('contextmenu', this.contextMenuHandler as EventListener);
       });
 
       // Add new listeners
@@ -222,33 +225,33 @@ export default {
       elements.forEach(el => {
         const cid = el.getAttribute('c-id');
         const fakeElement = this.rootNode.querySelector(`[c-id=${cid}]`);
-        if (fakeElement.childNodes.length === 0 && !fakeElement.isClosingTag) {
+        if (fakeElement?.childNodes.length === 0 && !fakeElement.isClosingTag) {
           el.classList.add('empty-placeholder');
         }
-        el.addEventListener('contextmenu', this.contextMenuHandler);
+        el.addEventListener('contextmenu', this.contextMenuHandler as EventListener);
       });
     },
 
-    contextMenuHandler(e) {
+    contextMenuHandler(e: MouseEvent) {
       e.preventDefault();
       e.stopPropagation();
 
-      const cid = e.currentTarget.getAttribute('c-id');
+      const cid = (e.currentTarget as HTMLElement).getAttribute('c-id');
       if (cid) {
         this.onContextMenu(e, cid);
       }
     },
 
-    onContextMenu(e, cid) {
+    onContextMenu(e: MouseEvent, cid: string) {
       e.preventDefault();
       this.contextMenuOption.x = e.clientX;
       this.contextMenuOption.y = e.clientY;
       this.ContextMenuVisible = true;
       this.selectedCid = cid;
-      this.highlightElement(e.currentTarget);
+      this.highlightElement(e.currentTarget as HTMLElement);
     },
 
-    openInsertMenu(position) {
+    openInsertMenu(position: string) {
       this.insertPosition = position;
       this.ContextMenuVisible = false;
       
@@ -258,7 +261,7 @@ export default {
       this.insertMenuVisible = true;
     },
 
-    insertElement(templateConfig) {
+    insertElement(templateConfig: TemplateItem) {
       if (!this.selectedCid) return;
 
       const selectedElement = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`);
@@ -278,13 +281,13 @@ export default {
       this.updateTemplate();
     },
 
-    openEditPanel(e) {
+    openEditPanel(e: Event) {
       if (this.selectedCid) {
         this.selectedNode = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`);
       }
     },
 
-    copyElement(e) {
+    copyElement(e: Event) {
       if (!this.selectedCid) return;
 
       const selectedElement = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`) as VirtualNode;
@@ -292,7 +295,7 @@ export default {
       this.elementCopied = selectedElement.cloneNode(true);
     },
 
-    pasteElement(pastePosition) {
+    pasteElement(pastePosition: string) {
       if (!this.selectedCid) return;
 
       const selectedElement = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`);
@@ -309,16 +312,16 @@ export default {
       this.updateTemplate();
     },
 
-    removeElement(e) {
+    removeElement(e: Event) {
       if (this.selectedCid) {
-        const el = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`);
+        const el = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`) as VirtualNode;
         el.remove();
         this.updateTemplate();
       }
     },
 
-    highlightElement(el) {
-      this.unHighlightElement(el);
+    highlightElement(el: HTMLElement) {
+      this.unHighlightElement();
       el.classList.add('element-highlight');
     },
 
@@ -341,7 +344,7 @@ export default {
       this.unHighlightElement()
     },
 
-    isClosingTag(cid) {
+    isClosingTag(cid: string) {
       return this.rootNode.querySelector(`[c-id=${cid}]`)?.isClosingTag;
     },
 
