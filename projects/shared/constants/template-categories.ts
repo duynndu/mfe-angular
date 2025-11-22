@@ -26,21 +26,33 @@ export const templateCategories: TemplateCategory[] = [
         label: '2 Columns Grid',
         icon: 'fa-solid fa-grip',
         template: `
-        <div class="grid grid-cols-2 gap-1"></div>
+        <div class="grid grid-cols-2 gap-1">
+          <div></div>
+          <div></div>
+        </div>
       `,
       },
       {
         label: '3 Columns Grid',
         icon: 'fa-solid fa-grip',
         template: `
-        <div class="grid grid-cols-3 gap-1"></div>
+        <div class="grid grid-cols-3 gap-1">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
       `,
       },
       {
         label: '4 Columns Grid',
         icon: 'fa-solid fa-grip',
         template: `
-        <div class="grid grid-cols-4 gap-1"></div>
+        <div class="grid grid-cols-4 gap-1">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
       `,
       },
     ],
