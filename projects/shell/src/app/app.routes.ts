@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { loadRemoteModule } from 'shared/helpers';
+import { loadRemoteModule } from 'shared/helpers/load-remote-module';
 import { Home } from './pages/home/home';
 import { createVueWrapperComponent } from '../helpers';
 import { VueModule } from 'shared/types';
@@ -26,7 +26,7 @@ export const routes: Routes = [
   {
     path: 'first',
     loadComponent: () =>
-      loadRemoteModule('firstMf', './Component').then((m) => m.App),
+      loadRemoteModule('firstMf', './Component').then((m: any) => m.App),
   },
   { path: '**', component: Home },
 ];

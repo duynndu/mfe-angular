@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { loadRemoteModule } from 'shared/helpers';
+import { loadRemoteModule } from 'shared/helpers/load-remote-module';
 import { VueModule } from 'shared/types';
 @Injectable({ providedIn: 'root' })
 export class VueLoader {
