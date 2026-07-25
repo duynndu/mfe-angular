@@ -1,4 +1,5 @@
-import { html_beautify } from 'js-beautify';
+import jsBeautify from 'js-beautify';
+const html_beautify = jsBeautify.html_beautify || (jsBeautify as any);
 import { VirtualNode } from './virtual-node';
 
 export class VirtualHTMLParser {
@@ -19,6 +20,7 @@ export class VirtualHTMLParser {
     'wbr',
     'Textarea',
     'InputOTP',
+    'XmlViewer',
   ];
   static parseToTree(
     htmlString: string,
@@ -35,17 +37,29 @@ export class VirtualHTMLParser {
       .replace(/\r/g, '\n')
       .trim();
 
-    const tokenRegex = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)([^>]*)\/?>|([^<]+)/g;
+    // Regex pattern: matches HTML comments, tags, or text
+    // Group 1: HTML comment (<!--...-->)
+    // Group 2-4: Tag parts (closing slash, tag name, attributes)
+    // Group 5: Text content
+    const tokenRegex = /(<!--[\s\S]*?-->)|<(\/?)([a-zA-Z][a-zA-Z0-9]*)([^"'<>]*(?:"[^"]*"[^"'<>]*|'[^']*'[^"'<>]*)*)\/?>|([^<]+)/g;
     let match;
 
     while ((match = tokenRegex.exec(normalizedHtml)) !== null) {
-      const [fullMatch, closingSlash, tagName, attributes, text] = match;
+      const [fullMatch, comment, closingSlash, tagName, attributes, text] = match;
+
+      // Skip HTML comments
+      if (comment) {
+        continue;
+      }
 
       if (text) {
-        const trimmedText = text.trim();
-        if (trimmedText) {
+        const hasLeadingSpace = /^\s/.test(text);
+        const hasTrailingSpace = /\s$/.test(text);
+        const normalizedCore = text.trim().replace(/\s+/g, ' ');
+
+        if (normalizedCore) {
           const textNode = new VirtualNode('#text');
-          textNode.textContent = trimmedText;
+          textNode.textContent = `${hasLeadingSpace ? ' ' : ''}${normalizedCore}${hasTrailingSpace ? ' ' : ''}`;
           currentParent.appendChild(textNode);
         }
       } else if (closingSlash) {
@@ -64,6 +78,18 @@ export class VirtualHTMLParser {
 
         node.setAttribute('c-name', node.tagName);
         node.setAttribute('c-id', Math.random().toString(36).substring(2, 9));
+
+        const pathValue = attrs['v-model'] || attrs[':modelValue'];
+        if (pathValue && typeof pathValue === 'string') {
+          node.setAttribute('path', pathValue);
+        }
+
+        Object.entries(attrs).forEach(([key, value]) => {
+          if (key.startsWith(':') && key !== ':modelValue' && typeof value === 'string') {
+            node.setAttribute(`path-${key.substring(1)}`, value);
+          }
+        });
+
         currentParent.appendChild(node);
 
         if (!node.isClosingTag) {
@@ -122,7 +148,7 @@ export class VirtualHTMLParser {
     const attrs: Record<string, string> = {};
     if (!attributeString.trim()) return attrs;
 
-    const attrRegex = /([a-zA-Z-:@]+)(?:\s*=\s*"([^"]*)"|\s*=\s*'([^']*)')?/g;
+    const attrRegex = /([#a-zA-Z-:@]+)(?:\s*=\s*"([^"]*)"|\s*=\s*'([^']*)')?/g;
     let match;
     let lastIndex = 0;
 

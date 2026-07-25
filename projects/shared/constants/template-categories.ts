@@ -6,25 +6,25 @@ export const templateCategories: TemplateCategory[] = [
     templates: [
       {
         label: 'Div Container',
-        icon: 'fa-solid fa-square',
+        icon: 'fa fa-square-o',
         template: '<div></div>',
       },
       {
         label: 'A4 Page',
-        icon: 'fa-solid fa-file',
+        icon: 'fa fa-file-o',
         template:
           '<PageA4 style="padding: 3mm 15mm 3mm 15mm;">New Page Content</div></PageA4>',
       },
       {
         label: 'A5 Page',
-        icon: 'fa-solid fa-file',
+        icon: 'fa fa-file-o',
         template:
           '<PageA5 style="padding: 3mm 15mm 3mm 15mm;">New Page Content</div></PageA5>',
       },
       // Grid Layouts
       {
         label: '2 Columns Grid',
-        icon: 'fa-solid fa-grip',
+        icon: 'fa fa-th-large',
         template: `
         <div class="grid grid-cols-2 gap-1">
           <div></div>
@@ -34,7 +34,7 @@ export const templateCategories: TemplateCategory[] = [
       },
       {
         label: '3 Columns Grid',
-        icon: 'fa-solid fa-grip',
+        icon: 'fa fa-th-large',
         template: `
         <div class="grid grid-cols-3 gap-1">
           <div></div>
@@ -45,7 +45,7 @@ export const templateCategories: TemplateCategory[] = [
       },
       {
         label: '4 Columns Grid',
-        icon: 'fa-solid fa-grip',
+        icon: 'fa fa-th-large',
         template: `
         <div class="grid grid-cols-4 gap-1">
           <div></div>
@@ -62,13 +62,13 @@ export const templateCategories: TemplateCategory[] = [
     templates: [
       {
         label: 'Button',
-        icon: 'fa-solid fa-button',
+        icon: 'fa fa-hand-pointer-o',
         template:
           '<button style="padding: 8px 16px; margin: 5px 0; background: #007bff; color: white; border: none; border-radius: 4px;">Button</button>',
       },
       {
         label: 'Paragraph',
-        icon: 'fa-solid fa-paragraph',
+        icon: 'fa fa-paragraph',
         template:
           '<p style="margin: 5px 0; padding: 5px;">New paragraph text</p>',
       },
@@ -79,18 +79,18 @@ export const templateCategories: TemplateCategory[] = [
     templates: [
       {
         label: 'Text Input',
-        icon: 'fa-solid fa-font',
+        icon: 'fa fa-font',
         template:
           '<input type="text" placeholder="Enter text..." style="padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px;" />',
       },
       {
         label: 'Text Area',
-        icon: 'fa-solid fa-font',
+        icon: 'fa fa-font',
         template: `<Textarea v-model="data.fullName" label="Họ và tên:" :line="true" :suffix="{ length: 1, char: '❤️' }" />`,
       },
       {
         label: 'OTP Input',
-        icon: 'fa-solid fa-key',
+        icon: 'fa fa-key',
         template: `<InputOTP v-model="data.age" :maskLength="[1,1,1]" pad-start="0" />`,
       },
     ],
@@ -100,17 +100,17 @@ export const templateCategories: TemplateCategory[] = [
     templates: [
       {
         label: 'Heading 1',
-        icon: 'fa-solid fa-heading',
+        icon: 'fa fa-header',
         template: '<h1 style="margin: 10px 0; font-size: 24px;">Heading 1</h1>',
       },
       {
         label: 'Heading 2',
-        icon: 'fa-solid fa-heading',
+        icon: 'fa fa-header',
         template: '<h2 style="margin: 8px 0; font-size: 20px;">Heading 2</h2>',
       },
       {
         label: 'List',
-        icon: 'fa-solid fa-list',
+        icon: 'fa fa-list-ul',
         template:
           '<ul style="margin: 5px 0; padding-left: 20px;"><li>List item 1</li><li>List item 2</li></ul>',
       },
@@ -121,7 +121,7 @@ export const templateCategories: TemplateCategory[] = [
     templates: [
       {
         label: 'Image',
-        icon: 'fa-solid fa-image',
+        icon: 'fa fa-image',
         template:
           '<img src="/src/assets/img/icon/image.png" alt="Image" style="max-width: 100%; margin: 5px 0;" />',
       },

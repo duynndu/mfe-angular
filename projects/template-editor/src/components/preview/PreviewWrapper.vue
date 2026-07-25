@@ -1,5 +1,6 @@
 <template>
-  <Preview v-model:template="template" :data="data"/>
+  <DatePickerPortal />
+  <Preview v-model:template="template" v-model:editMode="editMode" :context="context" />
   <!-- <Codemirror v-model:value="template" :options="{ mode: 'text/html', theme: 'default', tabSize: 2 }" height="400px" :border="true" /> -->
 </template>
 
@@ -7,23 +8,53 @@
 import Preview from './Preview.vue';
 import "codemirror/mode/htmlmixed/htmlmixed.js"
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
+import DatePickerPortal from '../forms/DatePickerPortal.vue';
+import moment from 'moment';
+// @ts-ignore - import raw HTML template
+import defaultTemplate from './default-template.html?raw';
 
 export default {
   name: 'PreviewWrapper',
-  components: { Preview },
+  components: { Preview, DatePickerPortal },
   data() {
     return {
-      data: { },
-      template: `<PageA4 style="padding: 3mm 15mm 3mm 15mm;" c-name="PageA4" c-id="ngk54ac">
-  <div c-name="div" c-id="d25qofp">{{ data.name }}</div>
-  <p c-name="p" c-id="biv1e2e">Tuổi: {{ data.age }}</p>
-  <Textarea v-model="data.name" label="Họ và tên:" :line="true"
-    :suffix="{ length: 1, char: '❤️' }" c-name="Textarea" c-id="qcbffl6" />
-  <Textarea v-model="data.age" label="Tuổi:" :line="true" c-name="Textarea"
-    c-id="55w05t2" />
-  <InputOTP v-model="data.age" :maskLength="[1,1,1]" pad-start="0"
-    c-name="InputOTP" c-id="s0li5xj" />
-</PageA4>`
+      editMode: false,
+      template: defaultTemplate,
+      context: {
+        moment: moment,
+        log: console.log,
+        onFieldChange: (path: string, value: any) => {
+          console.log('Field changed:', path, value);
+        },
+        data: {
+          name: "duynnz",
+          age: "18",
+          tags: ['vue', 'typescript' ],
+          category: 'tech',
+          gender: 'male',
+          sizeTest: 'large',
+          birthday: '',
+          birthdayText: '',
+          appointment: '',
+          signature: ''
+        },
+        categoryList: [
+          { id: 'tech', name: 'Công Nghệ' },
+          { id: 'business', name: 'Kinh Doanh' },
+          { id: 'other', name: 'Khác' }
+        ],
+        tagList: [
+          { value: 'vue', label: 'Vue' },
+          { value: 'typescript', label: 'TypeScript' },
+          { value: 'tailwind', label: 'Tailwind' },
+          { value: 'react', label: 'React' }
+        ],
+        contextItems: [
+          { id: 1, label: 'Hàng số 1' },
+          { id: 2, label: 'Hàng số 2' },
+          { id: 3, label: 'Hàng số 3' }
+        ]
+      }
     }
   }
 }

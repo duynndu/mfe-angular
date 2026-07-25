@@ -14,7 +14,12 @@
   "dependencies": {
     "@imengyu/vue3-context-menu": "^1.5.2",
     "@vueuse/core": "^14.0.0",
+    "autosize": "^6.0.1",
+    "bootstrap": "^5.3.8",
     "codemirror-editor-vue3": "^2.8.0",
+    "font-awesome": "^4.7.0",
+    "js-beautify": "^2.0.3",
+    "moment": "^2.30.1",
     "vue": "^3.5.22"
   },
   "devDependencies": {
@@ -23,6 +28,7 @@
     "@types/prettier": "^2.7.3",
     "@vitejs/plugin-vue": "^6.0.1",
     "ngx-build-plus": "^16.0.0",
+    "sass-embedded": "^1.100.0",
     "typescript": "^5.1.6",
     "vite": "^7.1.11",
     "vite-plugin-vue-devtools": "^8.0.3",

@@ -38,5 +38,8 @@ export default defineConfig(({ mode }) => ({
     target: 'esnext',
     emptyOutDir: true,
     chunkSizeWarningLimit: 10000,
+    rollupOptions: {
+      external: ['@angular-architects/native-federation']
+    }
   }
 }))
