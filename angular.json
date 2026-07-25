@@ -23,7 +23,7 @@
 						},
 						"demo": {
 							"target": "shell:esbuild:production",
-							"baseHref": "/mfe-angular/shell/",
+							"baseHref": "/mfe-angular/",
 							"fileReplacements": [
 								{
 									"replace": "projects/shell/src/environments/environment.ts",
