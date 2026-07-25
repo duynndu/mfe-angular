@@ -102,5 +102,6 @@ export class Home {
       style="max-width:200px;border:1px solid #ccc;" c-name="img" c-id="x7lifom" path-src="data.signature" />
   </div>
 </PageA4>`
-  data: any = { name: 'duynnz' }
+  data: any = { name: 'duynnz' };
+  editMode = true;
 }

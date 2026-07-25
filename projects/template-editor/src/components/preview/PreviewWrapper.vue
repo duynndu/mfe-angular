@@ -18,7 +18,7 @@ export default {
   components: { Preview, DatePickerPortal },
   data() {
     return {
-      editMode: false,
+      editMode: true,
       template: defaultTemplate,
       context: {
         moment: moment,

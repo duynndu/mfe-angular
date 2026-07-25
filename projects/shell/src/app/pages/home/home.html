@@ -1,3 +1,12 @@
-<!-- <textarea [(ngModel)]="data.name"></textarea> {{data.name}} -->
-<!-- <textarea [(ngModel)]="template"></textarea> -->
-<template-editor [(template)]="template" [(data)]="data"></template-editor>
+<div style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
+  <button 
+    (click)="editMode = !editMode" 
+    style="padding: 8px 18px; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 6px; border: 1px solid #0066cc; background: #0066cc; color: white; transition: all 0.2s ease;">
+    {{ editMode ? '🔒 Tắt Edit Mode' : '✏️ Bật Edit Mode' }}
+  </button>
+  <span style="font-size: 14px; color: #444;">
+    Trạng thái: <strong>{{ editMode ? 'Đang bật sửa' : 'Chỉ xem' }}</strong>
+  </span>
+</div>
+
+<template-editor [(template)]="template" [(data)]="data" [(editMode)]="editMode"></template-editor>

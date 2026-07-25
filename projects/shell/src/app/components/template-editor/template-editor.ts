@@ -18,24 +18,39 @@ export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
   @Input('data') data = {};
   @Output() dataChange = new EventEmitter<any>();
 
+  @Input('editMode') editMode = true;
+  @Output() editModeChange = new EventEmitter<boolean>();
+
   constructor(private vueLoader: VueLoader) {}
 
   async ngOnInit() {
     this.app = await this.vueLoader.createPreview();
+    if (!this.app) return console.error('Failed to load Vue preview component.');
     this.vm = this.app.mount('#template-editor');
-    this.vm.data = this.data;
-    this.vm.template = this.template;
-    this.dataChange.emit(this.vm.data);
+    const vmData = this.vm.$data as any;
+    if (vmData) {
+      vmData.data = this.data;
+      vmData.template = this.template;
+      vmData.editMode = this.editMode;
+    }
+    this.dataChange.emit(vmData?.data ?? this.data);
     this.vm.$watch('template', (newVal: any) => {
       this.templateChange.emit(newVal);
     });
-    
+    this.vm.$watch('editMode', (newVal: any) => {
+      this.editModeChange.emit(newVal);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.vm) return;
+    const vmData = this.vm.$data as any;
+    if (!vmData) return;
     if (changes['template']) {
-      this.vm.template = this.template;
+      vmData.template = this.template;
+    }
+    if (changes['editMode']) {
+      vmData.editMode = this.editMode;
     }
   }
 
