@@ -24,7 +24,7 @@ export class VueLoader {
         throw new Error('Vue module does not export createPreview.');
       }
       return this.module.createPreview();
-    } catch(error) {
+    } catch (error) {
       console.log(error);
       return null;
     }

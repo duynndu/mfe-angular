@@ -10,10 +10,12 @@
     "serve:first-mf": "cd dist/first-mf/browser && npx serve -l 4201 --cors",
     "start:template-editor": "cd projects/template-editor && vite",
     "build:template-editor": "cd projects/template-editor && vite build",
+    "build:template-editor:shell": "cd projects/template-editor && vite build --mode shell",
+    "build:template-editor:demo": "cd projects/template-editor && vite build --mode demo",
     "serve:template-editor": "cd dist/template-editor && npx serve -l 4202 --cors",
     "build:all": "concurrently \"npm run build:shell\" \"npm run build:first-mf\" \"npm run build:template-editor\"",
     "serve:all": "concurrently \"npm run serve:shell\" \"npm run serve:first-mf\" \"npm run serve:template-editor\"",
-    "build:all:demo": "concurrently \"ng build shell --configuration=demo\" \"ng build first-mf --configuration=demo\" \"cd projects/template-editor && vite build --mode demo\""
+    "build:all:demo": "concurrently \"ng build shell --configuration=demo\" \"ng build first-mf --configuration=demo\" \"npm run build:template-editor:demo\""
   },
   "private": true,
   "dependencies": {

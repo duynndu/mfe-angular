@@ -23,6 +23,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set release metadata
+      id: release_metadata
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        SHORT_SHA="${GITHUB_SHA::7}"
+        echo "template_editor_release_tag=template-editor-build-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+        echo "template_editor_zip_name=template-editor-${SHORT_SHA}.zip" >> "$GITHUB_OUTPUT"
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
@@ -34,6 +42,16 @@ jobs:
     - name: Install template-editor dependencies
       working-directory: ./projects/template-editor
       run: npm ci
+
+    - name: Build template-editor release artifact
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: npm run build:template-editor:shell
+
+    - name: Archive template-editor build
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        cd dist
+        zip -r "${{ steps.release_metadata.outputs.template_editor_zip_name }}" template-editor
 
     - name: Replace environment file with demo version
       working-directory: ./projects/shell
@@ -47,16 +65,26 @@ jobs:
     - name: Copy all built files to deploy folder
       run: |
         mkdir deploy
-        mkdir deploy/shell
         mkdir deploy/first-mf
         mkdir deploy/template-editor
 
-        cp -r dist/shell/browser/* deploy/shell/
+        cp -r dist/shell/browser/* deploy/
         cp -r dist/first-mf/browser/* deploy/first-mf/
         cp -r dist/template-editor/* deploy/template-editor/
+        touch deploy/.nojekyll
 
     - name: Deploy to GitHub Pages
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./deploy
+
+    - name: Create template-editor release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.release_metadata.outputs.template_editor_release_tag }}
+        name: Template Editor Build ${{ steps.release_metadata.outputs.template_editor_release_tag }}
+        generate_release_notes: true
+        files: dist/${{ steps.release_metadata.outputs.template_editor_zip_name }}
