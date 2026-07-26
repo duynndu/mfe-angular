@@ -114,7 +114,6 @@ import { installMaskDirective } from '../../directives/mask-datetime';
 import Paint from '../forms/Paint.vue';
 import SimpleContextMenu from '../ContextMenu.vue';
 import { installContextMenuDirective } from '../../directives/context-menu';
-import XmlViewer from './XmlViewer.vue';
 
 export default {
   name: 'Preview',
@@ -226,7 +225,6 @@ export default {
           .component('Checkbox', Checkbox)
           .component('DatePicker', DatePicker)
           .component('Paint', Paint)
-          .component('XmlViewer', XmlViewer)
           .component('ContextMenu', SimpleContextMenu)
           .component('ImContextMenu', ImContextMenu)
           .component('ImContextMenuItem', ImContextMenuItem);

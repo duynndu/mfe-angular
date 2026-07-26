@@ -79,16 +79,10 @@ export class VirtualHTMLParser {
         node.setAttribute('c-name', node.tagName);
         node.setAttribute('c-id', Math.random().toString(36).substring(2, 9));
 
-        const pathValue = attrs['v-model'] || attrs[':modelValue'];
+        const pathValue = attrs['v-model'];
         if (pathValue && typeof pathValue === 'string') {
           node.setAttribute('path', pathValue);
         }
-
-        Object.entries(attrs).forEach(([key, value]) => {
-          if (key.startsWith(':') && key !== ':modelValue' && typeof value === 'string') {
-            node.setAttribute(`path-${key.substring(1)}`, value);
-          }
-        });
 
         currentParent.appendChild(node);
 
