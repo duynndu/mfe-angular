@@ -2,8 +2,8 @@
   "name": "mf-angular-20",
   "version": "0.0.0",
   "scripts": {
-    "start:shell": "ng s shell",
-    "build:shell": "ng build shell",
+    "start:shell": "npm run build:template-editor:shell && ng s shell",
+    "build:shell": "npm run build:template-editor:shell && ng build shell",
     "serve:shell": "cd dist/shell/browser && npx serve -l 4200 --cors",
     "start:first-mf": "ng s first-mf",
     "build:first-mf": "ng build first-mf",

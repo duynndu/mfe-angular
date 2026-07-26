@@ -84,6 +84,11 @@
 							{
 								"glob": "**/*",
 								"input": "projects/shell/public"
+							},
+							{
+								"glob": "**/*",
+								"input": "dist/template-editor",
+								"output": "template-editor"
 							}
 						],
 						"styles": [
@@ -253,5 +258,8 @@
 				}
 			}
 		}
-	}
+  },
+  "cli": {
+    "analytics": false
+  }
 }

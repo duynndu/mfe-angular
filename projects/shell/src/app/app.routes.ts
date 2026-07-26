@@ -3,6 +3,7 @@ import { loadRemoteModule } from 'shared/helpers/load-remote-module';
 import { Home } from './pages/home/home';
 import { createVueWrapperComponent } from '../helpers';
 import { VueModule } from 'shared/types';
+import { VUE_REMOTE_ENTRY } from '../constants/vue-remote-entry';
 
 export const routes: Routes = [
   {
@@ -12,14 +13,10 @@ export const routes: Routes = [
   {
     path: 'vue-page',
     loadComponent: () =>
-      // loadRemoteModule({
-      //   // remoteEntry: 'http://localhost:4202/assets/remoteEntry.js',
-      //   remoteName: 'templateEditor',
-      //   exposedModule: './component-factory',
-      // }).then((m: VueModule) =>
-      //   createVueWrapperComponent(m.createApp)
-      // ),
-      loadRemoteModule('templateEditor', './component-factory').then((m: VueModule) =>
+      loadRemoteModule({
+        remoteEntry: VUE_REMOTE_ENTRY,
+        exposedModule: './component-factory',
+      }).then((m: VueModule) =>
         createVueWrapperComponent(m.createApp)
       ),
   },

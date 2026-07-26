@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { loadRemoteModule } from 'shared/helpers/load-remote-module';
 import { VueModule } from 'shared/types';
+import { VUE_REMOTE_ENTRY } from '../../constants/vue-remote-entry';
+
 @Injectable({ providedIn: 'root' })
 export class VueLoader {
   module: VueModule | null = null;
@@ -8,7 +10,7 @@ export class VueLoader {
     if (this.module) return;
     try {
       this.module = await loadRemoteModule({
-        remoteName: 'templateEditor',
+        remoteEntry: VUE_REMOTE_ENTRY,
         exposedModule: './component-factory',
       });
     } catch (error) {
