@@ -55,4 +55,4 @@ export class Home{
 ![Context menu](./assets/context-menu2.png)
 ![Context menu](./assets/menu-edit.png)
 
-🎯 Live Demo: https://duynndu.github.io/mfe-angular/shell/
+🎯 Live Demo: https://duynndu.github.io/mfe-angular
