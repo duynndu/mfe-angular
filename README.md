@@ -55,4 +55,16 @@ export class Home{
 ![Context menu](./assets/context-menu2.png)
 ![Context menu](./assets/menu-edit.png)
 
+## 🛠️ Hướng dẫn Đóng góp Component (Contribution Guide)
+
+Vui lòng xem chi tiết hướng dẫn tạo và đăng ký Component mới trong [CONTRIBUTING.md](file:///e:/template-editor/mfe-angular/CONTRIBUTING.md) hoặc tham khảo skill quy trình chuẩn tại [SKILL.md](file:///e:/template-editor/mfe-angular/.agents/skills/create-template-component/SKILL.md).
+
+### Tóm tắt các bước chính:
+1. **Tạo Component `.vue`**: Đặt trong `projects/template-editor/src/components/forms/` hoặc `layouts/`.
+2. **Đăng ký Component**: Đăng ký trong `renderPreview()` tại [Preview.vue](file:///e:/template-editor/mfe-angular/projects/template-editor/src/components/preview/Preview.vue).
+3. **Thêm vào Context Menu**: Khai báo mẫu template tại [template-categories.ts](file:///e:/template-editor/mfe-angular/projects/shared/constants/template-categories.ts).
+4. **Kiểm tra Biên dịch**: Chạy `npm run build:template-editor`.
+
+---
+
 🎯 Live Demo: https://duynndu.github.io/mfe-angular
