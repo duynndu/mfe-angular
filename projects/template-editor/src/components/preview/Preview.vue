@@ -213,14 +213,6 @@ export default {
         this.app.config.compilerOptions.isCustomElement = (tag) => tag === 'Root';
         const logFn = (key: string) => (...args: any[]) => console.warn(`[Preview] context.${key} chưa được cung cấp`, ...args);
         this.app.provide('onFieldChange', this.context['onFieldChange'] ?? logFn('onFieldChange'));
-        this.app.provide('onSelectSearch', this.context['onSelectSearch'] ?? logFn('onSelectSearch'));
-        this.app.provide('signature', this.context['signature'] ?? null);
-        this.app.provide('MauHoSo', this.context['MauHoSo'] ?? null);
-        this.app.provide('openSignatureHistory', this.context['openSignatureHistory'] ?? logFn('openSignatureHistory'));
-        this.app.provide('handleSign', this.context['handleSign'] ?? logFn('handleSign'));
-        this.app.provide('insertICD', this.context['insertICD'] ?? logFn('insertICD'));
-        this.app.provide('editICD', this.context['editICD'] ?? logFn('editICD'));
-        this.app.provide('removeICD', this.context['removeICD'] ?? logFn('removeICD'));
 
         installMaskDirective(this.app);
         installContextMenuDirective(this.app);

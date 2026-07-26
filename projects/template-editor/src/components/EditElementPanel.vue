@@ -136,10 +136,7 @@ const attributeSuggestionMap: Record<string, string[]> = {
   Select: ['style', 'class', 'v-model', 'items', 'bind-label', 'bind-value', 'placeholder', 'multiple', 'disabled', 'readonly', 'label', 'search-by-keys'],
   Checkbox: ['style', 'class', 'v-model', 'value', 'native', 'before-text', 'after-text', 'size', 'disabled', 'readonly'],
   DatePicker: ['style', 'class', 'v-model', 'placeholder', 'format', 'disabled', 'readonly', 'minute-step', 'label', 'input-style'],
-  Paint: ['style', 'class', 'v-model', 'line-width', 'color', 'src'],
-  Signature: ['style', 'class', 'code'],
-  IcdGroupItem: ['style', 'class', 'v-model', 'type', 'index', 'label', 'v-model:ten', 'v-model:ma'],
-  IcdList: ['style', 'class', 'items', 'type']
+  Paint: ['style', 'class', 'v-model', 'line-width', 'color', 'src']
 };
 
 type AttributeValueSuggestion = string[] | Record<string, string[]>;
