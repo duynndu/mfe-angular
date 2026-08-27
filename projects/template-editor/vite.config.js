@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => ({
   ],
   resolve: {
     alias: {
+      'vue': 'vue/dist/vue.esm-bundler.js',
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       'shared/helpers': path.resolve(__dirname, '../shared/helpers'),
       'shared/types': path.resolve(__dirname, '../shared/types'),
@@ -38,5 +39,9 @@ export default defineConfig(({ mode }) => ({
     target: 'esnext',
     emptyOutDir: true,
     chunkSizeWarningLimit: 10000,
+  },
+
+  server: {
+    allowedHosts: ['farmbot.io.vn']
   }
 }))

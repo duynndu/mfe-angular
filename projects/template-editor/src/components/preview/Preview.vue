@@ -16,6 +16,54 @@
     />
 
     <div class="preview-editor-main">
+      <!-- Top Action Bar (Script toggle & Tooling) -->
+      <div class="preview-top-bar" v-if="editMode">
+        <div class="top-bar-left">
+          <span class="preview-title"><i class="fa fa-file-text-o"></i> Xem trước Bản in</span>
+        </div>
+        <div class="top-bar-right">
+          <button
+            class="script-toggle-btn"
+            :class="{ active: showScriptEditor, 'has-error': !!scriptError }"
+            @click="showScriptEditor = !showScriptEditor"
+            title="Mở / Đóng trình soạn thảo JavaScript Logic"
+          >
+            <i class="fa fa-code"></i>
+            <span>JS Script</span>
+            <span class="err-badge" v-if="scriptError">!</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Script Error Banner (if any) -->
+      <div class="script-error-banner" v-if="scriptError && editMode">
+        <i class="fa fa-exclamation-triangle"></i>
+        <span>{{ scriptError }}</span>
+      </div>
+
+      <!-- Script Editor Drawer (Collapsible) -->
+      <div class="script-editor-drawer" v-if="showScriptEditor && editMode">
+        <div class="script-drawer-header">
+          <div class="drawer-title">
+            <i class="fa fa-code"></i>
+            <span>JavaScript Scope & Logic</span>
+            <span class="drawer-hint">(reactive data, computed, watch, methods...)</span>
+          </div>
+          <div class="drawer-actions">
+            <button class="drawer-close-btn" @click="showScriptEditor = false" title="Đóng">✕</button>
+          </div>
+        </div>
+        <div class="script-drawer-body">
+          <textarea
+            class="script-code-area"
+            :value="localScript"
+            @input="onScriptInput"
+            placeholder="// Viết mã JavaScript tại đây...&#10;const data = reactive({ name: 'Nguyễn Văn A' });&#10;const upperName = computed(() => (data.name || '').toUpperCase());&#10;return { data, upperName };"
+            spellcheck="false"
+          ></textarea>
+        </div>
+      </div>
+
       <!-- Context Menu Component -->
       <ImContextMenu v-model:show="ContextMenuVisible" @update:show="unHighlightElement" :options="contextMenuOption">
         <context-menu-group label="Insert">
@@ -116,7 +164,7 @@
 </template>
 
 <script lang="ts">
-import { createApp, type App, type ComponentPublicInstance } from 'vue/dist/vue.esm-bundler.js';
+import { createApp, type App, type ComponentPublicInstance, effectScope, type EffectScope } from 'vue';
 import PageA4 from '../layouts/PageA4.vue';
 import PageA5 from '../layouts/PageA5.vue';
 import Textarea from '../forms/Textarea.vue';
@@ -135,6 +183,7 @@ import { templateCategories } from 'shared/constants';
 import { TemplateItem } from 'shared/types';
 import { installMaskDirective } from '../../directives/mask-datetime';
 import { installContextMenuDirective } from '../../directives/context-menu';
+import { evalScriptScope } from '../../utils/script-evaluator';
 
 export default {
   name: 'Preview',
@@ -149,6 +198,10 @@ export default {
       type: String,
       required: true
     },
+    script: {
+      type: String,
+      default: ''
+    },
     context: {
       type: Object,
       default: () => ({})
@@ -158,7 +211,7 @@ export default {
       default: true
     }
   },
-  emits: ['update:template', 'update:editMode'],
+  emits: ['update:template', 'update:editMode', 'update:script', 'script-error'],
   data() {
     const rootId = '123456';
     let rootNode = VirtualHTMLParser.parseToTree(this.template, 'Root', { 'c-id': rootId });
@@ -188,12 +241,26 @@ export default {
       templateCategories: templateCategories,
       isDraggingComponent: false,
       currentDropTarget: null as { cid: string; position: string } | null,
+      localScript: this.script || '',
+      showScriptEditor: false,
+      scriptError: null as string | null,
+      evaluatedScope: {} as Record<string, any>,
+      activeScriptScope: null as EffectScope | null,
     };
   },
   watch: {
     template: {
       handler() {
         this.processTemplate();
+      }
+    },
+    script: {
+      handler(newVal) {
+        if (newVal !== this.localScript) {
+          this.localScript = newVal || '';
+          this.evalScript();
+          this.renderPreview();
+        }
       }
     },
     context: {
@@ -204,12 +271,43 @@ export default {
   },
   mounted() {
     document.addEventListener('keydown', handlePrint);
+    this.evalScript();
     this.processTemplate();
   },
   beforeUnmount() {
     document.removeEventListener('keydown', handlePrint);
+    if (this.activeScriptScope) {
+      this.activeScriptScope.stop();
+      this.activeScriptScope = null;
+    }
   },
   methods: {
+    evalScript() {
+      if (this.activeScriptScope) {
+        this.activeScriptScope.stop();
+        this.activeScriptScope = null;
+      }
+
+      this.activeScriptScope = effectScope();
+      this.activeScriptScope.run(() => {
+        const { scope, error } = evalScriptScope(this.localScript);
+        this.scriptError = error;
+        if (error) {
+          this.$emit('script-error', error);
+        } else {
+          this.evaluatedScope = scope;
+        }
+      });
+    },
+
+    onScriptInput(e: Event) {
+      const val = (e.target as HTMLTextAreaElement).value;
+      this.localScript = val;
+      this.$emit('update:script', val);
+      this.evalScript();
+      this.renderPreview();
+    },
+
     processTemplate() {
       this.rootNode.innerHTML = this.template;
       this.rootNode.genComponentId();
@@ -225,16 +323,19 @@ export default {
       if (this.app) this.app.unmount();
 
       try {
+        const self = this;
         const DynamicComponent = {
           template: this.processedTemplate,
-          data: () => (this.context)
+          setup() {
+            return self.evaluatedScope;
+          }
         };
 
         containerEl.innerHTML = '';
         this.app = createApp(DynamicComponent);
         this.app.config.compilerOptions.isCustomElement = (tag) => tag === 'Root' || tag === 'root';
         const logFn = (key: string) => (...args: any[]) => console.warn(`[Preview] context.${key} chưa được cung cấp`, ...args);
-        this.app.provide('onFieldChange', this.context['onFieldChange'] ?? logFn('onFieldChange'));
+        this.app.provide('onFieldChange', this.context?.['onFieldChange'] ?? logFn('onFieldChange'));
 
         installMaskDirective(this.app);
         installContextMenuDirective(this.app);
@@ -651,6 +752,155 @@ export default {
   min-height: 0;
 }
 
+.preview-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  color: #f8fafc;
+  z-index: 10;
+}
+
+.preview-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.script-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.script-toggle-btn:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.script-toggle-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.4);
+}
+
+.script-toggle-btn.has-error {
+  border-color: #ef4444;
+  color: #fca5a5;
+}
+
+.err-badge {
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 1px 5px;
+  border-radius: 10px;
+  line-height: 1;
+}
+
+/* Script Error Banner */
+.script-error-banner {
+  background: #fef2f2;
+  border-bottom: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 8px 16px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: monospace;
+}
+
+/* Script Editor Drawer */
+.script-editor-drawer {
+  background: #090d16;
+  border-bottom: 2px solid #1e293b;
+  display: flex;
+  flex-direction: column;
+  height: 220px;
+  max-height: 40vh;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  z-index: 15;
+}
+
+.script-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 14px;
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+}
+
+.drawer-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #38bdf8;
+}
+
+.drawer-hint {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: normal;
+}
+
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.drawer-close-btn:hover {
+  background: #1e293b;
+  color: #ffffff;
+}
+
+.script-drawer-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.script-code-area {
+  flex: 1;
+  width: 100%;
+  padding: 10px 14px;
+  background: #020617;
+  color: #f1f5f9;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+  border: none;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+}
+
 .preview-container {
   flex: 1;
   padding: 16px;
@@ -711,6 +961,11 @@ export default {
 @media print {
   .preview-editor-layout {
     display: block;
+  }
+  .preview-top-bar,
+  .script-editor-drawer,
+  .script-error-banner {
+    display: none !important;
   }
   :deep([c-id="123456"]) {
     box-shadow: none;

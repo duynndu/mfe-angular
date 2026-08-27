@@ -275,7 +275,6 @@ export default {
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  width: 100%;
 }
 
 .page-a4-source {
