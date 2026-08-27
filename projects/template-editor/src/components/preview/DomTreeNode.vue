@@ -2,6 +2,7 @@
   <div class="tree-node-wrapper" :class="{ 'search-matched': isSearchMatched }">
     <div
       class="tree-row"
+      :data-cid="cid"
       :class="{
         selected: selectedCid === cid,
         dragging: draggingCid === cid,

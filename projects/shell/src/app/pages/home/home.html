@@ -1,12 +1,45 @@
-<div style="margin-bottom: 12px; display: flex; align-items: center; gap: 12px;">
-  <button 
-    (click)="editMode = !editMode" 
-    style="padding: 8px 18px; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 6px; border: 1px solid #0066cc; background: #0066cc; color: white; transition: all 0.2s ease;">
-    {{ editMode ? '🔒 Tắt Edit Mode' : '✏️ Bật Edit Mode' }}
-  </button>
-  <span style="font-size: 14px; color: #444;">
-    Trạng thái: <strong>{{ editMode ? 'Đang bật sửa' : 'Chỉ xem' }}</strong>
-  </span>
+<div class="shell-control-panel">
+  <!-- Left section: Mode toggle & Status -->
+  <div class="panel-left">
+    <button 
+      class="mode-toggle-btn" 
+      [class.active]="editMode" 
+      (click)="editMode = !editMode"
+      [title]="editMode ? 'Nhấn để chuyển sang chế độ Chỉ xem' : 'Nhấn để chuyển sang chế độ Chỉnh sửa'"
+    >
+      <span class="btn-icon">{{ editMode ? '🔒' : '✏️' }}</span>
+      <span class="btn-text">{{ editMode ? 'Khóa thiết kế' : 'Bật thiết kế' }}</span>
+    </button>
+
+    <div class="status-badge" [class.editing]="editMode">
+      <span class="status-dot"></span>
+      <span class="status-label">{{ editMode ? 'Thiết kế mẫu biểu (Edit)' : 'Xem trước & Điền dữ liệu' }}</span>
+    </div>
+  </div>
+
+  <!-- Right section: Live 2-way Angular input & IP status -->
+  <div class="panel-right">
+    <div class="angular-input-group">
+      <span class="input-tag">🅰️ Angular Cha</span>
+      <div class="input-wrapper">
+        <label for="angular-name-input">Họ & Tên:</label>
+        <input 
+          id="angular-name-input"
+          [(ngModel)]="data.name" 
+          placeholder="Nhập họ tên tại Angular..." 
+          class="form-control-shell"
+        />
+      </div>
+    </div>
+
+    <div class="ip-info-pill" [class.loaded]="data.ip">
+      <span class="ip-dot"></span>
+      <span class="ip-label">Client IP:</span>
+      <span class="ip-value">{{ data.ip || 'Đang tải IP...' }}</span>
+    </div>
+  </div>
 </div>
 
-<template-editor [(template)]="template" [(data)]="data" [(editMode)]="editMode"></template-editor>
+<div class="editor-wrapper">
+  <template-editor [(template)]="template" [(script)]="script" [(data)]="data" [(editMode)]="editMode"></template-editor>
+</div>

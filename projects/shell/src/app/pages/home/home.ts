@@ -10,6 +10,10 @@ import { FormsModule } from '@angular/forms';
 })
 export class Home {
   template = `<PageA4 style="padding:3mm 15mm" c-name="PageA4" c-id="u30lyv7">
+  <div style="margin-top: 15px; padding: 10px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px;" c-name="div" c-id="ip_box_1">
+    <b style="color: #1e40af;" c-name="b" c-id="ip_title_1">🌐 Địa chỉ IP (Lấy từ API qua top-level await):</b>
+    <span style="color: #2563eb; font-weight: bold; margin-left: 8px; font-size: 15px;" c-name="span" c-id="ip_val_1">{{ data.ip || 'Đang tải IP...' }}</span>
+  </div>
   <div c-name="div" c-id="5wz82b0">
     <b c-name="b" c-id="z7ton81">Textarea</b>
   </div>
@@ -101,7 +105,41 @@ export class Home {
     <div c-name="div" c-id="ozfucom">Ảnh đã lưu:</div><img :src="data.signature" alt="signature"
       style="max-width:200px;border:1px solid #ccc;" c-name="img" c-id="x7lifom" path-src="data.signature" />
   </div>
-</PageA4>`
-  data: any = { name: 'duynnz' };
+</PageA4>`;
+
+  script = `// 📜 Khởi tạo state và logic tính toán truyền từ Angular
+try {
+  data.ip = await (await fetch('https://api.ipify.org')).text();
+} catch (e) {
+  data.ip = 'Lỗi tải IP: ' + e.message;
+}
+
+// Danh mục và Tags
+const categoryList = [
+  { id: 'tech', name: 'Công Nghệ (Tech)' },
+  { id: 'business', name: 'Kinh Doanh (Business)' },
+  { id: 'other', name: 'Khác (Other)' }
+];
+
+const tagList = [
+  { value: 'vue', label: 'Vue 3' },
+  { value: 'typescript', label: 'TypeScript' },
+  { value: 'tailwind', label: 'Tailwind CSS' },
+  { value: 'react', label: 'React' }
+];
+
+const contextItems = [
+  { id: 1, label: 'Bệnh án Ngoại trú #1' },
+  { id: 2, label: 'Bệnh án Nội trú #2' },
+  { id: 3, label: 'Giấy ra viện #3' }
+];
+
+return {
+  categoryList,
+  tagList,
+  contextItems
+};`;
+
+  data: any = { name: 'duynnz1', ip: '' };
   editMode = true;
 }

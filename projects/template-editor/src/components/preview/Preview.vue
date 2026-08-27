@@ -154,6 +154,7 @@
       <div
         class="preview-container"
         ref="container"
+        @click="onCanvasClick"
         @contextmenu="onCanvasContextMenu"
         @dragover="onCanvasDragOver"
         @dragleave="onCanvasDragLeave"
@@ -198,6 +199,10 @@ export default {
       type: String,
       required: true
     },
+    data: {
+      type: Object,
+      default: () => ({})
+    },
     script: {
       type: String,
       default: ''
@@ -211,7 +216,7 @@ export default {
       default: true
     }
   },
-  emits: ['update:template', 'update:editMode', 'update:script', 'script-error'],
+  emits: ['update:template', 'update:data', 'update:editMode', 'update:script', 'script-error'],
   data() {
     const rootId = '123456';
     let rootNode = VirtualHTMLParser.parseToTree(this.template, 'Root', { 'c-id': rootId });
@@ -255,10 +260,10 @@ export default {
       }
     },
     script: {
-      handler(newVal) {
+      async handler(newVal) {
         if (newVal !== this.localScript) {
           this.localScript = newVal || '';
-          this.evalScript();
+          await this.evalScript();
           this.renderPreview();
         }
       }
@@ -269,9 +274,9 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     document.addEventListener('keydown', handlePrint);
-    this.evalScript();
+    await this.evalScript();
     this.processTemplate();
   },
   beforeUnmount() {
@@ -282,15 +287,21 @@ export default {
     }
   },
   methods: {
-    evalScript() {
+    async evalScript() {
+      if (!this.localScript || !this.localScript.trim()) {
+        this.evaluatedScope = {};
+        this.scriptError = null;
+        return;
+      }
+
       if (this.activeScriptScope) {
         this.activeScriptScope.stop();
         this.activeScriptScope = null;
       }
 
       this.activeScriptScope = effectScope();
-      this.activeScriptScope.run(() => {
-        const { scope, error } = evalScriptScope(this.localScript);
+      await this.activeScriptScope.run(async () => {
+        const { scope, error } = await evalScriptScope(this.localScript, this.data);
         this.scriptError = error;
         if (error) {
           this.$emit('script-error', error);
@@ -300,11 +311,11 @@ export default {
       });
     },
 
-    onScriptInput(e: Event) {
+    async onScriptInput(e: Event) {
       const val = (e.target as HTMLTextAreaElement).value;
       this.localScript = val;
       this.$emit('update:script', val);
-      this.evalScript();
+      await this.evalScript();
       this.renderPreview();
     },
 
@@ -324,10 +335,49 @@ export default {
 
       try {
         const self = this;
+        const hasCustomScript = self.localScript && self.localScript.trim() && Object.keys(self.evaluatedScope).length > 0;
+
+        const defaultLists = {
+          categoryList: [
+            { id: 'tech', name: 'Công Nghệ' },
+            { id: 'business', name: 'Kinh Doanh' },
+            { id: 'other', name: 'Khác' }
+          ],
+          tagList: [
+            { value: 'vue', label: 'Vue' },
+            { value: 'typescript', label: 'TypeScript' },
+            { value: 'tailwind', label: 'Tailwind' },
+            { value: 'react', label: 'React' }
+          ],
+          contextItems: [
+            { id: 1, label: 'Hàng số 1' },
+            { id: 2, label: 'Hàng số 2' },
+            { id: 3, label: 'Hàng số 3' }
+          ]
+        };
+
         const DynamicComponent = {
           template: this.processedTemplate,
-          setup() {
-            return self.evaluatedScope;
+          computed: {
+            upperName() {
+              return (self.data?.name || '').toUpperCase();
+            },
+            birthYear() {
+              const bday = self.data?.birthday;
+              if (!bday) return '';
+              const parts = bday.split('/');
+              return parts.length === 3 ? parts[2] : '';
+            }
+          },
+          data: () => {
+            const scriptScope = hasCustomScript ? self.evaluatedScope : {};
+
+            return {
+              ...defaultLists,
+              ...scriptScope,
+              data: self.data, // 👉 Luôn đảm bảo data là instance reactive duy nhất từ Angular
+              ...self.context
+            };
           }
         };
 
@@ -369,6 +419,7 @@ export default {
       rootEl.removeEventListener('contextmenu', this.contextMenuHandler);
       elements.forEach((el) => {
         el.classList.remove('empty-placeholder');
+        el.removeEventListener('click', this.elementClickHandler as EventListener);
         el.removeEventListener('contextmenu', this.contextMenuHandler as EventListener);
         el.removeEventListener('dragover', this.elementDragOverHandler as EventListener);
         el.removeEventListener('dragleave', this.elementDragLeaveHandler as EventListener);
@@ -391,6 +442,7 @@ export default {
           el.classList.add('empty-placeholder');
         }
         
+        el.addEventListener('click', this.elementClickHandler as EventListener);
         el.addEventListener('contextmenu', this.contextMenuHandler as EventListener);
         if (this.editMode) {
           el.addEventListener('dragover', this.elementDragOverHandler as EventListener);
@@ -398,6 +450,39 @@ export default {
           el.addEventListener('drop', this.elementDropHandler as EventListener);
         }
       });
+    },
+
+    elementClickHandler(e: MouseEvent) {
+      if (!this.editMode) return;
+      e.stopPropagation();
+
+      const targetEl = (e.currentTarget || e.target) as HTMLElement;
+      const closestWithCid = (targetEl.closest('[c-id]') as HTMLElement) || targetEl;
+      const cid = closestWithCid?.getAttribute('c-id');
+      
+      if (cid && cid !== this.rootId) {
+        this.selectedCid = cid;
+        this.selectedNode = this.rootNode.querySelector(`[c-id=${cid}]`);
+        this.highlightElement(closestWithCid);
+
+        // Cuộn node tương ứng trên cây DOM vào tầm nhìn
+        this.$nextTick(() => {
+          const treeItem = document.querySelector(`.tree-row[data-cid="${cid}"]`) as HTMLElement;
+          if (treeItem) {
+            treeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        });
+      }
+    },
+
+    onCanvasClick(e: MouseEvent) {
+      if (!this.editMode) return;
+      const target = e.target as HTMLElement;
+      if (!target.closest('[c-id]')) {
+        this.selectedCid = '';
+        this.selectedNode = null;
+        this.unHighlightElement();
+      }
     },
 
     onCanvasContextMenu(e: MouseEvent) {

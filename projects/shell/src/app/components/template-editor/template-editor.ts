@@ -11,32 +11,50 @@ import { FormsModule } from '@angular/forms';
 export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
   app: any = null;
   vm: any = null;
-  
+
   @Input('template') template = '';
   @Output() templateChange = new EventEmitter<string>();
-  
-  @Input('data') data = {};
+
+  @Input('script') script = '';
+  @Output() scriptChange = new EventEmitter<string>();
+
+  @Input('data') data: any = {};
   @Output() dataChange = new EventEmitter<any>();
 
   @Input('editMode') editMode = true;
   @Output() editModeChange = new EventEmitter<boolean>();
 
-  constructor(private vueLoader: VueLoader) {}
+  constructor(private vueLoader: VueLoader) { }
 
   async ngOnInit() {
     this.app = await this.vueLoader.createPreview();
     if (!this.app) return console.error('Failed to load Vue preview component.');
+
     this.vm = this.app.mount('#template-editor');
     const vmData = this.vm.$data as any;
     if (vmData) {
-      vmData.data = this.data;
-      vmData.template = this.template;
+      if (this.template) vmData.template = this.template;
+      if (this.script) vmData.script = this.script;
+      if (this.data && Object.keys(this.data).length > 0) {
+        Object.assign(vmData.data, this.data);
+      }
       vmData.editMode = this.editMode;
     }
     this.dataChange.emit(vmData?.data ?? this.data);
+
+    // Lắng nghe mọi thay đổi trên data từ Vue và bắn ngược về Angular
+    this.vm.$watch('data', (newVal: any) => {
+      this.dataChange.emit(newVal);
+    }, { deep: true });
+
     this.vm.$watch('template', (newVal: any) => {
       this.templateChange.emit(newVal);
     });
+
+    this.vm.$watch('script', (newVal: any) => {
+      this.scriptChange.emit(newVal);
+    });
+
     this.vm.$watch('editMode', (newVal: any) => {
       this.editModeChange.emit(newVal);
     });
@@ -46,6 +64,13 @@ export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
     if (!this.vm) return;
     const vmData = this.vm.$data as any;
     if (!vmData) return;
+
+    if (changes['data'] && this.data) {
+      Object.assign(vmData.data, this.data);
+    }
+    if (changes['script']) {
+      vmData.script = this.script;
+    }
     if (changes['template']) {
       vmData.template = this.template;
     }
