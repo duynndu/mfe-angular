@@ -3,52 +3,44 @@ import { VirtualHTMLParser } from './virtual-html-parser';
 
 export class VirtualNode {
   tagName: string;
-  attributes: any = {};
-  childNodes: VirtualNode[];
-  parentNode: null | VirtualNode;
-  textContent: string;
-  isClosingTag!: boolean
-  constructor(tagName = '', attributes = {}) {
+  attributes: Record<string, any> = {};
+  childNodes: VirtualNode[] = [];
+  parentNode: null | VirtualNode = null;
+  textContent: string = '';
+  isClosingTag!: boolean;
+
+  constructor(tagName = '', attributes: Record<string, any> = {}) {
     this.tagName = tagName;
-    this.attributes = attributes;
-    this.childNodes = [];
-    this.parentNode = null;
-    this.textContent = '';
+    this.attributes = { ...attributes };
   }
 
-  get innerHTML(): string {
+  // --- Serialization ---
+  private _serialize(isClean = false): string {
     if (this.tagName === '#text') {
-      return VirtualHTMLParser.vueBeautify(this.textContent);
-    }
-    return VirtualHTMLParser.vueBeautify(
-      this.childNodes.map((child) => child.outerHTML).join('')
-    );
-  }
-
-  set innerHTML(htmlString) {
-    // Remove all existing children
-    this.childNodes.forEach((child) => {
-      child.parentNode = null;
-    });
-    this.childNodes = [];
-
-    if (htmlString && htmlString.trim()) {
-      const fragment = VirtualHTMLParser.parseToTree(htmlString);
-      fragment.childNodes.forEach((child) => {
-        this.appendChild(child);
-      });
-    }
-  }
-
-  get outerHTML() {
-    if (this.tagName === '#text') {
-      return VirtualHTMLParser.vueBeautify(this.textContent);
+      return this.textContent;
     }
 
     let attrs = '';
     for (const [key, value] of Object.entries(this.attributes)) {
+      if (isClean && (key === 'c-id' || key === 'c-name' || (key === 'path' && this.hasAttribute('v-model')))) {
+        continue;
+      }
+      if (isClean && key === 'class') {
+        const cleanedClass = (String(value) || '')
+          .split(/\s+/)
+          .filter((c) => c && c !== 'element-highlight' && c !== 'empty-placeholder')
+          .join(' ')
+          .trim();
+        if (cleanedClass) {
+          attrs += ` class="${cleanedClass}"`;
+        }
+        continue;
+      }
+
       if (value === true) {
         attrs += ` ${key}`;
+      } else if (value === '' || value === undefined || value === null) {
+        attrs += ` ${key}=""`;
       } else {
         attrs += ` ${key}="${value}"`;
       }
@@ -63,339 +55,129 @@ export class VirtualNode {
       return `<${this.tagName}${attrs} />`;
     }
 
-    return VirtualHTMLParser.vueBeautify(
-      `<${this.tagName}${attrs}>${this.innerHTML}</${this.tagName}>`
-    );
+    const inner = this.childNodes.map((child) => child._serialize(isClean)).join('');
+    return `<${this.tagName}${attrs}>${inner}</${this.tagName}>`;
   }
 
-  // DOM methods
-  querySelector(selector: string) {
-    const results = this._querySelectorAll(selector, true);
-    return results.length > 0 ? results[0] : null;
+  get innerHTML(): string {
+    if (this.tagName === '#text') {
+      return VirtualHTMLParser.vueBeautify(this.textContent);
+    }
+    const raw = this.childNodes.map((child) => child._serialize(false)).join('');
+    return VirtualHTMLParser.vueBeautify(raw);
   }
 
-  querySelectorAll(selector: string) {
-    return this._querySelectorAll(selector, false);
+  set innerHTML(htmlString: string) {
+    this.childNodes.forEach((child) => {
+      child.parentNode = null;
+    });
+    this.childNodes = [];
+
+    if (htmlString && htmlString.trim()) {
+      const fragment = VirtualHTMLParser.parseToTree(htmlString);
+      fragment.childNodes.forEach((child) => {
+        this.appendChild(child);
+      });
+    }
   }
 
-  _querySelectorAll(selector: string, firstOnly = false) {
-    const results: VirtualNode[] = [];
+  get outerHTML(): string {
+    return VirtualHTMLParser.vueBeautify(this._serialize(false));
+  }
 
-    if (selector.startsWith('.')) {
-      // Class selector: .className
-      const className = selector.slice(1);
-      this._collectByClassName(className, results, firstOnly);
-    } else if (selector.startsWith('#')) {
-      // ID selector: #id
-      const id = selector.slice(1);
-      this._collectById(id, results, firstOnly);
-    } else if (selector.startsWith('[') && selector.endsWith(']')) {
-      // Attribute selector: [attr], [attr=value], [attr~=value], [attr|=value], [attr^=value], [attr$=value], [attr*=value]
-      this._collectByAttribute(selector, results, firstOnly);
-    } else if (selector.includes('.')) {
-      // Tag with class selector: tag.className
-      const parts = selector.split('.');
-      const tagName = parts[0];
-      const className = parts.slice(1).join(' ');
-      this._collectByTagAndClass(tagName, className, results, firstOnly);
-    } else if (selector.includes('#')) {
-      // Tag with ID selector: tag#id
-      const parts = selector.split('#');
-      const tagName = parts[0];
-      const id = parts[1];
-      this._collectByTagAndId(tagName, id, results, firstOnly);
-    } else if (selector.includes('[')) {
-      // Tag with attribute selector: tag[attr=value]
-      const bracketIndex = selector.indexOf('[');
-      const tagName = selector.substring(0, bracketIndex);
-      const attributeSelector = selector.substring(bracketIndex);
-      this._collectByTagAndAttribute(
-        tagName,
-        attributeSelector,
-        results,
-        firstOnly
-      );
-    } else {
-      // Simple tag name selector
-      this._collectByTagName(selector, results, firstOnly);
+  toCleanHTML(indent: number = 2): string {
+    return VirtualHTMLParser.vueBeautify(this._serialize(true), indent);
+  }
+
+  // --- Selector & Query Engine ---
+  matches(selector: string): boolean {
+    if (!selector || this.tagName === '#text') return false;
+    const s = selector.trim();
+
+    // ID selector: #id
+    if (s.startsWith('#')) {
+      return this.attributes['id'] === s.slice(1);
     }
 
+    // Class selector: .className or .class1.class2
+    if (s.startsWith('.')) {
+      const classes = (this.attributes['class'] || '').split(/\s+/);
+      const targetClasses = s.slice(1).split('.').filter(Boolean);
+      return targetClasses.every((c) => classes.includes(c));
+    }
+
+    // Attribute selector: [attr] or [attr=val]
+    if (s.startsWith('[') && s.endsWith(']')) {
+      const match = s.match(/^\[([^\s=~|^$*\]]+)(?:([~|^$*]?=)["']?(.*?)["']?)?\]$/);
+      if (!match) return false;
+      const [, key, op, val] = match;
+      if (op === undefined) return key in this.attributes;
+      const attrVal = String(this.attributes[key] ?? '');
+      switch (op) {
+        case '=': return attrVal === val;
+        case '^=': return attrVal.startsWith(val);
+        case '$=': return attrVal.endsWith(val);
+        case '*=': return attrVal.includes(val);
+        case '~=': return attrVal.split(/\s+/).includes(val);
+        case '|=': return attrVal === val || attrVal.startsWith(`${val}-`);
+        default: return false;
+      }
+    }
+
+    // Compound selector: tag.class, tag#id, tag[attr=val]
+    const compoundMatch = s.match(/^([a-zA-Z0-9_-]+)([\.#\[].+)$/);
+    if (compoundMatch) {
+      const [, tag, rest] = compoundMatch;
+      return this.tagName.toLowerCase() === tag.toLowerCase() && this.matches(rest);
+    }
+
+    // Tag name selector
+    return this.tagName.toLowerCase() === s.toLowerCase();
+  }
+
+  private _collect(predicate: (node: VirtualNode) => boolean, firstOnly = false): VirtualNode[] {
+    const results: VirtualNode[] = [];
+    const walk = (node: VirtualNode): boolean => {
+      if (predicate(node)) {
+        results.push(node);
+        if (firstOnly) return true;
+      }
+      for (const child of node.childNodes) {
+        if (walk(child) && firstOnly) return true;
+      }
+      return false;
+    };
+    walk(this);
     return results;
   }
 
-  _collectByTagName(tagName: string, results: VirtualNode[], firstOnly: boolean) {
-    if (this.tagName === tagName) {
-      results.push(this);
-      if (firstOnly) return true;
-    }
-
-    for (const child of this.childNodes) {
-      if (child.tagName && child._collectByTagName) {
-        const found = child._collectByTagName(tagName, results, firstOnly);
-        if (found && firstOnly) return true;
-      }
-    }
-    return false;
+  querySelector(selector: string): VirtualNode | null {
+    const res = this._collect((node) => node.matches(selector), true);
+    return res[0] || null;
   }
 
-  _collectByClassName(className: string, results: VirtualNode[], firstOnly: boolean) {
-    const classAttr = this.getAttribute('class') || '';
-    const classes = classAttr.split(' ').filter((c: string) => c.trim());
-
-    if (classes.includes(className)) {
-      results.push(this);
-      if (firstOnly) return true;
-    }
-
-    for (const child of this.childNodes) {
-      if (child.tagName && child._collectByClassName) {
-        const found = child._collectByClassName(className, results, firstOnly);
-        if (found && firstOnly) return true;
-      }
-    }
-    return false;
+  querySelectorAll(selector: string): VirtualNode[] {
+    return this._collect((node) => node.matches(selector), false);
   }
 
-  _collectById(id: string, results: VirtualNode[], firstOnly: boolean) {
-    if (this.getAttribute('id') === id) {
-      results.push(this);
-      if (firstOnly) return true;
-    }
-
-    for (const child of this.childNodes) {
-      if (child.tagName && child._collectById) {
-        const found = child._collectById(id, results, firstOnly);
-        if (found && firstOnly) return true;
-      }
-    }
-    return false;
-  }
-
-  _collectByTagAndClass(tagName: string, className: string, results: VirtualNode[], firstOnly: boolean) {
-    if (this.tagName === tagName) {
-      const classAttr = this.getAttribute('class') || '';
-      const classes = classAttr.split(' ').filter((c: string) => c.trim());
-
-      if (classes.includes(className)) {
-        results.push(this);
-        if (firstOnly) return true;
-      }
-    }
-
-    for (const child of this.childNodes) {
-      if (child.tagName && child._collectByTagAndClass) {
-        const found = child._collectByTagAndClass(
-          tagName,
-          className,
-          results,
-          firstOnly
-        );
-        if (found && firstOnly) return true;
-      }
-    }
-    return false;
-  }
-
-  _collectByTagAndId(tagName: string, id: string, results: VirtualNode[], firstOnly: boolean) {
-    if (this.tagName === tagName && this.getAttribute('id') === id) {
-      results.push(this);
-      if (firstOnly) return true;
-    }
-
-    for (const child of this.childNodes) {
-      if (child.tagName && child._collectByTagAndId) {
-        const found = child._collectByTagAndId(tagName, id, results, firstOnly);
-        if (found && firstOnly) return true;
-      }
-    }
-    return false;
-  }
-
-  _collectByAttribute(attributeSelector: string, results: VirtualNode[], firstOnly: boolean) {
-    const attributeMatch = this._parseAttributeSelector(attributeSelector);
-    if (attributeMatch && this._matchesAttribute(attributeMatch)) {
-      results.push(this);
-      if (firstOnly) return true;
-    }
-
-    for (const child of this.childNodes) {
-      if (child.tagName && child._collectByAttribute) {
-        const found = child._collectByAttribute(
-          attributeSelector,
-          results,
-          firstOnly
-        );
-        if (found && firstOnly) return true;
-      }
-    }
-    return false;
-  }
-
-  _collectByTagAndAttribute(tagName: string, attributeSelector: string, results: VirtualNode[], firstOnly: boolean) {
-    if (this.tagName === tagName) {
-      const attributeMatch = this._parseAttributeSelector(attributeSelector);
-      if (attributeMatch && this._matchesAttribute(attributeMatch)) {
-        results.push(this);
-        if (firstOnly) return true;
-      }
-    }
-
-    for (const child of this.childNodes) {
-      if (child.tagName && child._collectByTagAndAttribute) {
-        const found = child._collectByTagAndAttribute(
-          tagName,
-          attributeSelector,
-          results,
-          firstOnly
-        );
-        if (found && firstOnly) return true;
-      }
-    }
-    return false;
-  }
-
-  _parseAttributeSelector(selector: string) {
-    // Remove brackets: [attr=value] -> attr=value
-    const content = selector.slice(1, -1).trim();
-
-    // Support various attribute selector formats:
-    // [attr], [attr=value], [attr~=value], [attr|=value], [attr^=value], [attr$=value], [attr*=value]
-    const operators = ['~=', '|=', '^=', '$=', '*=', '='];
-    let operator = '';
-    let attributeName = '';
-    let value = '';
-
-    for (const op of operators) {
-      const index = content.indexOf(op);
-      if (index > -1) {
-        operator = op;
-        attributeName = content.substring(0, index).trim();
-        value = content.substring(index + op.length).trim();
-
-        // Remove quotes if present
-        if (
-          (value.startsWith('"') && value.endsWith('"')) ||
-          (value.startsWith("'") && value.endsWith("'"))
-        ) {
-          value = value.slice(1, -1);
-        }
-        break;
-      }
-    }
-
-    // If no operator found, it's a simple [attr] selector
-    if (!operator) {
-      attributeName = content.trim();
-    }
-
-    return { attributeName, operator, value };
-  }
-
-  _matchesAttribute(attributeMatch: { attributeName: string; operator: string; value: string }) {
-    const { attributeName, operator, value } = attributeMatch;
-    const attrValue = this.getAttribute(attributeName);
-
-    // Attribute exists selector: [attr]
-    if (!operator) {
-      return this.hasAttribute(attributeName);
-    }
-
-    // Exact match: [attr=value]
-    if (operator === '=') {
-      return attrValue === value;
-    }
-
-    // Contains word: [attr~=value]
-    if (operator === '~=') {
-      const words = (attrValue || '')
-        .split(' ')
-        .map((w: string) => w.trim())
-        .filter((w: string) => w);
-      return words.includes(value);
-    }
-
-    // Starts with prefix: [attr|=value]
-    if (operator === '|=') {
-      return (
-        (attrValue || '').startsWith(value) &&
-        (attrValue === value || attrValue.startsWith(value + '-'))
-      );
-    }
-
-    // Starts with: [attr^=value]
-    if (operator === '^=') {
-      return (attrValue || '').startsWith(value);
-    }
-
-    // Ends with: [attr$=value]
-    if (operator === '$=') {
-      return (attrValue || '').endsWith(value);
-    }
-
-    // Contains substring: [attr*=value]
-    if (operator === '*=') {
-      return (attrValue || '').includes(value);
-    }
-
-    return false;
-  }
-
-  getElementById(id: string) {
+  getElementById(id: string): VirtualNode | null {
     return this.querySelector(`#${id}`);
   }
 
-  getElementsByTagName(tagName: string) {
+  getElementsByTagName(tagName: string): VirtualNode[] {
     return this.querySelectorAll(tagName);
   }
 
-  getElementsByClassName(className: string) {
+  getElementsByClassName(className: string): VirtualNode[] {
     return this.querySelectorAll(`.${className}`);
   }
 
-  // Collection methods
-  _collectElementsByTagName(tagName: string, results: VirtualNode[]) {
-    if (this.tagName === tagName) {
-      results.push(this);
-    }
-
-    for (const child of this.childNodes) {
-      if (child._collectElementsByTagName) {
-        child._collectElementsByTagName(tagName, results);
-      }
-    }
-  }
-
-  _collectElementsById(id: string, results: VirtualNode[]) {
-    if (this.attributes.id === id) {
-      results.push(this);
-    }
-
-    for (const child of this.childNodes) {
-      if (child._collectElementsById) {
-        child._collectElementsById(id, results);
-      }
-    }
-  }
-
-  _collectElementsByClassName(className: string, results: VirtualNode[]) {
-    const classAttr = this.attributes.class || '';
-    if (classAttr.split(' ').includes(className)) {
-      results.push(this);
-    }
-
-    for (const child of this.childNodes) {
-      if (child._collectElementsByClassName) {
-        child._collectElementsByClassName(className, results);
-      }
-    }
-  }
-
-  // Attribute methods
+  // --- Attribute Methods ---
   getAttribute(name: string) {
     return this.attributes[name];
   }
 
-  setAttribute(name: string, value: string) {
+  setAttribute(name: string, value: any) {
     this.attributes[name] = value;
     return this;
   }
@@ -409,45 +191,39 @@ export class VirtualNode {
     return name in this.attributes;
   }
 
-  // Node manipulation methods
-  appendChild(child: VirtualNode) {
+  // --- Tree Mutation Methods ---
+  private _childIndex(node: VirtualNode): number {
+    const idx = this.childNodes.indexOf(node);
+    if (idx === -1) throw new Error('Reference node not found in parent');
+    return idx;
+  }
+
+  appendChild(child: VirtualNode): VirtualNode {
     child.parentNode = this;
     this.childNodes.push(child);
     return child;
   }
 
-  insertBefore(newNode: VirtualNode, referenceNode: VirtualNode) {
-    const index = this.childNodes.indexOf(referenceNode);
-    if (index === -1) {
-      throw new Error('Reference node not found');
-    }
-
+  insertBefore(newNode: VirtualNode, referenceNode: VirtualNode): VirtualNode {
+    const index = this._childIndex(referenceNode);
     newNode.parentNode = this;
     this.childNodes.splice(index, 0, newNode);
     return newNode;
   }
 
-  insertAfter(newNode: VirtualNode, referenceNode: VirtualNode) {
-    const index = this.childNodes.indexOf(referenceNode);
-    if (index === -1) {
-      throw new Error('Reference node not found');
-    }
-
+  insertAfter(newNode: VirtualNode, referenceNode: VirtualNode): VirtualNode {
+    const index = this._childIndex(referenceNode);
     newNode.parentNode = this;
     this.childNodes.splice(index + 1, 0, newNode);
     return newNode;
   }
 
-  remove() {
+  remove(): VirtualNode | null {
     if (!this.parentNode) return null;
-    const index = this.parentNode.childNodes.indexOf(this);
-    if (index > -1) {
-      return this.parentNode.childNodes.splice(index, 1)[0];
-    }
-    return null;
+    return this.parentNode.removeChild(this);
   }
 
-  removeChild(child: VirtualNode) {
+  removeChild(child: VirtualNode): VirtualNode | null {
     const index = this.childNodes.indexOf(child);
     if (index > -1) {
       child.parentNode = null;
@@ -456,23 +232,20 @@ export class VirtualNode {
     return null;
   }
 
-  replaceChild(newChild: VirtualNode, oldChild: VirtualNode) {
-    const index = this.childNodes.indexOf(oldChild);
-    if (index > -1) {
-      oldChild.parentNode = null;
-      newChild.parentNode = this;
-      this.childNodes.splice(index, 1, newChild);
-      return oldChild;
-    }
-    return null;
+  replaceChild(newChild: VirtualNode, oldChild: VirtualNode): VirtualNode | null {
+    const index = this._childIndex(oldChild);
+    oldChild.parentNode = null;
+    newChild.parentNode = this;
+    this.childNodes.splice(index, 1, newChild);
+    return oldChild;
   }
 
-  // Navigation properties
-  get firstChild() {
+  // --- Navigation & Utilities ---
+  get firstChild(): VirtualNode | null {
     return this.childNodes[0] || null;
   }
 
-  get lastChild() {
+  get lastChild(): VirtualNode | null {
     return this.childNodes[this.childNodes.length - 1] || null;
   }
 
@@ -494,8 +267,7 @@ export class VirtualNode {
     clone.isClosingTag = this.isClosingTag;
     if (deep) {
       for (const child of this.childNodes) {
-        const childClone = child.cloneNode(true);
-        clone.appendChild(childClone);
+        clone.appendChild(child.cloneNode(true));
       }
     }
     return clone;
@@ -505,18 +277,19 @@ export class VirtualNode {
     return {
       tagName: this.tagName,
       attributes: this.attributes,
-      childNodes: this.childNodes.map(child => child.toObject()),
+      childNodes: this.childNodes.map((child) => child.toObject()),
       textContent: this.textContent
     };
   }
 
-  genComponentId() {
+  genComponentId(force = false) {
     const genCID = (node: VirtualNode) => {
-      node.setAttribute('c-id', Math.random().toString(36).substring(2, 9));
-      node.childNodes.forEach((node) => {
-        genCID(node);
-      });
+      if (force || !node.hasAttribute('c-id')) {
+        node.setAttribute('c-id', Math.random().toString(36).substring(2, 9));
+      }
+      node.childNodes.forEach((child) => genCID(child));
     };
     genCID(this);
   }
 }
+

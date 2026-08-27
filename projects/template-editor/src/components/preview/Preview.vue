@@ -1,124 +1,146 @@
 <template>
-  <div class="preview-editor">
-    <!-- Context Menu Component -->
-    <ImContextMenu v-model:show="ContextMenuVisible" @update:show="unHighlightElement" :options="contextMenuOption">
-      <context-menu-group label="Insert">
-        <template #icon>
-          <i class="fa fa-plus"></i>
-        </template>
-        <context-menu-item v-if="!isClosingTag(selectedCid)" label="Insert inside" @click="openInsertMenu('inside')">
-          <template #icon>
-            <i class="fa fa-level-down"></i>
-          </template>
-        </context-menu-item>
-        <context-menu-item v-if="selectedCid != rootId" label="Insert before" @click="openInsertMenu('before')">
-          <template #icon>
-            <i class="fa fa-level-up"></i>
-          </template>
-        </context-menu-item>
-        <context-menu-item v-if="selectedCid != rootId" label="Insert after" @click="openInsertMenu('after')">
-          <template #icon>
-            <i class="fa fa-level-down"></i>
-          </template>
-        </context-menu-item>
-      </context-menu-group>
-      <context-menu-item label="Edit" @click="openEditPanel">
-        <template #icon>
-          <i class="fa fa-pencil-square-o"></i>
-        </template>
-      </context-menu-item>
-      <context-menu-item v-if="selectedCid != rootId" label="Copy" @click="copyElement">
-        <template #icon>
-          <i class="fa fa-copy"></i>
-        </template>
-      </context-menu-item>
-      <context-menu-group v-if="elementCopied" label="Paste">
-        <template #icon>
-          <i class="fa fa-paste"></i>
-        </template>
-        <context-menu-item v-if="!isClosingTag(selectedCid)" label="Paste inside" @click="pasteElement('inside')">
-          <template #icon>
-            <i class="fa fa-level-down"></i>
-          </template>
-        </context-menu-item>
-        <context-menu-item v-if="selectedCid != rootId" label="Paste before" @click="pasteElement('before')">
-          <template #icon>
-            <i class="fa fa-level-up"></i>
-          </template>
-        </context-menu-item v-if="selectedCid != rootId">
-        <context-menu-item label="Paste after" @click="pasteElement('after')">
-          <template #icon>
-            <i class="fa fa-level-down"></i>
-          </template>
-        </context-menu-item>
-      </context-menu-group>
+  <div class="preview-editor-layout">
+    <!-- DOM Tree Sidebar -->
+    <ComponentPalette
+      v-if="editMode"
+      :root-node="rootNode"
+      :selected-cid="selectedCid"
+      @tree-select="onTreeSelect"
+      @tree-add-child="onTreeAddChild"
+      @tree-move-up="onTreeMoveUp"
+      @tree-move-down="onTreeMoveDown"
+      @tree-delete="onTreeDelete"
+      @tree-drop-reorder="onTreeDropReorder"
+      @tree-hover-enter="onTreeHoverEnter"
+      @tree-hover-leave="onTreeHoverLeave"
+    />
 
-      <context-menu-item v-if="selectedCid != rootId" label="Delete" @click="removeElement">
-        <template #icon>
-          <i class="fa fa-trash"></i>
-        </template>
-      </context-menu-item>
-    </ImContextMenu>
+    <div class="preview-editor-main">
+      <!-- Context Menu Component -->
+      <ImContextMenu v-model:show="ContextMenuVisible" @update:show="unHighlightElement" :options="contextMenuOption">
+        <context-menu-group label="Insert">
+          <template #icon>
+            <i class="fa fa-plus"></i>
+          </template>
+          <context-menu-item v-if="!isClosingTag(selectedCid)" label="Insert inside" @click="openInsertMenu('inside')">
+            <template #icon>
+              <i class="fa fa-level-down"></i>
+            </template>
+          </context-menu-item>
+          <context-menu-item v-if="selectedCid != rootId" label="Insert before" @click="openInsertMenu('before')">
+            <template #icon>
+              <i class="fa fa-level-up"></i>
+            </template>
+          </context-menu-item>
+          <context-menu-item v-if="selectedCid != rootId" label="Insert after" @click="openInsertMenu('after')">
+            <template #icon>
+              <i class="fa fa-level-down"></i>
+            </template>
+          </context-menu-item>
+        </context-menu-group>
+        <context-menu-item label="Edit" @click="openEditPanel">
+          <template #icon>
+            <i class="fa fa-pencil-square-o"></i>
+          </template>
+        </context-menu-item>
+        <context-menu-item v-if="selectedCid != rootId" label="Copy" @click="copyElement">
+          <template #icon>
+            <i class="fa fa-copy"></i>
+          </template>
+        </context-menu-item>
+        <context-menu-group v-if="elementCopied" label="Paste">
+          <template #icon>
+            <i class="fa fa-paste"></i>
+          </template>
+          <context-menu-item v-if="!isClosingTag(selectedCid)" label="Paste inside" @click="pasteElement('inside')">
+            <template #icon>
+              <i class="fa fa-level-down"></i>
+            </template>
+          </context-menu-item>
+          <context-menu-item v-if="selectedCid != rootId" label="Paste before" @click="pasteElement('before')">
+            <template #icon>
+              <i class="fa fa-level-up"></i>
+            </template>
+          </context-menu-item>
+          <context-menu-item v-if="selectedCid != rootId" label="Paste after" @click="pasteElement('after')">
+            <template #icon>
+              <i class="fa fa-level-down"></i>
+            </template>
+          </context-menu-item>
+        </context-menu-group>
 
-    <!-- Insert Template Menu -->
-    <ImContextMenu v-model:show="insertMenuVisible" :options="insertMenuOption">
-      <context-menu-group 
-        v-for="(category, categoryIndex) in templateCategories" 
-        :key="categoryIndex"
-        :label="category.label"
-      >
-        <context-menu-item 
-          v-for="(component, componentIndex) in category.templates" 
-          :key="componentIndex"
-          :label="component.label"
-          @click="insertElement(component)"
+        <context-menu-item v-if="selectedCid != rootId" label="Delete" @click="removeElement">
+          <template #icon>
+            <i class="fa fa-trash"></i>
+          </template>
+        </context-menu-item>
+      </ImContextMenu>
+
+      <!-- Insert Template Menu -->
+      <ImContextMenu v-model:show="insertMenuVisible" :options="insertMenuOption">
+        <context-menu-group 
+          v-for="(category, categoryIndex) in templateCategories" 
+          :key="categoryIndex"
+          :label="category.label"
         >
-          <template #icon>
-            <i :class="component.icon"></i>
-          </template>
-        </context-menu-item>
-      </context-menu-group>
-    </ImContextMenu>
+          <context-menu-item 
+            v-for="(component, componentIndex) in category.templates" 
+            :key="componentIndex"
+            :label="component.label"
+            @click="insertElement(component)"
+          >
+            <template #icon>
+              <i :class="component.icon"></i>
+            </template>
+          </context-menu-item>
+        </context-menu-group>
+      </ImContextMenu>
 
-    <!-- Overlay -->
-    <div v-if="selectedNode" class="editor-overlay" @click="selectedNode =null; unHighlightElement()"></div>
+      <!-- Overlay -->
+      <div v-if="selectedNode" class="editor-overlay" @click="selectedNode = null; unHighlightElement()"></div>
 
-    <!-- Panel chỉnh sửa -->
-    <EditElementPanel :selectedNode="selectedNode" @close="closeEditPanel" />
+      <!-- Panel chỉnh sửa -->
+      <EditElementPanel :selectedNode="selectedNode" @close="closeEditPanel" />
 
-    <!-- Preview container -->
-    <div class="preview-container" ref="container">
-      <div class="content-root" ref="content"></div>
+      <!-- Preview container with canvas drop & contextmenu support -->
+      <div
+        class="preview-container"
+        ref="container"
+        @contextmenu="onCanvasContextMenu"
+        @dragover="onCanvasDragOver"
+        @dragleave="onCanvasDragLeave"
+        @drop="onCanvasDrop"
+      ></div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { createApp } from 'vue/dist/vue.esm-bundler.js';
+import { createApp, type App, type ComponentPublicInstance } from 'vue/dist/vue.esm-bundler.js';
 import PageA4 from '../layouts/PageA4.vue';
 import PageA5 from '../layouts/PageA5.vue';
 import Textarea from '../forms/Textarea.vue';
 import InputOTP from '../forms/InputOTP.vue';
-import { VirtualHTMLParser, VirtualNode } from 'shared/utils';
-import EditElementPanel from '../EditElementPanel.vue';
-import { handlePrint, printElement } from 'shared/helpers';
-import { ContextMenu as ImContextMenu } from '@imengyu/vue3-context-menu';
-import { ContextMenuItem as ImContextMenuItem } from '@imengyu/vue3-context-menu';
-import { templateCategories } from 'shared/constants';
-import { App, ComponentPublicInstance } from 'vue';
-import { TemplateItem } from 'shared/types';
 import Select from '../forms/Select.vue';
 import Checkbox from '../forms/Checkbox.vue';
 import DatePicker from '../forms/DatePicker.vue';
-import { installMaskDirective } from '../../directives/mask-datetime';
 import Paint from '../forms/Paint.vue';
 import SimpleContextMenu from '../ContextMenu.vue';
+import ComponentPalette from './ComponentPalette.vue';
+import EditElementPanel from '../EditElementPanel.vue';
+import { VirtualHTMLParser, VirtualNode } from 'shared/utils';
+import { handlePrint, printElement } from 'shared/helpers';
+import { ContextMenu as ImContextMenu, ContextMenuItem as ImContextMenuItem } from '@imengyu/vue3-context-menu';
+import { templateCategories } from 'shared/constants';
+import { TemplateItem } from 'shared/types';
+import { installMaskDirective } from '../../directives/mask-datetime';
 import { installContextMenuDirective } from '../../directives/context-menu';
 
 export default {
   name: 'Preview',
   components: {
     EditElementPanel,
+    ComponentPalette,
     ImContextMenu,
     ImContextMenuItem
   },
@@ -138,7 +160,7 @@ export default {
   },
   emits: ['update:template', 'update:editMode'],
   data() {
-    const rootId = '123456'
+    const rootId = '123456';
     let rootNode = VirtualHTMLParser.parseToTree(this.template, 'Root', { 'c-id': rootId });
     rootNode.innerHTML = this.template;
     return {
@@ -163,7 +185,9 @@ export default {
         minWidth: 180
       },
       elementCopied: null as VirtualNode | null,
-      templateCategories: templateCategories
+      templateCategories: templateCategories,
+      isDraggingComponent: false,
+      currentDropTarget: null as { cid: string; position: string } | null,
     };
   },
   watch: {
@@ -190,14 +214,13 @@ export default {
       this.rootNode.innerHTML = this.template;
       this.rootNode.genComponentId();
       this.rootNode.setAttribute('c-id', this.rootId);
-      // Use outerHTML to keep the Root wrapper for single root element requirement
       this.processedTemplate = this.rootNode.outerHTML;
       this.renderPreview();
     },
 
     renderPreview() {      
-      const contentEl = this.$refs['content'] as HTMLElement;
-      if (!contentEl) return;
+      const containerEl = this.$refs['container'] as HTMLElement;
+      if (!containerEl) return;
 
       if (this.app) this.app.unmount();
 
@@ -207,9 +230,9 @@ export default {
           data: () => (this.context)
         };
 
-        contentEl.innerHTML = '';
+        containerEl.innerHTML = '';
         this.app = createApp(DynamicComponent);
-        this.app.config.compilerOptions.isCustomElement = (tag) => tag === 'Root';
+        this.app.config.compilerOptions.isCustomElement = (tag) => tag === 'Root' || tag === 'root';
         const logFn = (key: string) => (...args: any[]) => console.warn(`[Preview] context.${key} chưa được cung cấp`, ...args);
         this.app.provide('onFieldChange', this.context['onFieldChange'] ?? logFn('onFieldChange'));
 
@@ -229,16 +252,16 @@ export default {
           .component('ImContextMenu', ImContextMenu)
           .component('ImContextMenuItem', ImContextMenuItem);
 
-        this.vm = this.app.mount(contentEl);
+        this.vm = this.app.mount(containerEl);
 
-        this.attachContextMenuListeners(contentEl);
+        this.attachEventListeners(containerEl);
 
       } catch (e) {
         console.error('Render error:', e);
       }
     },
 
-    attachContextMenuListeners(rootEl: HTMLElement) {
+    attachEventListeners(rootEl: HTMLElement) {
       const elements = rootEl.querySelectorAll('[c-id]');
       
       // Remove existing listeners
@@ -246,9 +269,12 @@ export default {
       elements.forEach((el) => {
         el.classList.remove('empty-placeholder');
         el.removeEventListener('contextmenu', this.contextMenuHandler as EventListener);
+        el.removeEventListener('dragover', this.elementDragOverHandler as EventListener);
+        el.removeEventListener('dragleave', this.elementDragLeaveHandler as EventListener);
+        el.removeEventListener('drop', this.elementDropHandler as EventListener);
       });
 
-      // Add new listeners
+      // Add new contextmenu & drag listeners
       rootEl.addEventListener('contextmenu', this.contextMenuHandler);
       elements.forEach(el => {
         const cid = el.getAttribute('c-id');
@@ -263,8 +289,21 @@ export default {
         ) {
           el.classList.add('empty-placeholder');
         }
+        
         el.addEventListener('contextmenu', this.contextMenuHandler as EventListener);
+        if (this.editMode) {
+          el.addEventListener('dragover', this.elementDragOverHandler as EventListener);
+          el.addEventListener('dragleave', this.elementDragLeaveHandler as EventListener);
+          el.addEventListener('drop', this.elementDropHandler as EventListener);
+        }
       });
+    },
+
+    onCanvasContextMenu(e: MouseEvent) {
+      if (!this.editMode) return;
+      e.preventDefault();
+      e.stopPropagation();
+      this.onContextMenu(e, this.rootId);
     },
 
     contextMenuHandler(e: MouseEvent) {
@@ -272,26 +311,241 @@ export default {
       e.preventDefault();
       e.stopPropagation();
 
-      const cid = (e.currentTarget as HTMLElement).getAttribute('c-id');
-      if (cid) {
-        this.onContextMenu(e, cid);
-      }
+      const targetEl = e.currentTarget as HTMLElement;
+      const cid = targetEl?.getAttribute('c-id') || this.rootId;
+      this.onContextMenu(e, cid, targetEl);
     },
 
-    onContextMenu(e: MouseEvent, cid: string) {
+    onContextMenu(e: MouseEvent, cid: string, targetEl?: HTMLElement | null) {
       e.preventDefault();
       this.contextMenuOption.x = e.clientX;
       this.contextMenuOption.y = e.clientY;
       this.ContextMenuVisible = true;
       this.selectedCid = cid;
-      this.highlightElement(e.currentTarget as HTMLElement);
+      if (cid !== this.rootId) {
+        const el = targetEl || (document.querySelector(`[c-id="${cid}"]`) as HTMLElement);
+        if (el) this.highlightElement(el);
+      } else {
+        this.unHighlightElement();
+      }
+    },
+
+    // --- Drag & Drop Handlers ---
+    elementDragOverHandler(e: DragEvent) {
+      if (!this.editMode) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      const targetEl = e.currentTarget as HTMLElement;
+      const cid = targetEl.getAttribute('c-id');
+      if (!cid) return;
+
+      const rect = targetEl.getBoundingClientRect();
+      const relY = (e.clientY - rect.top) / (rect.height || 1);
+
+      let position = 'inside';
+      if (cid !== this.rootId) {
+        if (relY < 0.25) position = 'before';
+        else if (relY > 0.75) position = 'after';
+      }
+
+      this.clearDropIndicators();
+      targetEl.classList.add(`drop-target-${position}`);
+      this.currentDropTarget = { cid, position };
+    },
+
+    elementDragLeaveHandler(e: DragEvent) {
+      const targetEl = e.currentTarget as HTMLElement;
+      targetEl.classList.remove('drop-target-before', 'drop-target-after', 'drop-target-inside');
+    },
+
+    elementDropHandler(e: DragEvent) {
+      if (!this.editMode) return;
+      e.preventDefault();
+      e.stopPropagation();
+      this.clearDropIndicators();
+
+      const rawTemplate = e.dataTransfer?.getData('text/plain');
+      if (!rawTemplate) return;
+
+      const targetCid = (e.currentTarget as HTMLElement).getAttribute('c-id') || this.currentDropTarget?.cid;
+      const position = this.currentDropTarget?.position || 'inside';
+
+      this.insertTemplateAt(rawTemplate, targetCid, position);
+    },
+
+    onCanvasDragOver(e: DragEvent) {
+      if (!this.editMode) return;
+      e.preventDefault();
+    },
+
+    onCanvasDragLeave(e: DragEvent) {
+      this.clearDropIndicators();
+    },
+
+    onCanvasDrop(e: DragEvent) {
+      if (!this.editMode) return;
+      e.preventDefault();
+      this.clearDropIndicators();
+      const rawTemplate = e.dataTransfer?.getData('text/plain');
+      if (rawTemplate) {
+        this.insertTemplateAt(rawTemplate, this.rootId, 'inside');
+      }
+    },
+
+    clearDropIndicators() {
+      document.querySelectorAll('.drop-target-before, .drop-target-after, .drop-target-inside').forEach((el) => {
+        el.classList.remove('drop-target-before', 'drop-target-after', 'drop-target-inside');
+      });
+    },
+
+    onPaletteDragEnd() {
+      this.isDraggingComponent = false;
+      this.clearDropIndicators();
+    },
+
+    onPaletteInsert(item: TemplateItem) {
+      if (this.selectedCid && this.selectedCid !== this.rootId) {
+        this.insertTemplateAt(item.template, this.selectedCid, 'after');
+      } else {
+        this.insertTemplateAt(item.template, this.rootId, 'inside');
+      }
+    },
+
+    // --- DOM Tree View Handlers ---
+    onTreeSelect(cid: string) {
+      if (!cid) return;
+      this.selectedCid = cid;
+      this.selectedNode = this.rootNode.querySelector(`[c-id=${cid}]`);
+      this.$nextTick(() => {
+        const el = document.querySelector(`[c-id="${cid}"]`) as HTMLElement;
+        if (el) {
+          this.highlightElement(el);
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    },
+
+    onTreeHoverEnter(cid: string) {
+      if (cid && cid !== this.selectedCid) {
+        const el = document.querySelector(`[c-id="${cid}"]`);
+        el?.classList.add('element-hover-preview');
+      }
+    },
+
+    onTreeHoverLeave() {
+      document.querySelectorAll('.element-hover-preview').forEach((el) => {
+        el.classList.remove('element-hover-preview');
+      });
+    },
+
+    onTreeMoveUp(cid: string) {
+      const node = this.rootNode.querySelector(`[c-id=${cid}]`);
+      if (!node || !node.parentNode) return;
+      const parent = node.parentNode;
+      const idx = parent.childNodes.indexOf(node);
+      if (idx > 0) {
+        parent.childNodes.splice(idx, 1);
+        parent.childNodes.splice(idx - 1, 0, node);
+        this.updateTemplate();
+      }
+    },
+
+    onTreeMoveDown(cid: string) {
+      const node = this.rootNode.querySelector(`[c-id=${cid}]`);
+      if (!node || !node.parentNode) return;
+      const parent = node.parentNode;
+      const idx = parent.childNodes.indexOf(node);
+      if (idx < parent.childNodes.length - 1) {
+        parent.childNodes.splice(idx, 1);
+        parent.childNodes.splice(idx + 1, 0, node);
+        this.updateTemplate();
+      }
+    },
+
+    onTreeDelete(cid: string) {
+      const node = this.rootNode.querySelector(`[c-id=${cid}]`);
+      if (node) {
+        node.remove();
+        if (this.selectedCid === cid) {
+          this.selectedCid = '';
+          this.selectedNode = null;
+          this.unHighlightElement();
+        }
+        this.updateTemplate();
+      }
+    },
+
+    onTreeAddChild(cid: string) {
+      this.selectedCid = cid;
+      this.openInsertMenu('inside');
+    },
+
+    onTreeDropReorder(payload: { targetCid?: string; targetParentCid?: string; rawData?: string }) {
+      if (!payload.rawData) return;
+      const raw = payload.rawData;
+
+      // Case 1: Dragging existing node within tree
+      if (raw.startsWith('tree-node:')) {
+        const srcCid = raw.slice(10);
+        if (srcCid === payload.targetCid || srcCid === payload.targetParentCid) return;
+        const srcNode = this.rootNode.querySelector(`[c-id=${srcCid}]`);
+        if (!srcNode) return;
+
+        if (payload.targetCid) {
+          const targetNode = this.rootNode.querySelector(`[c-id=${payload.targetCid}]`);
+          if (targetNode && targetNode.parentNode) {
+            srcNode.remove();
+            targetNode.parentNode.insertBefore(srcNode, targetNode);
+            this.updateTemplate();
+          }
+        } else if (payload.targetParentCid) {
+          const parentNode = this.rootNode.querySelector(`[c-id=${payload.targetParentCid}]`) || this.rootNode;
+          if (parentNode) {
+            srcNode.remove();
+            parentNode.appendChild(srcNode);
+            this.updateTemplate();
+          }
+        }
+      }
+      // Case 2: Dragging component template from palette
+      else {
+        this.insertTemplateAt(raw, payload.targetCid || payload.targetParentCid, payload.targetCid ? 'before' : 'inside');
+      }
+    },
+
+    insertTemplateAt(templateStr: string, targetCid?: string, position: string = 'inside') {
+      const newElement = VirtualHTMLParser.parseToElement(templateStr);
+      if (!targetCid || targetCid === this.rootId) {
+        this.rootNode.appendChild(newElement);
+      } else {
+        const target = this.rootNode.querySelector(`[c-id=${targetCid}]`);
+        if (!target) {
+          this.rootNode.appendChild(newElement);
+        } else if (position === 'before' && target.parentNode) {
+          target.parentNode.insertBefore(newElement, target);
+        } else if (position === 'after' && target.parentNode) {
+          target.parentNode.insertAfter(newElement, target);
+        } else {
+          target.appendChild(newElement);
+        }
+      }
+
+      this.updateTemplate();
+
+      const newCid = newElement.getAttribute('c-id');
+      if (newCid) {
+        this.selectedCid = newCid;
+        this.$nextTick(() => {
+          const el = document.querySelector(`[c-id="${newCid}"]`) as HTMLElement;
+          if (el) this.highlightElement(el);
+        });
+      }
     },
 
     openInsertMenu(position: string) {
       this.insertPosition = position;
       this.ContextMenuVisible = false;
-      
-      // Position the insert menu near the context menu
       this.insertMenuOption.x = this.contextMenuOption.x + 100;
       this.insertMenuOption.y = this.contextMenuOption.y;
       this.insertMenuVisible = true;
@@ -299,22 +553,8 @@ export default {
 
     insertElement(templateConfig: TemplateItem) {
       if (!this.selectedCid) return;
-
-      const selectedElement = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`);
-      if (!selectedElement) return;
-
-      const newElement = VirtualHTMLParser.parseToElement(templateConfig.template);
-
-      const parent = selectedElement.parentNode;
-      if (this.insertPosition === 'before' && parent) {
-        parent.insertBefore(newElement, selectedElement);
-      } else if (this.insertPosition === 'after' && parent) {
-        parent.insertAfter(newElement, selectedElement);
-      } else if (this.insertPosition === 'inside') {
-        selectedElement.appendChild(newElement);
-      }
+      this.insertTemplateAt(templateConfig.template, this.selectedCid, this.insertPosition || 'inside');
       this.insertMenuVisible = false;
-      this.updateTemplate();
     },
 
     openEditPanel(e: Event) {
@@ -325,25 +565,24 @@ export default {
 
     copyElement(e: Event) {
       if (!this.selectedCid) return;
-
       const selectedElement = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`) as VirtualNode;
       if (!selectedElement) return;
       this.elementCopied = selectedElement.cloneNode(true);
     },
 
     pasteElement(pastePosition: string) {
-      if (!this.selectedCid) return;
-
+      if (!this.selectedCid || !this.elementCopied) return;
       const selectedElement = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`);
       if (!selectedElement) return;
+      const clone = this.elementCopied.cloneNode(true);
+      clone.genComponentId(true);
       const parent = selectedElement.parentNode;
-      if (!this.elementCopied) return;
       if (pastePosition === 'before' && parent) {
-        parent.insertBefore(this.elementCopied, selectedElement);
+        parent.insertBefore(clone, selectedElement);
       } else if (pastePosition === 'after' && parent) {
-        parent.insertAfter(this.elementCopied, selectedElement);
+        parent.insertAfter(clone, selectedElement);
       } else if (pastePosition === 'inside') {
-        selectedElement.appendChild(this.elementCopied);
+        selectedElement.appendChild(clone);
       }
       this.updateTemplate();
     },
@@ -351,7 +590,7 @@ export default {
     removeElement(e: Event) {
       if (this.selectedCid) {
         const el = this.rootNode.querySelector(`[c-id=${this.selectedCid}]`) as VirtualNode;
-        el.remove();
+        el?.remove();
         this.updateTemplate();
       }
     },
@@ -377,7 +616,7 @@ export default {
     closeEditPanel() {
       this.selectedNode = null;
       this.updateTemplate();
-      this.unHighlightElement()
+      this.unHighlightElement();
     },
 
     isClosingTag(cid: string) {
@@ -385,26 +624,68 @@ export default {
     },
 
     printPreview() {
-      printElement('.content-root');
+      printElement('[c-id="123456"]');
     }
   }
 };
 </script>
 
 <style scoped>
-/* :deep([c-id="123456"]) {
+.preview-editor-layout {
   display: flex;
-  justify-content: center;
-} */
-.preview-container {
+  height: 100vh;
+  max-height: 100vh;
   width: 100%;
+  position: relative;
   overflow: hidden;
 }
 
-.preview-editor {
-  position: relative;
+.preview-editor-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  position: relative;
+  min-height: 0;
+}
+
+.preview-container {
+  flex: 1;
+  padding: 16px;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  background: #f1f5f9;
+}
+
+/* Drop targets visual feedback */
+:deep(.drop-target-inside) {
+  outline: 2px dashed #0288d1 !important;
+  outline-offset: 2px !important;
+  background-color: rgba(2, 136, 209, 0.08) !important;
+}
+
+:deep(.drop-target-before) {
+  position: relative;
+  box-shadow: 0 -4px 0 0 #0288d1 !important;
+}
+
+:deep(.drop-target-after) {
+  position: relative;
+  box-shadow: 0 4px 0 0 #0288d1 !important;
+}
+
+:deep(.element-highlight) {
+  outline: 2px solid #0288d1 !important;
+  outline-offset: 1px !important;
+  box-shadow: 0 0 0 4px rgba(2, 136, 209, 0.15) !important;
+}
+
+:deep(.element-hover-preview) {
+  outline: 1px dashed rgba(2, 136, 209, 0.7) !important;
+  outline-offset: 2px !important;
 }
 
 /* Overlay */
@@ -419,13 +700,20 @@ export default {
   animation: fadeIn 0.2s ease-in-out;
 }
 
-.content-root {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  min-height: 148mm;
+:deep([c-id="123456"]) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media print {
-  .content-root {
+  .preview-editor-layout {
+    display: block;
+  }
+  :deep([c-id="123456"]) {
+    box-shadow: none;
     padding: 0;
   }
 }

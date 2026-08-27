@@ -27,6 +27,8 @@
     "@angular/platform-browser": "^20.0.0",
     "@angular/router": "^20.0.0",
     "@softarc/native-federation-node": "^2.0.10",
+    "@vue/compiler-core": "^3.5.22",
+    "@vue/compiler-dom": "^3.5.22",
     "es-module-shims": "^1.5.12",
     "js-beautify": "^1.15.4",
     "rxjs": "~7.8.0",

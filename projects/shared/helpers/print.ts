@@ -101,9 +101,8 @@ export const handleBeforePrint = (selector: string) => {
 
 export const handlePrint = (e: KeyboardEvent) => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-    console.log('beforeprint');
     e.preventDefault();
-    handleBeforePrint('.content-root');
+    handleBeforePrint('[c-id="123456"], .content-root, Root, root');
     window.print();
   }
 };
