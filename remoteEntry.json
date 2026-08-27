@@ -3,7 +3,7 @@
   "shared": [
     {
       "packageName": "@angular/common",
-      "outFileName": "_angular_common.wZYFbddDU3.js",
+      "outFileName": "_angular_common.zZD0WJhHqF.js",
       "requiredVersion": "^20.0.0",
       "singleton": true,
       "strictVersion": true,
@@ -11,7 +11,7 @@
     },
     {
       "packageName": "@angular/common/http",
-      "outFileName": "_angular_common_http.QJoElU1LSI.js",
+      "outFileName": "_angular_common_http.6GO4sc0t5L.js",
       "requiredVersion": "^20.0.0",
       "singleton": true,
       "strictVersion": true,
@@ -19,7 +19,7 @@
     },
     {
       "packageName": "@angular/core",
-      "outFileName": "_angular_core.5feQLopsCE.js",
+      "outFileName": "_angular_core.iOuer1BKNi.js",
       "requiredVersion": "^20.0.0",
       "singleton": true,
       "strictVersion": true,
@@ -27,7 +27,7 @@
     },
     {
       "packageName": "@angular/core/primitives/di",
-      "outFileName": "_angular_core_primitives_di.pO8uAvNsXT.js",
+      "outFileName": "_angular_core_primitives_di.PdU5F73c7f.js",
       "requiredVersion": "^20.0.0",
       "singleton": true,
       "strictVersion": true,
@@ -35,7 +35,7 @@
     },
     {
       "packageName": "@angular/core/primitives/signals",
-      "outFileName": "_angular_core_primitives_signals.SbXJz8oU3E.js",
+      "outFileName": "_angular_core_primitives_signals.FLy39-VZFM.js",
       "requiredVersion": "^20.0.0",
       "singleton": true,
       "strictVersion": true,
@@ -43,7 +43,7 @@
     },
     {
       "packageName": "@angular/forms",
-      "outFileName": "_angular_forms.POV0TL2rTh.js",
+      "outFileName": "_angular_forms.ITP9NJvFtr.js",
       "requiredVersion": "^20.0.0",
       "singleton": true,
       "strictVersion": true,
@@ -51,7 +51,7 @@
     },
     {
       "packageName": "@angular/platform-browser",
-      "outFileName": "_angular_platform_browser.Mq2DRFbv_U.js",
+      "outFileName": "_angular_platform_browser.Bv51vswmfO.js",
       "requiredVersion": "^20.0.0",
       "singleton": true,
       "strictVersion": true,
@@ -59,7 +59,7 @@
     },
     {
       "packageName": "@angular/router",
-      "outFileName": "_angular_router.n2BW2uxYdp.js",
+      "outFileName": "_angular_router.Cp-Gps_Qgf.js",
       "requiredVersion": "^20.0.0",
       "singleton": true,
       "strictVersion": true,
@@ -67,7 +67,7 @@
     },
     {
       "packageName": "rxjs",
-      "outFileName": "rxjs.AwHuKUAkwy.js",
+      "outFileName": "rxjs.XJw93cA104.js",
       "requiredVersion": "~7.8.0",
       "singleton": true,
       "strictVersion": true,
@@ -75,7 +75,7 @@
     },
     {
       "packageName": "rxjs/operators",
-      "outFileName": "rxjs_operators._PPqsQk1HJ.js",
+      "outFileName": "rxjs_operators.qQpP6Fe55v.js",
       "requiredVersion": "~7.8.0",
       "singleton": true,
       "strictVersion": true,
@@ -83,7 +83,7 @@
     },
     {
       "packageName": "tslib",
-      "outFileName": "tslib.GZwBY1Ykpr.js",
+      "outFileName": "tslib.hQtZcmhzhK.js",
       "requiredVersion": "^2.3.0",
       "singleton": true,
       "strictVersion": true,
