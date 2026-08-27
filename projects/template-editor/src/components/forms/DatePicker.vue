@@ -164,17 +164,25 @@ export default {
   line-height: 1;
   bottom: calc(100% - 20px);
   left: 0;
+  font-family: 'Times New Roman', Times, serif;
 }
 .datepicker-input {
   width: 100%;
-  padding: 2px 4px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
   font-size: 12pt;
+  font-family: 'Times New Roman', Times, serif;
   color: #00a;
   line-height: 20px;
   border: none;
   border-radius: 0;
-  background: url(@/assets/img/icon/bg-line-textarea.png);
-  background-position-y: 1px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='20'%3E%3Crect x='0' y='15' width='1' height='1' fill='%23777777'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 4px 20px;
+  background-position: 0 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 .datepicker-input:focus {
   outline: none;

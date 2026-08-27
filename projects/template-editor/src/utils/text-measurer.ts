@@ -58,7 +58,7 @@ export function measureTextareaLayout(options: MeasureOptions): MeasureResult {
     };
   }
 
-  // Trường hợp có thụt đầu dòng (label chiếm 1 phần dòng đầu tiên):
+  // Trường hợp có thụt đầu dòng:
   // Dòng 1 dùng width: width - indentFirstLine
   // Dòng 2 trở đi dùng width: width
   const preparedWithSegs = prepareWithSegments(text, font, { whiteSpace: 'pre-wrap' });
@@ -74,18 +74,25 @@ export function measureTextareaLayout(options: MeasureOptions): MeasureResult {
     const lineRange = layoutNextLineRange(preparedWithSegs, cursor, currentMaxWidth);
     if (!lineRange) break;
 
+    // Ngăn chặn lặp vô hạn hoặc tạo dòng rỗng thừa ở cuối
+    if (
+      cursor.segmentIndex === lineRange.end.segmentIndex &&
+      cursor.graphemeIndex === lineRange.end.graphemeIndex
+    ) {
+      break;
+    }
+
     const line = materializeLineRange(preparedWithSegs, lineRange);
     lines.push(line.text);
 
-    // Cập nhật cursor cho dòng tiếp theo
     cursor = line.end;
     isFirstLine = false;
 
-    // Kiểm tra xem đã duyệt hết chưa
+    // Kiểm tra xem cursor đã đi đến cuối toàn bộ văn bản chưa
     if (
       cursor.segmentIndex >= preparedWithSegs.segments.length ||
       (cursor.segmentIndex === preparedWithSegs.segments.length - 1 &&
-        cursor.graphemeIndex >= preparedWithSegs.segments[cursor.segmentIndex].length)
+        cursor.graphemeIndex >= (preparedWithSegs.segments[cursor.segmentIndex]?.length ?? 0))
     ) {
       break;
     }

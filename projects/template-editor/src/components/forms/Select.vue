@@ -413,34 +413,43 @@ export default {
 .select-wrapper {
   position: relative;
   font-size: 12pt;
+  line-height: 20px;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .input-container {
-  border-radius: 4px;
-  padding: 4px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   cursor: text;
   position: relative;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='20'%3E%3Crect x='0' y='15' width='1' height='1' fill='%23777777'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 4px 20px;
+  background-position: 0 0;
+  border: none;
+  line-height: 20px;
+  font-size: 12pt;
+  font-family: 'Times New Roman', Times, serif;
+  color: #00a;
+  min-height: 20px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 .hs-label-span {
   z-index: 1;
   position: absolute;
   background: white;
-  line-height: 1;
+  line-height: 20px;
+  height: 20px;
   bottom: calc(100% - 20px);
-}
-
-.input-container {
-  background: url(@/assets/img/icon/bg-line-textarea.png);
-  background-position-y: 1px;
-  border: none;
-  line-height: 18px;
-  font-size: 12pt;
-  color: #00a;
-  min-height: 24.4px;
+  left: 0;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .input-container:focus-within {
@@ -449,15 +458,19 @@ export default {
 }
 
 .tag {
+  display: inline-flex;
   align-items: center;
-  padding: 1px;
+  line-height: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
   border-radius: 2px;
-  transform: translateY(-2px);
+  box-sizing: border-box;
 }
 
 .label-spacer {
   display: inline-block;
-  height: 1px;
+  height: 20px;
 }
 
 .remove {
@@ -479,10 +492,14 @@ export default {
   outline: none;
   flex: 1;
   background-color: transparent;
-  transform: translateY(-3px);
-  line-height: 19px;
+  line-height: 20px;
+  height: 20px;
   color: inherit;
-  font-size: inherit;
+  font-size: 12pt;
+  font-family: 'Times New Roman', Times, serif;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .dropdown {
@@ -498,7 +515,7 @@ export default {
 }
 
 .option {
-  padding: 6px 10px;
+  padding: 0px 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -513,7 +530,6 @@ export default {
 }
 
 .empty {
-  padding: 10px;
   color: #999;
   text-align: center;
 }

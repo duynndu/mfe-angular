@@ -34,7 +34,8 @@
 
 <script lang="ts">
 import { ref, computed, watch, nextTick, onMounted, onUnmounted, PropType, inject } from 'vue'
-import { measureTextareaLayout } from '@/utils/text-measurer'
+// @ts-ignore
+import autosize from 'autosize'
 
 export default {
   name: 'HsTextarea',
@@ -71,7 +72,6 @@ export default {
     const labelSpan = ref<HTMLElement>()
     const padEnd = ref('')
     const textareaHeight = ref(20)
-    let resizeObserver: ResizeObserver | null = null
 
     const labelSpanWidth = computed(() => labelSpan.value?.offsetWidth ?? 0)
     const textareaStyleNormalized = computed(() => props.textareaStyle)
@@ -94,22 +94,14 @@ export default {
       return val.endsWith(pad) ? val.slice(0, -pad.length) : val
     }
 
-    // --- Pretext Measurement
-    const updateDimensions = () => {
-      if (!textarea.value) return
-      const width = textarea.value.clientWidth
-      if (!width) return
-
-      const result = measureTextareaLayout({
-        text: input.value || '',
-        font: "16px 'Times New Roman', Times, serif",
-        width,
-        lineHeight: 20,
-        indentFirstLine: labelSpanWidth.value,
-        minRows: props.rows || 1,
-      })
-
-      textareaHeight.value = result.height
+    const getSingleLineHeight = (el: HTMLTextAreaElement) => {
+      const style = window.getComputedStyle(el)
+      const lineHeight = parseFloat(style.lineHeight) || 20
+      const paddingTop = parseFloat(style.paddingTop) || 0
+      const paddingBottom = parseFloat(style.paddingBottom) || 0
+      const borderTop = parseFloat(style.borderTopWidth) || 0
+      const borderBottom = parseFloat(style.borderBottomWidth) || 0
+      return Math.max(0, Math.ceil(lineHeight + paddingTop + paddingBottom + borderTop + borderBottom - 4))
     }
 
     // --- Init
@@ -117,21 +109,12 @@ export default {
       padEnd.value = computePad()
       input.value = ensurePad(normalizeValue(props.modelValue ?? ''))
       nextTick(() => {
-        updateDimensions()
-        if (textarea.value && typeof ResizeObserver !== 'undefined') {
-          resizeObserver = new ResizeObserver(() => {
-            updateDimensions()
-          })
-          resizeObserver.observe(textarea.value)
+        if (textarea.value) {
+          textareaHeight.value = getSingleLineHeight(textarea.value)
+          autosize(textarea.value)
+          autosize.update(textarea.value)
         }
       })
-    })
-
-    onUnmounted(() => {
-      if (resizeObserver) {
-        resizeObserver.disconnect()
-        resizeObserver = null
-      }
     })
 
     watch(
@@ -139,10 +122,7 @@ export default {
       () => {
         padEnd.value = computePad()
         input.value = ensurePad(normalizeValue(stripPad(input.value)))
-        nextTick(() => {
-          setCaretPosition()
-          updateDimensions()
-        })
+        nextTick(() => setCaretPosition())
       },
       { deep: true }
     )
@@ -154,7 +134,6 @@ export default {
         const padded = ensurePad(normalizeValue(newVal ?? ''))
         if (padded !== input.value) {
           input.value = padded
-          nextTick(() => updateDimensions())
         }
       }
     )
@@ -164,15 +143,18 @@ export default {
       const padded = ensurePad(normalizeValue(stripPad(newVal ?? '')))
       if (padded !== newVal) {
         input.value = padded
-        nextTick(() => {
-          setCaretPosition()
-          updateDimensions()
-        })
+        nextTick(() => setCaretPosition())
         return
       }
       emit('update:modelValue', stripPad(padded))
       emitFieldChange(stripPad(padded))
-      updateDimensions()
+      nextTick(() => {
+        if (textarea.value) autosize.update(textarea.value)
+      })
+    })
+
+    onUnmounted(() => {
+      if (textarea.value) autosize.destroy(textarea.value)
     })
 
     // --- Caret control
@@ -228,18 +210,27 @@ export default {
   line-height: 1;
   bottom: calc(100% - 20px);
   left: 0;
+  font-family: 'Times New Roman', Times, serif;
 }
 .textarea-line {
   outline: none;
-  background: url(@/assets/img/icon/bg-line-textarea.png);
-  background-position-y: 1px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='20'%3E%3Crect x='0' y='15' width='1' height='1' fill='%23777777'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 4px 20px;
+  background-position: 0 0;
   border: none;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
   line-height: 20px;
   font-size: 12pt;
+  font-family: 'Times New Roman', Times, serif;
   width: 100%;
   color: #00a;
   resize: none;
   display: block;
   overflow: hidden;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 </style>
