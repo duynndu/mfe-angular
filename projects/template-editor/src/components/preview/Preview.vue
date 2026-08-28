@@ -1,4 +1,5 @@
 <template>
+  <DatePickerPortal />
   <div class="preview-editor-layout">
     <!-- DOM Tree Sidebar -->
     <ComponentPalette
@@ -172,6 +173,7 @@ import InputOTP from '../forms/InputOTP.vue';
 import Select from '../forms/Select.vue';
 import Checkbox from '../forms/Checkbox.vue';
 import DatePicker from '../forms/DatePicker.vue';
+import DatePickerPortal from '../forms/DatePickerPortal.vue';
 import Paint from '../forms/Paint.vue';
 import SimpleContextMenu from '../ContextMenu.vue';
 import ComponentPalette from './ComponentPalette.vue';
@@ -191,7 +193,8 @@ export default {
     EditElementPanel,
     ComponentPalette,
     ImContextMenu,
-    ImContextMenuItem
+    ImContextMenuItem,
+    DatePickerPortal
   },
   props: {
     template: {

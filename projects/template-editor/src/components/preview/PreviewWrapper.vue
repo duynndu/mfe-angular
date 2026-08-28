@@ -1,31 +1,22 @@
 <template>
-  <DatePickerPortal />
   <Preview
     v-model:template="template"
     v-model:script="script"
     :data="data"
     v-model:editMode="editMode"
   />
-  <div style="margin: 15px; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #f8fafc;">
-    <b style="color: #38bdf8;">📦 Dữ liệu gốc ở Parent (Đồng bộ 2 chiều qua :data="data"):</b>
-    <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
-      <span style="font-size: 13px; color: #94a3b8;">data.name:</span>
-      <input v-model="data.name" style="flex: 1; padding: 6px 10px; background: #1e293b; border: 1px solid #475569; color: #fff; border-radius: 4px;" />
-    </div>
-  </div>
 </template>
 
 <script lang="ts">
 import Preview from './Preview.vue';
 import "codemirror/mode/htmlmixed/htmlmixed.js"
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
-import DatePickerPortal from '../forms/DatePickerPortal.vue';
 // @ts-ignore - import raw HTML template
 import defaultTemplate from './default-template.html?raw';
 
 export default {
   name: 'PreviewWrapper',
-  components: { Preview, DatePickerPortal },
+  components: { Preview },
   data() {
     return {
       editMode: true,

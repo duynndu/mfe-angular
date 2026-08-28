@@ -93,9 +93,9 @@ export default {
     const syncFromState = () => {
       const val = state.value;
       const parsed = val
-        ? moment(val, state.format, true).isValid()
-          ? moment(val, state.format, true)
-          : moment(val)
+        ? (moment(val, state.format, true).isValid()
+            ? moment(val, state.format, true)
+            : moment(val, [state.format, moment.ISO_8601, 'YYYY-MM-DD', 'DD/MM/YYYY']))
         : null;
       if (parsed && parsed.isValid()) {
         selectedMoment.value = parsed;

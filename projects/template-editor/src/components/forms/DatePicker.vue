@@ -93,9 +93,9 @@ export default {
       () => props.modelValue,
       (val) => {
         const parsed = val
-          ? moment(val).isValid()
-            ? moment(val)
-            : moment(val, props.format, true)
+          ? (moment(val, props.format, true).isValid()
+              ? moment(val, props.format, true)
+              : moment(val, [props.format, moment.ISO_8601, 'YYYY-MM-DD', 'DD/MM/YYYY']))
           : null;
         if (parsed && parsed.isValid()) {
           displayValue.value = parsed.format(props.format);
@@ -117,7 +117,7 @@ export default {
         onSelect: (val: string) => {
           const parsed = moment(val, props.format, true).isValid()
             ? moment(val, props.format, true)
-            : moment(val);
+            : moment(val, [props.format, moment.ISO_8601, 'YYYY-MM-DD', 'DD/MM/YYYY']);
           if (parsed.isValid()) {
             const display = parsed.format(props.format);
             displayValue.value = display;
