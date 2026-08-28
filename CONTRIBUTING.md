@@ -1,22 +1,23 @@
-# 🛠️ Hướng dẫn Đóng góp Component
+# 🛠️ Component Contribution & Development Guide
 
-Quy trình chuẩn để tạo và đăng ký Vue Component mới vào hệ thống **Template Editor**.
-
----
-
-## 1. Cấu trúc Thư mục
-
-Tất cả component dùng trong template nằm tại `projects/template-editor/src/components/`:
-- `forms/`: Component nhập liệu (`Textarea.vue`, `Checkbox.vue`, `DatePicker.vue`, `Select.vue`, `InputOTP.vue`, `Paint.vue`).
-- `layouts/`: Component bố cục trang (`PageA4.vue`, `PageA5.vue`).
-- `preview/`: Engine lõi (`Preview.vue`, `PreviewWrapper.vue` - *không chứa component template tại đây*).
+Standard workflow for creating, registering, and maintaining Vue 3 template components in the **Template Editor Micro-Frontend** system.
 
 ---
 
-## 2. Quy trình Thực hiện (5 bước)
+## 1. Directory Structure & Conventions
 
-### Bước 1: Tạo Component (`src/components/forms/MyComponent.vue`)
-Khai báo prop `path` và inject `onFieldChange` để đồng bộ dữ liệu với Angular Shell:
+All components usable within templates must reside under `projects/template-editor/src/components/`:
+
+- **`forms/`**: Form inputs and interactive components (`Textarea.vue`, `Checkbox.vue`, `DatePicker.vue`, `Select.vue`, `InputOTP.vue`, `Paint.vue`).
+- **`layouts/`**: Page containers and layout templates (`PageA4.vue`, `PageA5.vue`).
+- **`preview/`**: Editor core engine, DOM Tree view, and preview wrapper (`Preview.vue`, `PreviewWrapper.vue`, `DomTreeView.vue` — *do NOT place template-usable components here*).
+
+---
+
+## 2. Component Creation Workflow (5 Steps)
+
+### Step 1: Create Component (`src/components/forms/MyComponent.vue`)
+Support `v-model` (`modelValue`), `path` prop, and inject `onFieldChange` to maintain full synchronization with the host shell:
 
 ```vue
 <template>
@@ -28,55 +29,76 @@ Khai báo prop `path` và inject `onFieldChange` để đồng bộ dữ liệu 
 <script setup lang="ts">
 import { inject } from 'vue';
 
-const props = defineProps<{ modelValue?: any; path?: string }>();
+const props = defineProps<{
+  modelValue?: any;
+  path?: string;
+}>();
+
 const emit = defineEmits(['update:modelValue']);
 const onFieldChange = inject<((path: string, val: any) => void) | null>('onFieldChange', null);
 
 function onInput(e: Event) {
   const val = (e.target as HTMLInputElement).value;
   emit('update:modelValue', val);
-  if (props.path) onFieldChange?.(props.path, val);
+  if (props.path) {
+    onFieldChange?.(props.path, val);
+  }
 }
 </script>
 
 <style scoped>
-.my-component { display: inline-block; }
+.my-component {
+  display: inline-block;
+}
 </style>
 ```
 
-### Bước 2: Đăng ký trong `Preview.vue`
-Mở `src/components/preview/Preview.vue`, import và đăng ký vào `renderPreview()`:
+### Step 2: Register Component in `Preview.vue`
+Open `projects/template-editor/src/components/preview/Preview.vue`, import your component, and register it inside `renderPreview()`:
+
 ```typescript
 import MyComponent from '../forms/MyComponent.vue';
 
-// Trong phương thức renderPreview():
+// Inside renderPreview() method:
 this.app.component('MyComponent', MyComponent);
 ```
 
-### Bước 3: Thêm vào Context Menu Insert
-Thêm mẫu preset vào `projects/shared/constants/template-categories.ts`:
+### Step 3: Add Component Preset to Insert Context Menu
+Add the component preset in `projects/shared/constants/template-categories.ts`:
+
 ```typescript
 {
-  label: 'Form',
+  label: 'Form Components',
   templates: [
-    { label: 'My Component', icon: 'fa fa-cube', template: '<MyComponent v-model="data.myField" />' }
+    {
+      label: 'My Component',
+      icon: 'fa fa-cube',
+      template: '<MyComponent v-model="data.myField" />'
+    }
   ]
 }
 ```
 
-### Bước 4 (Tùy chọn): Khai báo thẻ tự đóng
-Nếu component là thẻ self-closing (`<MyComponent />`), thêm tên tag vào `VirtualHTMLParser.closingTags` tại `projects/shared/utils/virtual-html-parser.ts`.
+### Step 4 (Optional): Declare Self-Closing Tag
+If your component is a self-closing tag (e.g. `<MyComponent />`), add its tag name into `VirtualHTMLParser.closingTags` in `projects/shared/utils/virtual-html-parser.ts`.
 
-### Bước 5: Kiểm tra Biên dịch
+### Step 5: Verify Build & Type Safety
 ```bash
-npm run build:template-editor
+# Build Vue Micro-Frontend integration bundle
+npm run build:template-editor:shell
+
+# Or build entire workspace
+npm run build:all
 ```
 
 ---
 
-## 3. Checklist Kiểm thử (PR Checklist)
+## 3. Pull Request & Quality Checklist
 
-- [ ] Luôn dùng Scoped CSS (`<style scoped>`) để tránh ghi đè trang in A4/A5.
-- [ ] Hỗ trợ prop `path` và gọi `onFieldChange` khi dữ liệu thay đổi.
-- [ ] Chạy `npm run build:template-editor` thành công không có lỗi TypeScript.
-- [ ] Kiểm tra chèn component từ Menu chuột phải & sửa thuộc tính qua Edit Panel.
+Before submitting a PR, ensure all following items pass:
+
+- [ ] **Scoped CSS**: Always use `<style scoped>` to avoid style leakage across print pages (A4 / A5).
+- [ ] **Data Sync**: Support `v-model` and call `onFieldChange` when values change.
+- [ ] **Type Safety**: Maintain clean TypeScript types without any compile warnings or errors.
+- [ ] **Context Menu & Palette**: Verify the component can be inserted via Right-Click Context Menu and inspected via the DOM Tree Sidebar.
+- [ ] **Build Validation**: `npm run build:template-editor:shell` and `npm run build:shell` succeed with **0 errors**.
