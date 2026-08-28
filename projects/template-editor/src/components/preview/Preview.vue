@@ -267,9 +267,10 @@ export default {
       }
     },
     context: {
-      deep: true,
-      async handler() {
-        await this.evalScript();
+      async handler(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          await this.evalScript();
+        }
       }
     }
   },

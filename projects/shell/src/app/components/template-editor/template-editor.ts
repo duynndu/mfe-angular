@@ -35,10 +35,7 @@ export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
     if (vmData) {
       if (this.template) vmData.template = this.template;
       if (this.script) vmData.script = this.script;
-      if (this.context && Object.keys(this.context).length > 0) {
-        if (!vmData.context) vmData.context = {};
-        Object.assign(vmData.context, this.context);
-      }
+      vmData.context = this.context;
       vmData.editMode = this.editMode;
     }
     this.contextChange.emit(vmData?.context ?? this.context);
@@ -67,8 +64,7 @@ export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
     if (!vmData) return;
 
     if (changes['context'] && this.context) {
-      if (!vmData.context) vmData.context = {};
-      Object.assign(vmData.context, this.context);
+      vmData.context = this.context;
     }
     if (changes['script']) {
       vmData.script = this.script;

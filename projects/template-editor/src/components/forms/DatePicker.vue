@@ -162,7 +162,7 @@ export default {
   position: absolute;
   background: white;
   line-height: 1;
-  bottom: calc(100% - 20px);
+  bottom: calc(100% - 18px);
   left: 0;
   font-family: 'Times New Roman', Times, serif;
 }

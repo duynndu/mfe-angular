@@ -5,41 +5,72 @@
       class="mode-toggle-btn" 
       [class.active]="editMode" 
       (click)="editMode = !editMode"
-      [title]="editMode ? 'Nhấn để chuyển sang chế độ Chỉ xem' : 'Nhấn để chuyển sang chế độ Chỉnh sửa'"
+      [title]="editMode ? 'Nhấn để chuyển sang chế độ Chỉ xem & Điền form' : 'Nhấn để chuyển sang chế độ Thiết kế mẫu biểu'"
     >
       <span class="btn-icon">{{ editMode ? '🔒' : '✏️' }}</span>
-      <span class="btn-text">{{ editMode ? 'Khóa thiết kế' : 'Bật thiết kế' }}</span>
+      <span class="btn-text">{{ editMode ? 'Khóa' : 'Thiết kế' }}</span>
     </button>
 
     <div class="status-badge" [class.editing]="editMode">
       <span class="status-dot"></span>
-      <span class="status-label">{{ editMode ? 'Thiết kế mẫu biểu (Edit)' : 'Xem trước & Điền dữ liệu' }}</span>
+      <span class="status-label">{{ editMode ? 'Edit' : 'Preview' }}</span>
     </div>
   </div>
 
-    <!-- Right section: Live 2-way Angular input & IP status -->
-  <div class="panel-right">
-    <div class="angular-input-group">
-      <span class="input-tag">🅰️ Angular Cha</span>
-      <div class="input-wrapper">
-        <label for="angular-name-input">Họ & Tên:</label>
-        <input 
-          id="angular-name-input"
-          [(ngModel)]="context.data.name" 
-          placeholder="Nhập họ tên tại Angular..." 
-          class="form-control-shell"
-        />
-      </div>
+  <!-- Center section: Compact Template Switcher Tabs -->
+  <div class="panel-center">
+    <div class="template-tabs">
+      @for (tpl of templates; track tpl.id; let i = $index) {
+        <button 
+          type="button"
+          class="template-tab-btn" 
+          [class.active]="selectedTemplateIndex === i"
+          (click)="selectTemplate(i)"
+          [title]="tpl.name + ' (' + tpl.badge + '): ' + tpl.description"
+        >
+          <span class="tpl-icon">{{ tpl.icon }}</span>
+          <span class="tpl-name">{{ tpl.name }}</span>
+          <span class="tpl-badge" [class.badge-a5]="tpl.badge === 'A5'">{{ tpl.badge }}</span>
+        </button>
+      }
     </div>
+  </div>
 
-    <div class="ip-info-pill" [class.loaded]="context.data.ip">
-      <span class="ip-dot"></span>
-      <span class="ip-label">Client IP:</span>
-      <span class="ip-value">{{ context.data.ip || 'Đang tải IP...' }}</span>
-    </div>
+  <!-- Right section: Live 2-way Angular input & IP status -->
+  <div class="panel-right">
+    @if (context?.data?.name !== undefined) {
+      <div class="angular-input-group">
+        <span class="input-tag">🅰️ Cha</span>
+        <div class="input-wrapper">
+          <label for="angular-name-input">Tên:</label>
+          <input 
+            id="angular-name-input"
+            [(ngModel)]="context.data.name" 
+            placeholder="Nhập họ tên..." 
+            class="form-control-shell"
+          />
+        </div>
+      </div>
+    }
+
+    @if (context?.data?.ip) {
+      <div class="ip-info-pill loaded">
+        <span class="ip-dot"></span>
+        <span class="ip-label">IP:</span>
+        <span class="ip-value">{{ context.data.ip }}</span>
+      </div>
+    }
   </div>
 </div>
 
 <div class="editor-wrapper">
-  <template-editor [(template)]="template" [(script)]="script" [(context)]="context" [(editMode)]="editMode"></template-editor>
+  <template-editor 
+    [(template)]="template" 
+    [(script)]="script" 
+    [(context)]="context" 
+    [(editMode)]="editMode"
+    (templateChange)="onTemplateChange($event)"
+    (scriptChange)="onScriptChange($event)"
+    (contextChange)="onContextChange($event)"
+  ></template-editor>
 </div>
