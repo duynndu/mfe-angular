@@ -275,8 +275,8 @@ export default {
   },
   async mounted() {
     document.addEventListener('keydown', handlePrint);
-    this.processTemplate();
     await this.evalScript();
+    this.processTemplate();
   },
   beforeUnmount() {
     document.removeEventListener('keydown', handlePrint);
@@ -346,9 +346,10 @@ export default {
           template: this.processedTemplate,
           setup() {
             const scriptScope = hasCustomScript ? self.evaluatedScope : {};
-            console.log('scriptScope', scriptScope);
+
             return {
               $context: self.context,
+              data: self.context?.data || {},
               ...scriptScope
             };
           }
