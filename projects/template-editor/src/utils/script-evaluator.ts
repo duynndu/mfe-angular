@@ -13,10 +13,12 @@ const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
  * Hỗ trợ TOP-LEVEL AWAIT trực tiếp trong Script!
  * @param scriptStr Chuỗi mã JavaScript người dùng nhập
  * @param dataObj Đối tượng data reactive từ Angular/Vue truyền vào
+ * @param contextObj Đối tượng context bổ sung truyền vào
  */
 export async function evalScriptScope(
   scriptStr: string,
-  dataObj?: Record<string, any>
+  dataObj?: Record<string, any>,
+  contextObj?: Record<string, any>
 ): Promise<EvalScriptResult> {
   if (!scriptStr || !scriptStr.trim()) {
     return { scope: {}, error: null };
@@ -45,8 +47,11 @@ export async function evalScriptScope(
       isReactive
     } = Vue;
 
-    const data = dataObj || {};
+    const $data = dataObj || {};
+    const $context = contextObj || {};
+    const $props = { data: $data, context: $context };
 
+    // Sử dụng AsyncFunction để hỗ trợ Top-Level Await trực tiếp trong script
     const fn = new AsyncFunction(
       'Vue',
       'reactive',
@@ -63,7 +68,9 @@ export async function evalScriptScope(
       'unref',
       'isRef',
       'isReactive',
-      'data',
+      '$data',
+      '$context',
+      '$props',
       body
     );
 
@@ -83,10 +90,12 @@ export async function evalScriptScope(
       unref,
       isRef,
       isReactive,
-      data
+      $data,
+      $context,
+      $props
     );
 
-    const evaluatedScope = typeof result === 'object' && result !== null ? result : {};
+    const evaluatedScope = typeof result === 'object' && result !== null ? result : { data: result };
     return { scope: evaluatedScope, error: null };
   } catch (err: any) {
     return {

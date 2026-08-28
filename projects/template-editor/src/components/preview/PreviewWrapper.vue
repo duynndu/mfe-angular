@@ -6,6 +6,13 @@
     :data="data"
     v-model:editMode="editMode"
   />
+  <div style="margin: 15px; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #f8fafc;">
+    <b style="color: #38bdf8;">📦 Dữ liệu gốc ở Parent (Đồng bộ 2 chiều qua :data="data"):</b>
+    <div style="display: flex; gap: 12px; margin-top: 8px; align-items: center;">
+      <span style="font-size: 13px; color: #94a3b8;">data.name:</span>
+      <input v-model="data.name" style="flex: 1; padding: 6px 10px; background: #1e293b; border: 1px solid #475569; color: #fff; border-radius: 4px;" />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -23,7 +30,49 @@ export default {
     return {
       editMode: true,
       template: defaultTemplate,
-      script: '',
+      script: `// 📜 Khởi tạo state và logic tính toán truyền từ Angular
+const data = reactive($data || {});
+
+// 🌐 Top-Level Await: Lấy địa chỉ IP trực tiếp trong Script!
+try {
+  const res = await fetch('https://api.ipify.org');
+  data.ip = await res.text();
+} catch (e) {
+  data.ip = 'Lỗi tải IP: ' + e.message;
+}
+
+// Computed: Tự động chuyển đổi họ tên sang chữ in hoa
+const uppername = computed(() => {
+  return (data.name || '').toUpperCase();
+});
+
+// Danh mục và Tags
+const categoryList = [
+  { id: 'tech', name: 'Công Nghệ (Tech)' },
+  { id: 'business', name: 'Kinh Doanh (Business)' },
+  { id: 'other', name: 'Khác (Other)' }
+];
+
+const tagList = [
+  { value: 'vue', label: 'Vue 3' },
+  { value: 'typescript', label: 'TypeScript' },
+  { value: 'tailwind', label: 'Tailwind CSS' },
+  { value: 'react', label: 'React' }
+];
+
+const contextItems = [
+  { id: 1, label: 'Bệnh án Ngoại trú #1' },
+  { id: 2, label: 'Bệnh án Nội trú #2' },
+  { id: 3, label: 'Giấy ra viện #3' }
+];
+
+return {
+  data,
+  categoryList,
+  tagList,
+  contextItems,
+  uppername
+};`,
       data: {
         name: "Nguyễn Văn An",
         age: "35",

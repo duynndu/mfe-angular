@@ -19,6 +19,9 @@ export class Home {
   </div>
   <Textarea v-model="data.name" label="Họ và tên:" line :suffix="{ length:1, char:'❤️' }" c-name="Textarea"
     c-id="oqtwc4d" path="data.name" path-suffix="{ length:1, char:'❤️' }" />
+  <div style="color: #0284c7; font-size: 13px; margin-top: 2px;" c-name="div" c-id="un_disp">
+    Tên in hoa (Computed từ Script): <b c-name="b" c-id="un_val">{{ uppername }}</b>
+  </div>
   <div c-name="div" c-id="gszdea8">
     <b c-name="b" c-id="yukgkqs">InputOTP</b>
   </div>
@@ -108,11 +111,11 @@ export class Home {
 </PageA4>`;
 
   script = `// 📜 Khởi tạo state và logic tính toán truyền từ Angular
-try {
-  data.ip = await (await fetch('https://api.ipify.org')).text();
-} catch (e) {
-  data.ip = 'Lỗi tải IP: ' + e.message;
-}
+const data = reactive($data || {});
+// Computed: Tự động chuyển đổi họ tên sang chữ in hoa
+const uppername = computed(() => {
+  return (data.name || '').toUpperCase();
+});
 
 // Danh mục và Tags
 const categoryList = [
@@ -134,10 +137,19 @@ const contextItems = [
   { id: 3, label: 'Giấy ra viện #3' }
 ];
 
+try {
+  const res = await fetch('https://api.ipify.org');
+  data.ip = await res.text();
+} catch (e) {
+  data.ip = 'Lỗi tải IP: ' + e.message;
+}
+
 return {
+  data,
   categoryList,
   tagList,
-  contextItems
+  contextItems,
+  uppername
 };`;
 
   data: any = { name: 'duynnz1', ip: '' };

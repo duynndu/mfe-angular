@@ -164,7 +164,7 @@
 </template>
 
 <script lang="ts">
-import { createApp, type App, type ComponentPublicInstance, effectScope, type EffectScope } from 'vue';
+import { createApp, type App, type ComponentPublicInstance, effectScope, type EffectScope, markRaw } from 'vue';
 import PageA4 from '../layouts/PageA4.vue';
 import PageA5 from '../layouts/PageA5.vue';
 import Textarea from '../forms/Textarea.vue';
@@ -250,6 +250,7 @@ export default {
       scriptError: null as string | null,
       evaluatedScope: {} as Record<string, any>,
       activeScriptScope: null as EffectScope | null,
+      evalScriptId: 0,
     };
   },
   watch: {
@@ -263,7 +264,6 @@ export default {
         if (newVal !== this.localScript) {
           this.localScript = newVal || '';
           await this.evalScript();
-          this.renderPreview();
         }
       }
     },
@@ -275,8 +275,8 @@ export default {
   },
   async mounted() {
     document.addEventListener('keydown', handlePrint);
-    await this.evalScript();
     this.processTemplate();
+    await this.evalScript();
   },
   beforeUnmount() {
     document.removeEventListener('keydown', handlePrint);
@@ -290,6 +290,7 @@ export default {
       if (!this.localScript || !this.localScript.trim()) {
         this.evaluatedScope = {};
         this.scriptError = null;
+        this.renderPreview();
         return;
       }
 
@@ -298,16 +299,22 @@ export default {
         this.activeScriptScope = null;
       }
 
+      this.evalScriptId = (this.evalScriptId || 0) + 1;
+      const currentId = this.evalScriptId;
+
       this.activeScriptScope = effectScope();
-      await this.activeScriptScope.run(async () => {
-        const { scope, error } = await evalScriptScope(this.localScript, this.data);
-        this.scriptError = error;
-        if (error) {
-          this.$emit('script-error', error);
-        } else {
-          this.evaluatedScope = scope;
-        }
-      });
+      const { scope, error } = await evalScriptScope(this.localScript, this.data, this.context);
+
+      // Nếu đã có lần chạy mới hơn trong lúc đang await, bỏ qua kết quả cũ này
+      if (this.evalScriptId !== currentId) return;
+
+      this.scriptError = error;
+      if (error) {
+        this.$emit('script-error', error);
+      } else {
+        this.evaluatedScope = markRaw(scope);
+        this.renderPreview();
+      }
     },
 
     async onScriptInput(e: Event) {
@@ -315,7 +322,6 @@ export default {
       this.localScript = val;
       this.$emit('update:script', val);
       await this.evalScript();
-      this.renderPreview();
     },
 
     processTemplate() {
@@ -336,46 +342,17 @@ export default {
         const self = this;
         const hasCustomScript = self.localScript && self.localScript.trim() && Object.keys(self.evaluatedScope).length > 0;
 
-        const defaultLists = {
-          categoryList: [
-            { id: 'tech', name: 'Công Nghệ' },
-            { id: 'business', name: 'Kinh Doanh' },
-            { id: 'other', name: 'Khác' }
-          ],
-          tagList: [
-            { value: 'vue', label: 'Vue' },
-            { value: 'typescript', label: 'TypeScript' },
-            { value: 'tailwind', label: 'Tailwind' },
-            { value: 'react', label: 'React' }
-          ],
-          contextItems: [
-            { id: 1, label: 'Hàng số 1' },
-            { id: 2, label: 'Hàng số 2' },
-            { id: 3, label: 'Hàng số 3' }
-          ]
-        };
-
         const DynamicComponent = {
           template: this.processedTemplate,
-          computed: {
-            upperName() {
-              return (self.data?.name || '').toUpperCase();
-            },
-            birthYear() {
-              const bday = self.data?.birthday;
-              if (!bday) return '';
-              const parts = bday.split('/');
-              return parts.length === 3 ? parts[2] : '';
-            }
-          },
-          data: () => {
+          setup() {
             const scriptScope = hasCustomScript ? self.evaluatedScope : {};
 
             return {
-              ...defaultLists,
-              ...scriptScope,
-              data: self.data, // 👉 Luôn đảm bảo data là instance reactive duy nhất từ Angular
-              ...self.context
+              ...self.context,
+              data: self.data,
+              $data: self.data,
+              $context: self.context,
+              ...scriptScope
             };
           }
         };
@@ -383,6 +360,7 @@ export default {
         containerEl.innerHTML = '';
         this.app = createApp(DynamicComponent);
         this.app.config.compilerOptions.isCustomElement = (tag) => tag === 'Root' || tag === 'root';
+        
         const logFn = (key: string) => (...args: any[]) => console.warn(`[Preview] context.${key} chưa được cung cấp`, ...args);
         this.app.provide('onFieldChange', this.context?.['onFieldChange'] ?? logFn('onFieldChange'));
 
