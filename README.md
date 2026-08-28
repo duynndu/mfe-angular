@@ -158,7 +158,7 @@ To add a new component usable within templates:
 ---
 
 ## 🎯 Live Demo
-- GitHub Repository: [https://github.com/duynndu/mfe-angular](https://github.com/duynndu/mfe-angular)
+- [https://duynndu.github.io/mfe-angular](https://duynndu.github.io/mfe-angular)
 
 ---
 
