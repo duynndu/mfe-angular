@@ -201,10 +201,6 @@ export default {
       type: String,
       required: true
     },
-    data: {
-      type: Object,
-      default: () => ({})
-    },
     script: {
       type: String,
       default: ''
@@ -218,7 +214,7 @@ export default {
       default: true
     }
   },
-  emits: ['update:template', 'update:data', 'update:editMode', 'update:script', 'script-error'],
+  emits: ['update:template', 'update:context', 'update:editMode', 'update:script', 'script-error'],
   data() {
     const rootId = '123456';
     let rootNode = VirtualHTMLParser.parseToTree(this.template, 'Root', { 'c-id': rootId });
@@ -271,8 +267,9 @@ export default {
       }
     },
     context: {
-      handler() {
-        this.renderPreview();
+      deep: true,
+      async handler() {
+        await this.evalScript();
       }
     }
   },
@@ -306,7 +303,7 @@ export default {
       const currentId = this.evalScriptId;
 
       this.activeScriptScope = effectScope();
-      const { scope, error } = await evalScriptScope(this.localScript, this.data, this.context);
+      const { scope, error } = await evalScriptScope(this.localScript, this.context);
 
       // Nếu đã có lần chạy mới hơn trong lúc đang await, bỏ qua kết quả cũ này
       if (this.evalScriptId !== currentId) return;
@@ -349,11 +346,8 @@ export default {
           template: this.processedTemplate,
           setup() {
             const scriptScope = hasCustomScript ? self.evaluatedScope : {};
-
+            console.log('scriptScope', scriptScope);
             return {
-              ...self.context,
-              data: self.data,
-              $data: self.data,
               $context: self.context,
               ...scriptScope
             };

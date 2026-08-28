@@ -6,18 +6,16 @@ export interface EvalScriptResult {
 }
 
 // Constructor chuẩn cho hàm Async trong JS Engine
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
 
 /**
  * Thực thi chuỗi mã JavaScript trong Async Sandbox khép kín với đầy đủ Vue 3 Composition APIs
  * Hỗ trợ TOP-LEVEL AWAIT trực tiếp trong Script!
  * @param scriptStr Chuỗi mã JavaScript người dùng nhập
- * @param dataObj Đối tượng data reactive từ Angular/Vue truyền vào
- * @param contextObj Đối tượng context bổ sung truyền vào
+ * @param contextObj Đối tượng context chứa data và metadata từ Host truyền vào
  */
 export async function evalScriptScope(
   scriptStr: string,
-  dataObj?: Record<string, any>,
   contextObj?: Record<string, any>
 ): Promise<EvalScriptResult> {
   if (!scriptStr || !scriptStr.trim()) {
@@ -47,9 +45,7 @@ export async function evalScriptScope(
       isReactive
     } = Vue;
 
-    const $data = dataObj || {};
     const $context = contextObj || {};
-    const $props = { data: $data, context: $context };
 
     // Sử dụng AsyncFunction để hỗ trợ Top-Level Await trực tiếp trong script
     const fn = new AsyncFunction(
@@ -68,9 +64,7 @@ export async function evalScriptScope(
       'unref',
       'isRef',
       'isReactive',
-      '$data',
       '$context',
-      '$props',
       body
     );
 
@@ -90,13 +84,10 @@ export async function evalScriptScope(
       unref,
       isRef,
       isReactive,
-      $data,
-      $context,
-      $props
+      $context
     );
 
-    const evaluatedScope = typeof result === 'object' && result !== null ? result : { data: result };
-    return { scope: evaluatedScope, error: null };
+    return { scope: result ?? {}, error: null };
   } catch (err: any) {
     return {
       scope: {},

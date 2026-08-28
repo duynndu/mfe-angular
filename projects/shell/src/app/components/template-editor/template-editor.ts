@@ -18,8 +18,8 @@ export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
   @Input('script') script = '';
   @Output() scriptChange = new EventEmitter<string>();
 
-  @Input('data') data: any = {};
-  @Output() dataChange = new EventEmitter<any>();
+  @Input('context') context: any = {};
+  @Output() contextChange = new EventEmitter<any>();
 
   @Input('editMode') editMode = true;
   @Output() editModeChange = new EventEmitter<boolean>();
@@ -35,16 +35,17 @@ export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
     if (vmData) {
       if (this.template) vmData.template = this.template;
       if (this.script) vmData.script = this.script;
-      if (this.data && Object.keys(this.data).length > 0) {
-        Object.assign(vmData.data, this.data);
+      if (this.context && Object.keys(this.context).length > 0) {
+        if (!vmData.context) vmData.context = {};
+        Object.assign(vmData.context, this.context);
       }
       vmData.editMode = this.editMode;
     }
-    this.dataChange.emit(vmData?.data ?? this.data);
+    this.contextChange.emit(vmData?.context ?? this.context);
 
-    // Lắng nghe mọi thay đổi trên data từ Vue và bắn ngược về Angular
-    this.vm.$watch('data', (newVal: any) => {
-      this.dataChange.emit(newVal);
+    // Lắng nghe mọi thay đổi trên context từ Vue và bắn ngược về Angular
+    this.vm.$watch('context', (newVal: any) => {
+      this.contextChange.emit(newVal);
     }, { deep: true });
 
     this.vm.$watch('template', (newVal: any) => {
@@ -65,8 +66,9 @@ export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
     const vmData = this.vm.$data as any;
     if (!vmData) return;
 
-    if (changes['data'] && this.data) {
-      Object.assign(vmData.data, this.data);
+    if (changes['context'] && this.context) {
+      if (!vmData.context) vmData.context = {};
+      Object.assign(vmData.context, this.context);
     }
     if (changes['script']) {
       vmData.script = this.script;

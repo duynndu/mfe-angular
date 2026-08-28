@@ -111,7 +111,7 @@ export class Home {
 </PageA4>`;
 
   script = `// 📜 Khởi tạo state và logic tính toán truyền từ Angular
-const data = reactive($data || {});
+const data = reactive($context.data || {});
 // Computed: Tự động chuyển đổi họ tên sang chữ in hoa
 const uppername = computed(() => {
   return (data.name || '').toUpperCase();
@@ -152,6 +152,8 @@ return {
   uppername
 };`;
 
-  data: any = { name: 'duynnz1', ip: '' };
+  context: any = {
+    data: { name: 'duynnz1', ip: '' }
+  };
   editMode = true;
 }

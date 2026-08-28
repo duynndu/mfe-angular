@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <!-- Right section: Live 2-way Angular input & IP status -->
+    <!-- Right section: Live 2-way Angular input & IP status -->
   <div class="panel-right">
     <div class="angular-input-group">
       <span class="input-tag">🅰️ Angular Cha</span>
@@ -25,21 +25,21 @@
         <label for="angular-name-input">Họ & Tên:</label>
         <input 
           id="angular-name-input"
-          [(ngModel)]="data.name" 
+          [(ngModel)]="context.data.name" 
           placeholder="Nhập họ tên tại Angular..." 
           class="form-control-shell"
         />
       </div>
     </div>
 
-    <div class="ip-info-pill" [class.loaded]="data.ip">
+    <div class="ip-info-pill" [class.loaded]="context.data.ip">
       <span class="ip-dot"></span>
       <span class="ip-label">Client IP:</span>
-      <span class="ip-value">{{ data.ip || 'Đang tải IP...' }}</span>
+      <span class="ip-value">{{ context.data.ip || 'Đang tải IP...' }}</span>
     </div>
   </div>
 </div>
 
 <div class="editor-wrapper">
-  <template-editor [(template)]="template" [(script)]="script" [(data)]="data" [(editMode)]="editMode"></template-editor>
+  <template-editor [(template)]="template" [(script)]="script" [(context)]="context" [(editMode)]="editMode"></template-editor>
 </div>
