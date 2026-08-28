@@ -154,7 +154,6 @@
       <div
         class="preview-container"
         ref="container"
-        @click="onCanvasClick"
         @contextmenu="onCanvasContextMenu"
         @dragover="onCanvasDragOver"
         @dragleave="onCanvasDragLeave"
@@ -419,7 +418,6 @@ export default {
       rootEl.removeEventListener('contextmenu', this.contextMenuHandler);
       elements.forEach((el) => {
         el.classList.remove('empty-placeholder');
-        el.removeEventListener('click', this.elementClickHandler as EventListener);
         el.removeEventListener('contextmenu', this.contextMenuHandler as EventListener);
         el.removeEventListener('dragover', this.elementDragOverHandler as EventListener);
         el.removeEventListener('dragleave', this.elementDragLeaveHandler as EventListener);
@@ -442,7 +440,6 @@ export default {
           el.classList.add('empty-placeholder');
         }
         
-        el.addEventListener('click', this.elementClickHandler as EventListener);
         el.addEventListener('contextmenu', this.contextMenuHandler as EventListener);
         if (this.editMode) {
           el.addEventListener('dragover', this.elementDragOverHandler as EventListener);
@@ -450,39 +447,6 @@ export default {
           el.addEventListener('drop', this.elementDropHandler as EventListener);
         }
       });
-    },
-
-    elementClickHandler(e: MouseEvent) {
-      if (!this.editMode) return;
-      e.stopPropagation();
-
-      const targetEl = (e.currentTarget || e.target) as HTMLElement;
-      const closestWithCid = (targetEl.closest('[c-id]') as HTMLElement) || targetEl;
-      const cid = closestWithCid?.getAttribute('c-id');
-      
-      if (cid && cid !== this.rootId) {
-        this.selectedCid = cid;
-        this.selectedNode = this.rootNode.querySelector(`[c-id=${cid}]`);
-        this.highlightElement(closestWithCid);
-
-        // Cuộn node tương ứng trên cây DOM vào tầm nhìn
-        this.$nextTick(() => {
-          const treeItem = document.querySelector(`.tree-row[data-cid="${cid}"]`) as HTMLElement;
-          if (treeItem) {
-            treeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-        });
-      }
-    },
-
-    onCanvasClick(e: MouseEvent) {
-      if (!this.editMode) return;
-      const target = e.target as HTMLElement;
-      if (!target.closest('[c-id]')) {
-        this.selectedCid = '';
-        this.selectedNode = null;
-        this.unHighlightElement();
-      }
     },
 
     onCanvasContextMenu(e: MouseEvent) {
