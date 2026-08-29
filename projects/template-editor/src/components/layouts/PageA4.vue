@@ -151,7 +151,7 @@ export default {
       const sheetEl = (pageRefs.value[0]?.closest('.page-a4-sheet') as HTMLElement) || sourceContainer.value;
       const totalPageHeightPx = sheetEl?.clientHeight || getPageHeightPx();
       const paddingVerticalPx = sheetEl ? getPaddingVerticalPx(sheetEl) : 75.6;
-      const maxContentHeightPx = Math.max(100, totalPageHeightPx - paddingVerticalPx - 20);
+      const maxContentHeightPx = Math.max(100, totalPageHeightPx - paddingVerticalPx);
 
       // Phân bổ các phần tử vào từng bucket trang dựa trên chiều cao thực tế
       const pageBuckets: HTMLElement[][] = [[]];
