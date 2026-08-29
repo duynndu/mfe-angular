@@ -117,6 +117,7 @@
 </template>
 
 <script lang="ts">
+import { PropType } from 'vue';
 import { VirtualNode } from 'shared/utils';
 
 const attributeSuggestionMap: Record<string, string[]> = {
@@ -166,9 +167,9 @@ export default {
   name: "EditElementPanel",
   props: {
     selectedNode: {
-      type: Object,
+      type: Object as PropType<VirtualNode | null>,
       default: null,
-    } as unknown as () => VirtualNode | null,
+    },
   },
   emits: ["close"],
   data() {

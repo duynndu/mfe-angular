@@ -46,22 +46,43 @@
       <div class="script-editor-drawer" v-if="showScriptEditor && editMode">
         <div class="script-drawer-header">
           <div class="drawer-title">
-            <i class="fa fa-code"></i>
-            <span>JavaScript Scope & Logic</span>
-            <span class="drawer-hint">(reactive data, computed, watch, methods...)</span>
+            <span class="js-badge">JS</span>
+            <span class="drawer-heading">JavaScript Scope & Logic</span>
+            <span class="status-pill" :class="scriptError ? 'status-error' : 'status-ready'">
+              <i class="fa" :class="scriptError ? 'fa-times-circle' : 'fa-check-circle'"></i>
+              {{ scriptError ? 'Có lỗi Script' : 'Scope Sẵn Sàng' }}
+            </span>
           </div>
-          <div class="drawer-actions">
+
+          <div class="drawer-tools">
+            <button class="tool-btn format-btn" @click="formatScript" title="Định dạng mã JavaScript tự động">
+              <i class="fa fa-magic"></i> Format Code
+            </button>
             <button class="drawer-close-btn" @click="showScriptEditor = false" title="Đóng">✕</button>
           </div>
         </div>
+
         <div class="script-drawer-body">
-          <textarea
-            class="script-code-area"
+          <Codemirror
             :value="localScript"
-            @input="onScriptInput"
-            placeholder="// Viết mã JavaScript tại đây...&#10;const data = reactive({ name: 'Nguyễn Văn A' });&#10;const upperName = computed(() => (data.name || '').toUpperCase());&#10;return { data, upperName };"
-            spellcheck="false"
-          ></textarea>
+            :options="cmScriptOptions"
+            height="100%"
+            :border="false"
+            @change="onScriptEditorChange"
+          />
+        </div>
+
+        <div class="script-drawer-footer" :class="{ 'has-error': !!scriptError }">
+          <template v-if="scriptError">
+            <i class="fa fa-exclamation-triangle footer-err-icon"></i>
+            <span class="footer-err-text">{{ scriptError }}</span>
+          </template>
+          <template v-else>
+            <i class="fa fa-lightbulb-o footer-tip-icon"></i>
+            <span class="footer-tip-text">
+              Hỗ trợ: <code>reactive()</code>, <code>computed()</code>, <code>watch()</code>, <code>ref()</code>, <code>$context</code>, top-level <code>await fetch()</code>. Hãy <code>return</code> các biến cần dùng trong template.
+            </span>
+          </template>
         </div>
       </div>
 
@@ -166,6 +187,14 @@
 
 <script lang="ts">
 import { createApp, type App, type ComponentPublicInstance, effectScope, type EffectScope, markRaw } from 'vue';
+import Codemirror from 'codemirror-editor-vue3';
+import 'codemirror/mode/javascript/javascript.js';
+import 'codemirror/theme/dracula.css';
+import 'codemirror/addon/edit/closebrackets.js';
+import 'codemirror/addon/edit/matchbrackets.js';
+import 'codemirror/addon/selection/active-line.js';
+import 'codemirror/addon/comment/comment.js';
+import jsBeautify from 'js-beautify';
 import PageA4 from '../layouts/PageA4.vue';
 import PageA5 from '../layouts/PageA5.vue';
 import Textarea from '../forms/Textarea.vue';
@@ -194,7 +223,8 @@ export default {
     ComponentPalette,
     ImContextMenu,
     ImContextMenuItem,
-    DatePickerPortal
+    DatePickerPortal,
+    Codemirror
   },
   props: {
     template: {
@@ -250,6 +280,18 @@ export default {
       evaluatedScope: {} as Record<string, any>,
       activeScriptScope: null as EffectScope | null,
       evalScriptId: 0,
+      cmScriptOptions: {
+        mode: 'javascript',
+        theme: 'dracula',
+        lineNumbers: true,
+        lineWrapping: true,
+        tabSize: 2,
+        indentUnit: 2,
+        autoCloseBrackets: true,
+        matchBrackets: true,
+        styleActiveLine: true,
+      },
+      scriptDebounceTimer: null as ReturnType<typeof setTimeout> | null,
     };
   },
   watch: {
@@ -318,12 +360,37 @@ export default {
       }
     },
 
-    async onScriptInput(e: Event) {
-      const val = (e.target as HTMLTextAreaElement).value;
+    onScriptEditorChange(val: string) {
+      if (this.localScript === val) return;
       this.localScript = val;
       this.$emit('update:script', val);
-      await this.evalScript();
+      if (this.scriptDebounceTimer) clearTimeout(this.scriptDebounceTimer);
+      this.scriptDebounceTimer = setTimeout(() => {
+        this.evalScript();
+      }, 250);
     },
+
+    formatScript() {
+      if (!this.localScript) return;
+      try {
+        const beautifyFn = (jsBeautify as any).js || (jsBeautify as any).js_beautify || jsBeautify;
+        const formatted = beautifyFn(this.localScript, {
+          indent_size: 2,
+          space_in_empty_paren: false,
+          preserve_newlines: true,
+          max_preserve_newlines: 2
+        });
+        if (formatted && formatted !== this.localScript) {
+          this.localScript = formatted;
+          this.$emit('update:script', formatted);
+          this.evalScript();
+        }
+      } catch (err) {
+        console.error('Format script error:', err);
+      }
+    },
+
+
 
     processTemplate() {
       this.rootNode.innerHTML = this.template;
@@ -350,7 +417,7 @@ export default {
 
             return {
               $context: self.context,
-              data: self.context?.data || {},
+              data: self.context?.['data'] || {},
               ...scriptScope
             };
           }
@@ -856,13 +923,17 @@ export default {
 
 /* Script Editor Drawer */
 .script-editor-drawer {
-  background: #090d16;
+  background: #0f172a;
   border-bottom: 2px solid #1e293b;
   display: flex;
   flex-direction: column;
-  height: 220px;
-  max-height: 40vh;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  height: 520px;
+  min-height: 280px;
+  max-height: 85vh;
+  resize: vertical;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  animation: slideDown 0.18s ease-out;
   z-index: 15;
 }
 
@@ -873,21 +944,92 @@ export default {
   padding: 6px 14px;
   background: #0f172a;
   border-bottom: 1px solid #1e293b;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .drawer-title {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #38bdf8;
 }
 
-.drawer-hint {
+.js-badge {
+  background: #f59e0b;
+  color: #0f172a;
+  font-weight: 800;
   font-size: 11px;
-  color: #64748b;
-  font-weight: normal;
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.drawer-heading {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.status-ready {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-error {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.drawer-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+.tool-btn {
+  background: #1e293b;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  padding: 3px 9px;
+  font-size: 11.5px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.tool-btn:hover {
+  background: #334155;
+  color: #38bdf8;
+  border-color: #38bdf8;
+}
+
+.format-btn {
+  background: rgba(14, 165, 233, 0.15);
+  color: #38bdf8;
+  border-color: rgba(14, 165, 233, 0.35);
+}
+
+.format-btn:hover {
+  background: #0ea5e9;
+  color: #ffffff;
+  border-color: #0ea5e9;
 }
 
 .drawer-close-btn {
@@ -898,6 +1040,7 @@ export default {
   font-size: 14px;
   padding: 2px 6px;
   border-radius: 4px;
+  transition: all 0.15s ease;
 }
 
 .drawer-close-btn:hover {
@@ -910,21 +1053,103 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 
-.script-code-area {
-  flex: 1;
-  width: 100%;
-  padding: 10px 14px;
-  background: #020617;
-  color: #f1f5f9;
-  font-family: 'Fira Code', 'Consolas', monospace;
-  font-size: 12.5px;
-  line-height: 1.5;
-  border: none;
-  outline: none;
-  resize: none;
-  box-sizing: border-box;
+.script-drawer-body :deep(.vue-codemirror),
+.script-drawer-body :deep(.CodeMirror) {
+  height: 100% !important;
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.script-drawer-body :deep(.cm-s-dracula.CodeMirror) {
+  background: #0b1120 !important;
+}
+
+.script-drawer-body :deep(.cm-s-dracula .CodeMirror-gutters) {
+  background: #070a13 !important;
+  border-right: 1px solid #1e293b !important;
+}
+
+/* CodeMirror Scrollbars */
+.script-drawer-body :deep(.CodeMirror-vscrollbar),
+.script-drawer-body :deep(.CodeMirror-hscrollbar),
+.script-drawer-body :deep(.CodeMirror-scrollbar) {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #090d16;
+}
+
+.script-drawer-body :deep(.CodeMirror-vscrollbar)::-webkit-scrollbar,
+.script-drawer-body :deep(.CodeMirror-hscrollbar)::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.script-drawer-body :deep(.CodeMirror-vscrollbar)::-webkit-scrollbar-track,
+.script-drawer-body :deep(.CodeMirror-hscrollbar)::-webkit-scrollbar-track {
+  background: #090d16;
+  border-radius: 4px;
+}
+
+.script-drawer-body :deep(.CodeMirror-vscrollbar)::-webkit-scrollbar-thumb,
+.script-drawer-body :deep(.CodeMirror-hscrollbar)::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+  border: 1px solid #090d16;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.script-drawer-body :deep(.CodeMirror-vscrollbar)::-webkit-scrollbar-thumb:hover,
+.script-drawer-body :deep(.CodeMirror-hscrollbar)::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+  border-color: #0284c7;
+}
+
+.script-drawer-body :deep(.CodeMirror-scrollbar-filler),
+.script-drawer-body :deep(.CodeMirror-gutter-filler) {
+  background: #090d16 !important;
+}
+
+.script-drawer-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  background: #090d16;
+  border-top: 1px solid #1e293b;
+  font-size: 11.5px;
+}
+
+.script-drawer-footer.has-error {
+  background: #450a0a;
+  border-top-color: #7f1d1d;
+}
+
+.footer-tip-icon {
+  color: #f59e0b;
+}
+
+.footer-tip-text {
+  color: #94a3b8;
+}
+
+.footer-tip-text code {
+  background: #1e293b;
+  color: #38bdf8;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.footer-err-icon {
+  color: #ef4444;
+}
+
+.footer-err-text {
+  color: #fca5a5;
+  font-family: monospace;
 }
 
 .preview-container {
@@ -933,6 +1158,33 @@ export default {
   overflow: auto;
   display: flex;
   justify-content: center;
+  background: #f1f5f9;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.preview-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.preview-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.preview-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  border: 2px solid #f1f5f9;
+  transition: background 0.2s ease;
+}
+
+.preview-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.preview-container::-webkit-scrollbar-corner {
   background: #f1f5f9;
 }
 

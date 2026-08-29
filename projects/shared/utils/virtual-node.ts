@@ -15,7 +15,7 @@ export class VirtualNode {
   }
 
   // --- Serialization ---
-  private _serialize(isClean = false): string {
+  _serialize(isClean = false): string {
     if (this.tagName === '#text') {
       return this.textContent;
     }
@@ -135,7 +135,7 @@ export class VirtualNode {
     return this.tagName.toLowerCase() === s.toLowerCase();
   }
 
-  private _collect(predicate: (node: VirtualNode) => boolean, firstOnly = false): VirtualNode[] {
+  _collect(predicate: (node: VirtualNode) => boolean, firstOnly = false): VirtualNode[] {
     const results: VirtualNode[] = [];
     const walk = (node: VirtualNode): boolean => {
       if (predicate(node)) {
@@ -192,7 +192,7 @@ export class VirtualNode {
   }
 
   // --- Tree Mutation Methods ---
-  private _childIndex(node: VirtualNode): number {
+  _childIndex(node: VirtualNode): number {
     const idx = this.childNodes.indexOf(node);
     if (idx === -1) throw new Error('Reference node not found in parent');
     return idx;
