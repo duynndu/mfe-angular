@@ -318,8 +318,11 @@ export default {
   },
   async mounted() {
     document.addEventListener('keydown', handlePrint);
+    this.rootNode.innerHTML = this.template;
+    this.rootNode.genComponentId();
+    this.rootNode.setAttribute('c-id', this.rootId);
+    this.processedTemplate = this.rootNode.outerHTML;
     await this.evalScript();
-    this.processTemplate();
   },
   beforeUnmount() {
     document.removeEventListener('keydown', handlePrint);

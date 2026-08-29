@@ -628,16 +628,4 @@ return {
     if (index < 0 || index >= this.templates.length) return;
     this.selectedTemplateIndex = index;
   }
-
-  onTemplateChange(val: string) {
-    this.template = val;
-  }
-
-  onScriptChange(val: string) {
-    this.script = val;
-  }
-
-  onContextChange(val: any) {
-    this.context = val;
-  }
 }
