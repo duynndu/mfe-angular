@@ -1,5 +1,5 @@
 {
-  "name": "mf-angular-20",
+  "name": "ngx-vue-template-editor",
   "version": "0.0.0",
   "scripts": {
     "start:shell": "npm run build:template-editor:shell && ng s shell",

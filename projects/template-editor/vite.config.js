@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename)
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'demo' ? '/mfe-angular/template-editor/' : '/',
+  base: mode === 'demo' ? '/ngx-vue-template-editor/template-editor/' : '/',
   plugins: [
     vue(),
     vueDevTools(),

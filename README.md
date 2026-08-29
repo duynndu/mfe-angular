@@ -29,7 +29,7 @@ A powerful, interactive **Medical & Document Template Editor** built with **Angu
 ## 🏗️ Architecture
 
 ```
-mfe-angular/
+ngx-vue-template-editor/
 ├── projects/
 │   ├── shell/                # Angular 20 Shell Application (Host)
 │   │   ├── src/app/
@@ -158,7 +158,7 @@ To add a new component usable within templates:
 ---
 
 ## 🎯 Live Demo
-- [https://duynndu.github.io/mfe-angular](https://duynndu.github.io/mfe-angular)
+- [https://duynndu.github.io/ngx-vue-template-editor](https://duynndu.github.io/ngx-vue-template-editor)
 
 ---
 

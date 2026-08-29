@@ -23,7 +23,7 @@
 						},
 						"demo": {
 							"target": "shell:esbuild:production",
-							"baseHref": "/mfe-angular/",
+							"baseHref": "/ngx-vue-template-editor/",
 							"fileReplacements": [
 								{
 									"replace": "projects/shell/src/environments/environment.ts",
@@ -156,7 +156,7 @@
 						},
 						"demo": {
 							"target": "first-mf:esbuild:production",
-							"baseHref": "/mfe-angular/first-mf/"
+							"baseHref": "/ngx-vue-template-editor/first-mf/"
 						},
 						"development": {
 							"target": "first-mf:esbuild:development",

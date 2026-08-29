@@ -1,4 +1,4 @@
-# Agent Guidelines & Conventions for `mfe-angular`
+# Agent Guidelines & Conventions for `ngx-vue-template-editor`
 
 ## Project Architecture
 This repository is a Micro-Frontend workspace combining Angular 20 and Vue 3 apps via Module Federation / Native Federation:
