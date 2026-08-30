@@ -207,7 +207,7 @@ import Paint from '../forms/Paint.vue';
 import SimpleContextMenu from '../ContextMenu.vue';
 import ComponentPalette from './ComponentPalette.vue';
 import EditElementPanel from '../EditElementPanel.vue';
-import { VirtualHTMLParser, VirtualNode } from 'shared/utils';
+import { VirtualHTMLParser, VirtualNode, createTrackedState } from 'shared/utils';
 import { handlePrint, printElement } from 'shared/helpers';
 import { ContextMenu as ImContextMenu, ContextMenuItem as ImContextMenuItem } from '@imengyu/vue3-context-menu';
 import { templateCategories } from 'shared/constants';
@@ -332,6 +332,19 @@ export default {
     }
   },
   methods: {
+    getOnFieldChangeCallback() {
+      return this.context?.['onFieldChange'] || ((path: string, val: any) => {
+        console.log(
+          `%c[onFieldChange 🚀]%c Angular Callback nhận: %c${path}%c =`,
+          'background: #7c3aed; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold;',
+          'color: #334155;',
+          'color: #db2777; font-weight: bold;',
+          'color: #334155;',
+          val
+        );
+      });
+    },
+
     async evalScript() {
       if (!this.localScript || !this.localScript.trim()) {
         this.evaluatedScope = {};
@@ -348,8 +361,11 @@ export default {
       this.evalScriptId = (this.evalScriptId || 0) + 1;
       const currentId = this.evalScriptId;
 
+      const onFieldChange = this.getOnFieldChangeCallback();
+      const trackedContext = createTrackedState(this.context || {}, onFieldChange, '');
+
       this.activeScriptScope = effectScope();
-      const { scope, error } = await evalScriptScope(this.localScript, this.context);
+      const { scope, error } = await evalScriptScope(this.localScript, trackedContext);
 
       // Nếu đã có lần chạy mới hơn trong lúc đang await, bỏ qua kết quả cũ này
       if (this.evalScriptId !== currentId) return;
@@ -412,15 +428,17 @@ export default {
       try {
         const self = this;
         const hasCustomScript = self.localScript && self.localScript.trim() && Object.keys(self.evaluatedScope).length > 0;
+        const onFieldChange = this.getOnFieldChangeCallback();
+        const trackedContext = createTrackedState(self.context || {}, onFieldChange, '');
+        const scriptScope = hasCustomScript
+          ? self.evaluatedScope
+          : trackedContext;
 
         const DynamicComponent = {
           template: this.processedTemplate,
           setup() {
-            const scriptScope = hasCustomScript ? self.evaluatedScope : {};
-
             return {
-              $context: self.context,
-              data: self.context?.['data'] || {},
+              $context: trackedContext,
               ...scriptScope
             };
           }
@@ -430,8 +448,9 @@ export default {
         this.app = createApp(DynamicComponent);
         this.app.config.compilerOptions.isCustomElement = (tag) => tag === 'Root' || tag === 'root';
         
-        const logFn = (key: string) => (...args: any[]) => console.warn(`[Preview] context.${key} chưa được cung cấp`, ...args);
-        this.app.provide('onFieldChange', this.context?.['onFieldChange'] ?? logFn('onFieldChange'));
+        if (onFieldChange) {
+          this.app.provide('onFieldChange', onFieldChange);
+        }
 
         installMaskDirective(this.app);
         installContextMenuDirective(this.app);

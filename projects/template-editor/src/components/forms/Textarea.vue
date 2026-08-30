@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { ref, computed, watch, nextTick, onMounted, onUnmounted, PropType, inject } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onUnmounted, PropType } from 'vue'
 // @ts-ignore
 import autosize from 'autosize'
 
@@ -55,15 +55,9 @@ export default {
     },
     textareaStyle: { type: [String, Object], default: '' },
     style: { type: [String, Object], default: '' },
-    path: { type: String, default: '' },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const onFieldChange = inject<((path: string, value: any) => void) | null>('onFieldChange', null);
-    const emitFieldChange = (value: any) => {
-      if (!props.path) return
-      onFieldChange?.(props.path, value)
-    }
     // --- Reactive binding (keep internal ref non-nullable for helpers)
     const input = ref<string>(props.modelValue ?? '')
     const textarea = ref<HTMLTextAreaElement | null>(null)
@@ -104,11 +98,16 @@ export default {
       return Math.max(0, Math.ceil(lineHeight + paddingTop + paddingBottom + borderTop + borderBottom - 4))
     }
 
+    // --- Flag ngăn chặn emit khi đồng bộ từ props hoặc mounted
+    let isSyncingFromProp = false
+
     // --- Init
     onMounted(() => {
+      isSyncingFromProp = true
       padEnd.value = computePad()
       input.value = ensurePad(normalizeValue(props.modelValue ?? ''))
       nextTick(() => {
+        isSyncingFromProp = false
         if (textarea.value) {
           textareaHeight.value = getSingleLineHeight(textarea.value)
           autosize(textarea.value)
@@ -120,9 +119,13 @@ export default {
     watch(
       () => props.suffix,
       () => {
+        isSyncingFromProp = true
         padEnd.value = computePad()
         input.value = ensurePad(normalizeValue(stripPad(input.value)))
-        nextTick(() => setCaretPosition())
+        nextTick(() => {
+          isSyncingFromProp = false
+          setCaretPosition()
+        })
       },
       { deep: true }
     )
@@ -133,7 +136,11 @@ export default {
       newVal => {
         const padded = ensurePad(normalizeValue(newVal ?? ''))
         if (padded !== input.value) {
+          isSyncingFromProp = true
           input.value = padded
+          nextTick(() => {
+            isSyncingFromProp = false
+          })
         }
       }
     )
@@ -146,8 +153,11 @@ export default {
         nextTick(() => setCaretPosition())
         return
       }
-      emit('update:modelValue', stripPad(padded))
-      emitFieldChange(stripPad(padded))
+      if (isSyncingFromProp) return
+      const cleanValue = stripPad(padded)
+      if (cleanValue !== (props.modelValue ?? '')) {
+        emit('update:modelValue', cleanValue)
+      }
       nextTick(() => {
         if (textarea.value) autosize.update(textarea.value)
       })

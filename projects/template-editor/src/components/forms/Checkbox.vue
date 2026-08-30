@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { ref, inject } from 'vue'
+import { ref } from 'vue'
 
 export default {
   name: 'Checkbox',
@@ -60,16 +60,10 @@ export default {
       type: Boolean,
       default: false
     },
-    path: { type: String, default: '' },
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
-    const onFieldChange = inject<((path: string, value: any) => void) | null>('onFieldChange', null);
     const checkboxInput = ref<HTMLInputElement | null>(null)
-    const emitFieldChange = (value: any) => {
-      if (!props.path) return
-      onFieldChange?.(props.path, value)
-    }
 
     const handleClick = (e: MouseEvent) => {
       if (props.disabled || props.readonly) return
@@ -77,18 +71,15 @@ export default {
         // Native mode: toggle boolean
         const next = !props.modelValue
         emit('update:modelValue', next)
-        emitFieldChange(next)
         emit('change', next)
       } else {
         if (props.modelValue === props.value) {
           // Uncheck: set to null
           emit('update:modelValue', null)
-          emitFieldChange(null)
           emit('change', null)
         } else {
           // Check: set to value
           emit('update:modelValue', props.value)
-          emitFieldChange(props.value)
           emit('change', props.value)
         }
       }

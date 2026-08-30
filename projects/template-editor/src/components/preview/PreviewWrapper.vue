@@ -21,8 +21,9 @@ export default {
     return {
       editMode: true,
       template: defaultTemplate,
-      script: `// 📜 Khởi tạo state từ $context.data truyền từ Angular
+      script: `// 📜 Khởi tạo state từ $context truyền từ Angular Host
 const data = reactive($context.data || {});
+const medicalRecord = reactive($context.medicalRecord || {});
 
 // 🌐 Top-Level Await: Lấy địa chỉ IP trực tiếp trong Script!
 try {
@@ -59,6 +60,7 @@ const contextItems = [
 
 return {
   data,
+  medicalRecord,
   categoryList,
   tagList,
   contextItems,
@@ -89,6 +91,28 @@ return {
           appointment: '',
           signature: '',
           doctorSignature: ''
+        },
+        medicalRecord: {
+          code: "BA-2026/TM-0889",
+          patientId: "BN-98234",
+          department: "Khoa Tim Mạch - Can Thiệp",
+          room: "P.402",
+          bed: "G-12",
+          admissionDate: "28/08/2026 08:30",
+          dischargeDate: "30/08/2026 16:00",
+          insuranceCode: "DN-4-01-01-2093849",
+          bloodType: "O+",
+          vitals: {
+            pulse: 78,
+            bloodPressure: "135/85",
+            temperature: 36.8,
+            weight: 68,
+            height: 172,
+            spO2: 98
+          },
+          attendingDoctor: "BS. CKI Nguyễn Hải Đăng",
+          icd10: "I20.8 - Cơn đau thắt ngực khác",
+          isEmergency: false
         }
       }
     };

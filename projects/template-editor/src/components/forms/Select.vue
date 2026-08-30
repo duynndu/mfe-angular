@@ -110,7 +110,7 @@
 
 
 <script lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, PropType, nextTick, inject } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount, PropType, nextTick } from 'vue';
 
 export default {
   name: 'Select',
@@ -125,15 +125,9 @@ export default {
     readonly: Boolean,
     label: { type: String, default: '' },
     searchByKeys: { type: Array as PropType<string[]>, default: () => [] },
-    path: { type: String, default: '' },
   },
   emits: ['update:modelValue', 'search', 'change'],
   setup(props, { emit, slots }) {
-    const onFieldChange = inject<((path: string, value: any) => void) | null>('onFieldChange', null);
-    const emitFieldChange = (value: any) => {
-      if (!props.path) return;
-      onFieldChange?.(props.path, value);
-    };
     const isOpen = ref(false);
     const isSingleInputActive = ref(false);
     const search = ref('');
@@ -296,7 +290,6 @@ export default {
         : getItemValue(selectedItems.value[0] || '');
 
       emit('update:modelValue', value);
-      emitFieldChange(value);
       emit('change', props.multiple ? selectedItems.value : selectedItems.value[0]);
     };
 

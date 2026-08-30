@@ -65,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch, inject } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 export default {
   name: 'Paint',
@@ -74,15 +74,9 @@ export default {
     lineWidth: { type: Number, default: 3 },
     color: { type: String, default: '#000000' },
     src: { type: String, default: '' },
-    path: { type: String, default: '' },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const onFieldChange = inject<((path: string, value: any) => void) | null>('onFieldChange', null);
-    const emitFieldChange = (value: any) => {
-      if (!props.path) return;
-      onFieldChange?.(props.path, value);
-    };
     const baseCanvasRef = ref<HTMLCanvasElement | null>(null);
     const overlayCanvasRef = ref<HTMLCanvasElement | null>(null);
     const boxRef = ref<HTMLDivElement | null>(null);
@@ -246,7 +240,6 @@ export default {
       baseCtx.value.clearRect(0, 0, baseCanvas.width, baseCanvas.height);
       drawCtx.value.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
       emit('update:modelValue', '');
-      emitFieldChange('');
     };
 
     const toggleThicknessPopover = () => {
@@ -298,7 +291,6 @@ export default {
       try {
         const dataUrl = merged.toDataURL('image/png');
         emit('update:modelValue', dataUrl);
-        emitFieldChange(dataUrl);
       } catch (err) {
         console.error('Xuất ảnh thất bại do CORS/taint', err);
       }

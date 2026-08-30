@@ -39,26 +39,24 @@ export class Home {
   <div c-name="div" c-id="5wz82b0">
     <b c-name="b" c-id="z7ton81">Textarea</b>
   </div>
-  <Textarea v-model="data.name" label="Họ và tên:" line :suffix="{ length:1, char:'❤️' }" c-name="Textarea"
-    c-id="oqtwc4d" path="data.name" path-suffix="{ length:1, char:'❤️' }" />
+  <Textarea v-model="data.name" label="Họ và tên:" line :suffix="{ length:1, char:'❤️' }" c-name="Textarea" c-id="oqtwc4d" />
   <div style="color: #0284c7; font-size: 13px; margin-top: 2px;" c-name="div" c-id="un_disp">
     Tên in hoa (Computed từ Script): <b c-name="b" c-id="un_val">{{ uppername }}</b>
   </div>
   <div c-name="div" c-id="gszdea8">
     <b c-name="b" c-id="yukgkqs">InputOTP</b>
   </div>
-  <InputOTP v-model="data.age" :mask-length="[1,1,1]" pad-start="0" c-name="InputOTP" c-id="kdp07ck" path="data.age"
-    path-mask-length="[1,1,1]" />
+  <InputOTP v-model="data.age" :mask-length="[1,1,1]" pad-start="0" c-name="InputOTP" c-id="kdp07ck" />
   <div c-name="div" c-id="ri82mdl">
     <b c-name="b" c-id="86q3zv5">Select one</b>
   </div>
   <Select v-model="data.category" label="Danh mục:" placeholder="Chọn danh mục" bind-label="name" bind-value="id"
-    :items="categoryList" c-name="Select" c-id="r33jcxf" path="data.category" path-items="categoryList" />
+    :items="categoryList" c-name="Select" c-id="r33jcxf" />
   <div c-name="div" c-id="1aqqwln">
     <b c-name="b" c-id="bwz68li">Select multiple</b>
   </div>
   <Select v-model="data.tags" label="Tags:" placeholder="Chọn tags" bind-label="label" bind-value="value"
-    :items="tagList" multiple c-name="Select" c-id="9d3o1sm" path="data.tags" path-items="tagList" />
+    :items="tagList" multiple c-name="Select" c-id="9d3o1sm" />
   <div style="color:#0066cc" c-name="div" c-id="047rhv3">Tags đã chọn: {{ data.tags }}</div>
   <div c-name="div" c-id="ctxhdr01" style="margin-top: 10px;">
     <b c-name="b" c-id="ctxhdr02">
@@ -84,42 +82,37 @@ export class Home {
   <div c-name="div" c-id="tjwsub8">
     <b c-name="b" c-id="o9mo28j">DatePicker - Chọn ngày sinh</b>
   </div>
-  <DatePicker v-model="data.birthday" placeholder="Chọn ngày sinh" format="DD/MM/YYYY" c-name="DatePicker"
-    c-id="y366dko" path="data.birthday" />
+  <DatePicker v-model="data.birthday" placeholder="Chọn ngày sinh" format="DD/MM/YYYY" c-name="DatePicker" c-id="y366dko" />
   <div style="color:#0066cc" c-name="div" c-id="8zkactw">Ngày sinh đã chọn: <b c-name="b" c-id="5joniyw">{{ data.birthday }}</b></div>
   <div c-name="div" c-id="aknsmdv">
     <b c-name="b" c-id="ognk3qp">DatePicker - Định dạng chữ</b>
   </div>
   <DatePicker v-model="data.birthdayText" placeholder="DD tháng MM năm YYYY" format="DD [tháng] MM [năm] YYYY"
-    c-name="DatePicker" c-id="4cp28lw" path="data.birthdayText" />
+    c-name="DatePicker" c-id="4cp28lw" />
   <div style="color:#0066cc" c-name="div" c-id="mgbravx">Giá trị: <b c-name="b" c-id="btvfoao">{{ data.birthdayText }}</b></div>
   <div c-name="div" c-id="sbxot28">
     <b c-name="b" c-id="ilxg1be">DatePicker (datetime) - Giờ hẹn</b>
   </div>
   <DatePicker v-model="data.appointment" mode="datetime" placeholder="Chọn ngày giờ" format="HH:mm DD/MM/YYYY"
-    :minute-step="15" c-name="DatePicker" c-id="e6dqk7f" path="data.appointment" path-minute-step="15" />
+    :minute-step="15" c-name="DatePicker" c-id="e6dqk7f" />
   <div style="color:#0066cc" c-name="div" c-id="q74v2xs">Ngày giờ đã chọn: <b c-name="b" c-id="55xc88a">{{ data.appointment }}</b></div>
   <div c-name="div" c-id="82rm20p">
     <b c-name="b" c-id="po0ikwz">Checkbox - Size</b>
   </div>
-  <Checkbox v-model="data.sizeTest" value="small" beforeText="[sm]" afterText="Small" size="sm" c-name="Checkbox"
-    c-id="u9uayx1" path="data.sizeTest" />
-  <Checkbox v-model="data.sizeTest" value="medium" beforeText="[md]" afterText="Medium" size="md" c-name="Checkbox"
-    c-id="e673tj4" path="data.sizeTest" />
-  <Checkbox v-model="data.sizeTest" value="large" beforeText="[lg]" afterText="Large" size="lg" c-name="Checkbox"
-    c-id="qdqk80l" path="data.sizeTest" />
-  <Checkbox v-model="data.sizeTest" value="xlarge" beforeText="[xl]" afterText="X-Large" size="xl" c-name="Checkbox"
-    c-id="9hd0m1l" path="data.sizeTest" />
+  <Checkbox v-model="data.sizeTest" value="small" beforeText="[sm]" afterText="Small" size="sm" c-name="Checkbox" c-id="u9uayx1" />
+  <Checkbox v-model="data.sizeTest" value="medium" beforeText="[md]" afterText="Medium" size="md" c-name="Checkbox" c-id="e673tj4" />
+  <Checkbox v-model="data.sizeTest" value="large" beforeText="[lg]" afterText="Large" size="lg" c-name="Checkbox" c-id="qdqk80l" />
+  <Checkbox v-model="data.sizeTest" value="xlarge" beforeText="[xl]" afterText="X-Large" size="xl" c-name="Checkbox" c-id="9hd0m1l" />
   <div style="color:#0066cc" c-name="div" c-id="okpshd8">Giá trị: <b c-name="b" c-id="korldbv">{{ data.sizeTest }}</b></div>
   <div c-name="div" c-id="uxuwmt4">
     <b c-name="b" c-id="318h0k7">Paint - Chữ ký</b>
   </div>
   <Paint style="width:400px; height:150px;" v-model="data.signature"
     src="https://fastly.picsum.photos/id/237/250/250.jpg?hmac=tNmO3YWXALG9JM81cghI9nflo3dWc3e5vlNsf_jmKWw"
-    c-name="Paint" c-id="hq1vub8" path="data.signature" />
+    c-name="Paint" c-id="hq1vub8" />
   <div v-if="data.signature" c-name="div" c-id="8gswa5w">
     <div c-name="div" c-id="ozfucom">Ảnh đã lưu:</div><img :src="data.signature" alt="signature"
-      style="max-width:200px;border:1px solid #ccc;" c-name="img" c-id="x7lifom" path-src="data.signature" />
+      style="max-width:200px;border:1px solid #ccc;" c-name="img" c-id="x7lifom" />
   </div>
 </PageA4>`,
       script: `// 📜 Khởi tạo state và logic tính toán truyền từ Angular
@@ -493,15 +486,15 @@ return {
   <!-- Patient Details -->
   <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px 10px; margin-bottom: 8px;" c-name="div" c-id="rx_pat_0">
     <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 6px;" c-name="div" c-id="rx_pat_1">
-      <Textarea v-model="data.name" label="Họ tên:" line c-name="Textarea" c-id="rx_n" path="data.name" />
-      <Textarea v-model="data.age" label="Tuổi:" line c-name="Textarea" c-id="rx_ag" path="data.age" />
-      <Textarea v-model="data.gender" label="Giới tính:" line c-name="Textarea" c-id="rx_ge" path="data.gender" />
+      <Textarea v-model="data.name" label="Họ tên:" line c-name="Textarea" c-id="rx_n" />
+      <Textarea v-model="data.age" label="Tuổi:" line c-name="Textarea" c-id="rx_ag" />
+      <Textarea v-model="data.gender" label="Giới tính:" line c-name="Textarea" c-id="rx_ge" />
     </div>
     <div style="margin-top: 4px;" c-name="div" c-id="rx_pat_2">
-      <Textarea v-model="data.address" label="Địa chỉ:" line c-name="Textarea" c-id="rx_ad" path="data.address" />
+      <Textarea v-model="data.address" label="Địa chỉ:" line c-name="Textarea" c-id="rx_ad" />
     </div>
     <div style="margin-top: 4px;" c-name="div" c-id="rx_pat_3">
-      <Textarea v-model="data.diagnosis" label="Chẩn đoán:" line c-name="Textarea" c-id="rx_dx" path="data.diagnosis" />
+      <Textarea v-model="data.diagnosis" label="Chẩn đoán:" line c-name="Textarea" c-id="rx_dx" />
     </div>
   </div>
 
@@ -525,9 +518,9 @@ return {
 
   <!-- Advice & Followup -->
   <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 6px 10px; margin-bottom: 8px; font-size: 11.5px;" c-name="div" c-id="rx_adv_0">
-    <Textarea v-model="data.doctorAdvice" label="Lời dặn:" line c-name="Textarea" c-id="rx_adv_txt" path="data.doctorAdvice" />
+    <Textarea v-model="data.doctorAdvice" label="Lời dặn:" line c-name="Textarea" c-id="rx_adv_txt" />
     <div style="margin-top: 4px;" c-name="div" c-id="rx_adv_1">
-      <DatePicker v-model="data.revisitDate" label="Ngày tái khám:" placeholder="DD/MM/YYYY" format="DD/MM/YYYY" c-name="DatePicker" c-id="rx_rev_d" path="data.revisitDate" />
+      <DatePicker v-model="data.revisitDate" label="Ngày tái khám:" placeholder="DD/MM/YYYY" format="DD/MM/YYYY" c-name="DatePicker" c-id="rx_rev_d" />
     </div>
   </div>
 
@@ -541,7 +534,7 @@ return {
       <div style="font-size: 10px; font-style: italic; color: #475569;" c-name="div" c-id="rx_sig_3">Ngày 28 tháng 08 năm 2026</div>
       <div style="font-weight: bold; font-size: 11px; text-transform: uppercase; color: #047857; margin-top: 2px;" c-name="div" c-id="rx_sig_4">BÁC SĨ KÊ ĐƠN</div>
       <div style="margin-top: 4px;" c-name="div" c-id="rx_sig_5">
-        <Paint style="width: 170px; height: 75px; border: 1px dashed #cbd5e1; border-radius: 4px; background: #fff;" v-model="data.signature" c-name="Paint" c-id="rx_pnt" path="data.signature" />
+        <Paint style="width: 170px; height: 75px; border: 1px dashed #cbd5e1; border-radius: 4px; background: #fff;" v-model="data.signature" c-name="Paint" c-id="rx_pnt" />
       </div>
       <div style="font-weight: bold; font-size: 11px; color: #0f172a; margin-top: 2px;" c-name="div" c-id="rx_sig_6">{{ data.prescriber || 'BS. CKI Nguyễn Hải Đăng' }}</div>
     </div>

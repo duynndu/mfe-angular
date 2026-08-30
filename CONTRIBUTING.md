@@ -17,7 +17,7 @@ All components usable within templates must reside under `projects/template-edit
 ## 2. Component Creation Workflow (5 Steps)
 
 ### Step 1: Create Component (`src/components/forms/MyComponent.vue`)
-Support `v-model` (`modelValue`), `path` prop, and inject `onFieldChange` to maintain full synchronization with the host shell:
+Support standard `v-model` (`modelValue`). (Changes are automatically tracked via Deep Proxy at the Engine level, so NO `path` prop or `inject('onFieldChange')` is needed!):
 
 ```vue
 <template>
@@ -27,22 +27,15 @@ Support `v-model` (`modelValue`), `path` prop, and inject `onFieldChange` to mai
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue';
-
 const props = defineProps<{
   modelValue?: any;
-  path?: string;
 }>();
 
 const emit = defineEmits(['update:modelValue']);
-const onFieldChange = inject<((path: string, val: any) => void) | null>('onFieldChange', null);
 
 function onInput(e: Event) {
   const val = (e.target as HTMLInputElement).value;
   emit('update:modelValue', val);
-  if (props.path) {
-    onFieldChange?.(props.path, val);
-  }
 }
 </script>
 
