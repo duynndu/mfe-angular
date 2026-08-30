@@ -1,1 +1,0 @@
-import{c as n}from"./chunk-DRMXH472.js";var e={production:!1};console.log(e);n("federation.manifest.json").catch(o=>console.error(o)).then(o=>import("./chunk-G4TXUVK4.js")).catch(o=>console.error(o));
