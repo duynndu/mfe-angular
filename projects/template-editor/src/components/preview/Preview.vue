@@ -433,12 +433,10 @@ export default {
         const scriptScope = hasCustomScript
           ? self.evaluatedScope
           : trackedContext;
-
         const DynamicComponent = {
           template: this.processedTemplate,
           setup() {
             return {
-              $context: trackedContext,
               ...scriptScope
             };
           }
