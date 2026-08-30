@@ -129,6 +129,11 @@
       background: #dcfce7;
       color: #15803d;
     }
+
+    &.badge-landscape {
+      background: #fef3c7;
+      color: #b45309;
+    }
   }
 
   &:hover {
@@ -150,6 +155,11 @@
       &.badge-a5 {
         background: #dcfce7;
         color: #15803d;
+      }
+
+      &.badge-landscape {
+        background: #fef3c7;
+        color: #b45309;
       }
     }
   }

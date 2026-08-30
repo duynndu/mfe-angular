@@ -1,5 +1,5 @@
 <template>
-  <div class="page-a4-wrapper" :class="{ 'landscape': landscape }">
+  <div class="page-a4-wrapper" :class="{ 'landscape': isLandscape }">
     <!-- Container nguồn dùng để Vue render slot ban đầu -->
     <div
       ref="sourceContainer"
@@ -14,7 +14,7 @@
       v-for="pIdx in pageCount"
       :key="pIdx"
       class="page-a4 page-a4-sheet"
-      :class="{ 'landscape': landscape }"
+      :class="{ 'landscape': isLandscape }"
       :style="[computedStyle, { width: pageWidth, minHeight: pageHeight, height: pageHeight }]"
     >
       <div
@@ -36,11 +36,11 @@ export default {
       default: () => ({ padding: '10mm 15mm' }),
     },
     landscape: {
-      type: Boolean,
+      type: [Boolean, String] as PropType<boolean | string>,
       default: false,
     },
     autoPaginate: {
-      type: Boolean,
+      type: [Boolean, String] as PropType<boolean | string>,
       default: true,
     },
   },
@@ -52,6 +52,14 @@ export default {
     let isPaginating = false;
     let resizeObserver: ResizeObserver | null = null;
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const isLandscape = computed(() => {
+      return props.landscape === true || props.landscape === 'true' || props.landscape === '';
+    });
+
+    const isAutoPaginate = computed(() => {
+      return props.autoPaginate !== false && props.autoPaginate !== 'false';
+    });
 
     const setPageRef = (el: any, index: number) => {
       if (el) {
@@ -69,12 +77,12 @@ export default {
       };
     });
 
-    const pageWidth = computed(() => (props.landscape ? '297mm' : '210mm'));
-    const pageHeight = computed(() => (props.landscape ? '210mm' : '297mm'));
+    const pageWidth = computed(() => (isLandscape.value ? '297mm' : '210mm'));
+    const pageHeight = computed(() => (isLandscape.value ? '210mm' : '297mm'));
 
     // Chuyển đổi mm sang pixel xấp xỉ chuẩn CSS (96 DPI: 1mm ≈ 3.7795px)
     const getPageHeightPx = () => {
-      const mm = props.landscape ? 210 : 297;
+      const mm = isLandscape.value ? 210 : 297;
       return mm * 3.779527559;
     };
 
@@ -132,7 +140,7 @@ export default {
         return;
       }
 
-      if (!props.autoPaginate) {
+      if (!isAutoPaginate.value) {
         pageCount.value = 1;
         nextTick(() => {
           const targetPage = pageRefs.value[0];
@@ -249,7 +257,7 @@ export default {
     });
 
     watch(
-      () => [props.landscape, props.autoPaginate, props.style],
+      () => [isLandscape.value, isAutoPaginate.value, props.style],
       () => {
         nextTick(() => debouncedPaginate());
       },
@@ -264,6 +272,8 @@ export default {
       computedStyle,
       pageWidth,
       pageHeight,
+      isLandscape,
+      isAutoPaginate,
     };
   },
 };
@@ -305,11 +315,6 @@ export default {
 }
 
 @media print {
-  @page {
-    size: A4 portrait;
-    margin: 0mm;
-  }
-
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -332,8 +337,8 @@ export default {
   .page-a4-sheet {
     margin: 0 !important;
     box-shadow: none !important;
-    height: 297mm !important;
-    min-height: 297mm !important;
+    height: 296.8mm !important;
+    min-height: 296.8mm !important;
     max-height: 297mm !important;
     width: 210mm !important;
     box-sizing: border-box !important;
@@ -353,10 +358,11 @@ export default {
   }
 
   .page-a4-sheet.landscape {
-    height: 210mm !important;
-    min-height: 210mm !important;
+    height: 209.8mm !important;
+    min-height: 209.8mm !important;
     max-height: 210mm !important;
     width: 297mm !important;
   }
 }
 </style>
+

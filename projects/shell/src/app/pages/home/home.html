@@ -30,7 +30,7 @@
         >
           <span class="tpl-icon">{{ tpl.icon }}</span>
           <span class="tpl-name">{{ tpl.name }}</span>
-          <span class="tpl-badge" [class.badge-a5]="tpl.badge === 'A5'">{{ tpl.badge }}</span>
+          <span class="tpl-badge" [class.badge-a5]="tpl.badge.includes('A5')" [class.badge-landscape]="tpl.badge.includes('Ngang')">{{ tpl.badge }}</span>
         </button>
       }
     </div>

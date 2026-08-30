@@ -24,6 +24,14 @@
         </div>
         <div class="top-bar-right">
           <button
+            class="top-bar-action-btn print-btn"
+            @click="printPreview"
+            title="In mẫu biểu (Ctrl + P)"
+          >
+            <i class="fa fa-print"></i>
+            <span>In bản in</span>
+          </button>
+          <button
             class="script-toggle-btn"
             :class="{ active: showScriptEditor, 'has-error': !!scriptError }"
             @click="showScriptEditor = !showScriptEditor"
@@ -838,7 +846,7 @@ export default {
     },
 
     printPreview() {
-      printElement('[c-id="123456"]');
+      printElement('[c-id="123456"], .content-root, Root, root');
     }
   }
 };
@@ -883,6 +891,46 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.top-bar-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.top-bar-action-btn:hover {
+  background: #334155;
+  color: #ffffff;
+  border-color: #475569;
+}
+
+.print-btn {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.print-btn:hover {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
 }
 
 .script-toggle-btn {

@@ -5,14 +5,24 @@ export const templateCategories: TemplateCategory[] = [
     label: 'Bố cục (Layout)',
     templates: [
       {
-        label: 'A4 Page',
+        label: 'A4 Page (Dọc)',
         icon: 'fa fa-file-text-o',
         template: '<PageA4 style="padding: 10mm 15mm;">\n  <div>Nội dung trang A4</div>\n</PageA4>',
       },
       {
-        label: 'A5 Page',
+        label: 'A4 Ngang (Landscape)',
+        icon: 'fa fa-file-o',
+        template: '<PageA4 :landscape="true" style="padding: 10mm 15mm;">\n  <div>Nội dung trang A4 Ngang</div>\n</PageA4>',
+      },
+      {
+        label: 'A5 Page (Dọc)',
         icon: 'fa fa-file-text-o',
         template: '<PageA5 style="padding: 8mm 12mm;">\n  <div>Nội dung trang A5</div>\n</PageA5>',
+      },
+      {
+        label: 'A5 Ngang (Landscape)',
+        icon: 'fa fa-file-o',
+        template: '<PageA5 :landscape="true" style="padding: 8mm 12mm;">\n  <div>Nội dung trang A5 Ngang</div>\n</PageA5>',
       },
       {
         label: 'Div Khung chứa',
@@ -57,7 +67,7 @@ export const templateCategories: TemplateCategory[] = [
       {
         label: 'Checkbox (Hộp kiểm)',
         icon: 'fa fa-check-square-o',
-        template: '<Checkbox v-model="data.tags" label="Chọn kỹ năng:" :options="tagList" />',
+        template: '<Checkbox v-model="data.agree" :native="true" afterText="Đồng ý với các điều khoản" />',
       },
       {
         label: 'DatePicker (Chọn ngày)',

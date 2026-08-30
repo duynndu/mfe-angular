@@ -251,11 +251,11 @@ return {
     </div>
     <div style="font-size: 13.5px; color: #334155; font-weight: bold;">1. Tiền sử bản thân:</div>
     <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 6px; margin-bottom: 10px;">
-      <Checkbox v-model="data.historyHypertension" afterText="Tăng huyết áp" size="sm" />
-      <Checkbox v-model="data.historyDiabetes" afterText="Đái tháo đường" size="sm" />
-      <Checkbox v-model="data.historyAsthma" afterText="Hen phế quản / COPD" size="sm" />
-      <Checkbox v-model="data.historyHeart" afterText="Bệnh mạch vành" size="sm" />
-      <Checkbox v-model="data.historyKidney" afterText="Bệnh lý Gan / Thận" size="sm" />
+      <Checkbox v-model="data.historyHypertension" :native="true" afterText="Tăng huyết áp" size="sm" />
+      <Checkbox v-model="data.historyDiabetes" :native="true" afterText="Đái tháo đường" size="sm" />
+      <Checkbox v-model="data.historyAsthma" :native="true" afterText="Hen phế quản / COPD" size="sm" />
+      <Checkbox v-model="data.historyHeart" :native="true" afterText="Bệnh mạch vành" size="sm" />
+      <Checkbox v-model="data.historyKidney" :native="true" afterText="Bệnh lý Gan / Thận" size="sm" />
     </div>
     <div style="margin-top: 10px;">
       <Textarea v-model="data.historyAllergyDetail" label="2. Tiền sử dị ứng (Thuốc, thực phẩm, thời tiết):" line />
@@ -464,79 +464,78 @@ return {
       badge: 'A5',
       icon: '💊',
       description: 'Mẫu đơn thuốc điện tử khổ A5: Thông tin bệnh nhân, danh mục thuốc điều trị, tự động đếm tổng số loại thuốc, hướng dẫn sử dụng và chữ ký điện tử bác sĩ',
-      template: `<PageA5 style="padding: 6mm 10mm; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1e293b;" c-name="PageA5" c-id="rx_p01">
+      template: `<PageA5 style="padding: 5mm 8mm; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #1e293b;" c-name="PageA5" c-id="rx_p01">
   <!-- Header -->
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1.5px solid #059669; padding-bottom: 6px; margin-bottom: 8px;" c-name="div" c-id="rx_h01">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1.5px solid #059669; padding-bottom: 4px; margin-bottom: 6px;" c-name="div" c-id="rx_h01">
     <div c-name="div" c-id="rx_h02">
       <div style="font-weight: 700; font-size: 11px; text-transform: uppercase; color: #047857;" c-name="div" c-id="rx_h03">PHÒNG KHÁM ĐA KHOA MEDIC</div>
-      <div style="font-size: 9.5px; color: #64748b;" c-name="div" c-id="rx_h04">Đ/c: 108 Trần Hưng Đạo, Q. Hoàn Kiếm, HN</div>
-      <div style="font-size: 9.5px; color: #64748b;" c-name="div" c-id="rx_h05">SĐT: 024.3984.6688</div>
+      <div style="font-size: 9px; color: #64748b;" c-name="div" c-id="rx_h04">Đ/c: 108 Trần Hưng Đạo, Q. Hoàn Kiếm, HN - SĐT: 024.3984.6688</div>
     </div>
     <div style="text-align: right;" c-name="div" c-id="rx_h06">
-      <div style="font-size: 10px; font-weight: 600; color: #047857;" c-name="div" c-id="rx_h07">MÃ ĐƠN:</div>
-      <span style="font-family: monospace; font-size: 12px; font-weight: bold; background: #ecfdf5; padding: 2px 6px; border-radius: 4px; border: 1px solid #a7f3d0;" c-name="span" c-id="rx_code">{{ data.prescriptionCode || 'RX-2026-01' }}</span>
+      <div style="font-size: 9.5px; font-weight: 600; color: #047857;" c-name="div" c-id="rx_h07">MÃ ĐƠN:</div>
+      <span style="font-family: monospace; font-size: 11.5px; font-weight: bold; background: #ecfdf5; padding: 1px 5px; border-radius: 3px; border: 1px solid #a7f3d0;" c-name="span" c-id="rx_code">{{ data.prescriptionCode || 'RX-2026-01' }}</span>
     </div>
   </div>
 
   <!-- Title -->
-  <div style="text-align: center; margin-bottom: 8px;" c-name="div" c-id="rx_t01">
-    <h3 style="margin: 0; font-size: 16px; font-weight: 800; text-transform: uppercase; color: #065f46; letter-spacing: 0.5px;" c-name="h3" c-id="rx_t02">ĐƠN THUỐC ĐIỆN TỬ</h3>
+  <div style="text-align: center; margin-bottom: 6px;" c-name="div" c-id="rx_t01">
+    <h3 style="margin: 0; font-size: 15px; font-weight: 800; text-transform: uppercase; color: #065f46; letter-spacing: 0.5px;" c-name="h3" c-id="rx_t02">ĐƠN THUỐC ĐIỆN TỬ</h3>
   </div>
 
   <!-- Patient Details -->
-  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px 10px; margin-bottom: 8px;" c-name="div" c-id="rx_pat_0">
+  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 5px 8px; margin-bottom: 6px;" c-name="div" c-id="rx_pat_0">
     <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 6px;" c-name="div" c-id="rx_pat_1">
       <Textarea v-model="data.name" label="Họ tên:" line c-name="Textarea" c-id="rx_n" />
       <Textarea v-model="data.age" label="Tuổi:" line c-name="Textarea" c-id="rx_ag" />
       <Textarea v-model="data.gender" label="Giới tính:" line c-name="Textarea" c-id="rx_ge" />
     </div>
-    <div style="margin-top: 4px;" c-name="div" c-id="rx_pat_2">
+    <div style="margin-top: 3px;" c-name="div" c-id="rx_pat_2">
       <Textarea v-model="data.address" label="Địa chỉ:" line c-name="Textarea" c-id="rx_ad" />
     </div>
-    <div style="margin-top: 4px;" c-name="div" c-id="rx_pat_3">
+    <div style="margin-top: 3px;" c-name="div" c-id="rx_pat_3">
       <Textarea v-model="data.diagnosis" label="Chẩn đoán:" line c-name="Textarea" c-id="rx_dx" />
     </div>
   </div>
 
   <!-- Medicines Table -->
-  <div style="margin-bottom: 8px;" c-name="div" c-id="rx_med_0">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;" c-name="div" c-id="rx_med_h">
-      <b style="font-size: 12px; color: #047857;" c-name="b" c-id="rx_med_t">💊 THUỐC ĐIỀU TRỊ:</b>
-      <span style="font-size: 11px; color: #64748b;" c-name="span" c-id="rx_med_c">Tổng số: <b style="color: #047857;" c-name="b" c-id="rx_t_c">{{ totalMedicines }} loại</b></span>
+  <div style="margin-bottom: 6px;" c-name="div" c-id="rx_med_0">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;" c-name="div" c-id="rx_med_h">
+      <b style="font-size: 11.5px; color: #047857;" c-name="b" c-id="rx_med_t">💊 THUỐC ĐIỀU TRỊ:</b>
+      <span style="font-size: 10.5px; color: #64748b;" c-name="span" c-id="rx_med_c">Tổng số: <b style="color: #047857;" c-name="b" c-id="rx_t_c">{{ totalMedicines }} loại</b></span>
     </div>
     
-    <div v-for="(med, idx) in (data.medicines || [])" :key="idx" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 4px; padding: 5px 8px; margin-bottom: 5px;" c-name="div" c-id="rx_item">
-      <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 600; color: #0f172a;" c-name="div" c-id="rx_item_1">
+    <div v-for="(med, idx) in (data.medicines || [])" :key="idx" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 6px; margin-bottom: 3px;" c-name="div" c-id="rx_item">
+      <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: #0f172a;" c-name="div" c-id="rx_item_1">
         <span c-name="span" c-id="rx_med_name">{{ idx + 1 }}. {{ med.name }}</span>
         <span style="color: #047857;" c-name="span" c-id="rx_med_qty">SL: {{ med.quantity }} {{ med.unit }}</span>
       </div>
-      <div style="font-size: 10.5px; color: #475569; font-style: italic; margin-top: 2px;" c-name="div" c-id="rx_item_2">
+      <div style="font-size: 10px; color: #475569; font-style: italic; margin-top: 1px;" c-name="div" c-id="rx_item_2">
         👉 {{ med.usage }}
       </div>
     </div>
   </div>
 
   <!-- Advice & Followup -->
-  <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 6px 10px; margin-bottom: 8px; font-size: 11.5px;" c-name="div" c-id="rx_adv_0">
+  <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 4px 8px; margin-bottom: 6px; font-size: 11px;" c-name="div" c-id="rx_adv_0">
     <Textarea v-model="data.doctorAdvice" label="Lời dặn:" line c-name="Textarea" c-id="rx_adv_txt" />
-    <div style="margin-top: 4px;" c-name="div" c-id="rx_adv_1">
+    <div style="margin-top: 3px;" c-name="div" c-id="rx_adv_1">
       <DatePicker v-model="data.revisitDate" label="Ngày tái khám:" placeholder="DD/MM/YYYY" format="DD/MM/YYYY" c-name="DatePicker" c-id="rx_rev_d" />
     </div>
   </div>
 
   <!-- Signatures -->
-  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px;" c-name="div" c-id="rx_sig_0">
-    <div style="font-size: 10px; color: #64748b; font-style: italic;" c-name="div" c-id="rx_sig_1">
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px;" c-name="div" c-id="rx_sig_0">
+    <div style="font-size: 9.5px; color: #64748b; font-style: italic;" c-name="div" c-id="rx_sig_1">
       * Khám lại xin mang theo đơn thuốc này.<br/>
       * Đơn thuốc có giá trị mua trong vòng 05 ngày.
     </div>
-    <div style="text-align: center; width: 180px;" c-name="div" c-id="rx_sig_2">
-      <div style="font-size: 10px; font-style: italic; color: #475569;" c-name="div" c-id="rx_sig_3">Ngày 28 tháng 08 năm 2026</div>
-      <div style="font-weight: bold; font-size: 11px; text-transform: uppercase; color: #047857; margin-top: 2px;" c-name="div" c-id="rx_sig_4">BÁC SĨ KÊ ĐƠN</div>
-      <div style="margin-top: 4px;" c-name="div" c-id="rx_sig_5">
-        <Paint style="width: 170px; height: 75px; border: 1px dashed #cbd5e1; border-radius: 4px; background: #fff;" v-model="data.signature" c-name="Paint" c-id="rx_pnt" />
+    <div style="text-align: center; width: 170px;" c-name="div" c-id="rx_sig_2">
+      <div style="font-size: 9.5px; font-style: italic; color: #475569;" c-name="div" c-id="rx_sig_3">Ngày 28 tháng 08 năm 2026</div>
+      <div style="font-weight: bold; font-size: 10.5px; text-transform: uppercase; color: #047857; margin-top: 1px;" c-name="div" c-id="rx_sig_4">BÁC SĨ KÊ ĐƠN</div>
+      <div style="margin-top: 3px;" c-name="div" c-id="rx_sig_5">
+        <Paint style="width: 160px; height: 65px; border: 1px dashed #cbd5e1; border-radius: 4px; background: #fff;" v-model="data.signature" c-name="Paint" c-id="rx_pnt" />
       </div>
-      <div style="font-weight: bold; font-size: 11px; color: #0f172a; margin-top: 2px;" c-name="div" c-id="rx_sig_6">{{ data.prescriber || 'BS. CKI Nguyễn Hải Đăng' }}</div>
+      <div style="font-weight: bold; font-size: 10.5px; color: #0f172a; margin-top: 1px;" c-name="div" c-id="rx_sig_6">{{ data.prescriber || 'BS. CKI Nguyễn Hải Đăng' }}</div>
     </div>
   </div>
 </PageA5>`,
@@ -578,6 +577,330 @@ return {
           revisitDate: '02/09/2026',
           prescriber: 'BS. CKI Nguyễn Hải Đăng',
           signature: ''
+        }
+      }
+    },
+
+    // =========================================================================
+    // 📊 TEMPLATE 4: Bảng Kê Chi Phí Khám Chữa Bệnh (Page A4 Ngang - Landscape)
+    // =========================================================================
+    {
+      id: 'billing-statement-a4-landscape',
+      name: 'Bảng kê Viện phí (A4 Ngang)',
+      badge: 'A4 Ngang',
+      icon: '📊',
+      description: 'Mẫu bảng kê chi phí khám chữa bệnh ngoại trú định dạng A4 Ngang (Landscape): Bảng chi tiết dịch vụ, tính tổng tiền tự động qua Script, phân loại BHYT và 3 chữ ký xác nhận',
+      template: `<PageA4 :landscape="true" style="padding: 8mm 12mm; font-family: 'Times New Roman', Times, serif; color: #1e293b;" c-name="PageA4" c-id="bill_root">
+  <!-- Header: Thông tin bệnh viện & Mã số hóa đơn -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0284c7; padding-bottom: 8px; margin-bottom: 10px;" c-name="div" c-id="bill_hdr">
+    <div style="text-align: left;" c-name="div" c-id="bill_hleft">
+      <div style="font-weight: bold; font-size: 13px; text-transform: uppercase; color: #0369a1;" c-name="div" c-id="bill_h1">SỞ Y TẾ TP. HÀ NỘI - BỆNH VIỆN ĐA KHOA QUỐC TẾ MEDIC</div>
+      <div style="font-size: 11.5px; color: #64748b;" c-name="div" c-id="bill_h2">Phòng Kế Hoạch Tài Chính & Viện Phí - Hotline Hỗ Trợ: 1900 6868</div>
+    </div>
+    <div style="text-align: right;" c-name="div" c-id="bill_hright">
+      <div style="font-size: 11.5px; font-weight: bold; color: #0369a1;" c-name="div" c-id="bill_code_lbl">MÃ PHIẾU THU:</div>
+      <span style="font-family: monospace; font-size: 13px; font-weight: bold; color: #0284c7; background: #e0f2fe; padding: 2px 8px; border-radius: 4px; border: 1px solid #7dd3fc;" c-name="span" c-id="bill_code_val">{{ data.billCode || 'VP-2026-8899' }}</span>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div style="text-align: center; margin-bottom: 12px;" c-name="div" c-id="bill_title_wrap">
+    <h2 style="margin: 0; font-size: 19px; font-weight: bold; text-transform: uppercase; color: #0369a1; letter-spacing: 0.5px;" c-name="h2" c-id="bill_title">BẢNG KÊ CHI TIẾT CHI PHÍ KHÁM CHỮA BỆNH NGOẠI TRÚ</h2>
+    <div style="font-style: italic; font-size: 12px; color: #475569; margin-top: 2px;" c-name="div" c-id="bill_sub">Khổ giấy A4 Ngang (Landscape) - Dữ liệu tự động tính toán tổng viện phí</div>
+  </div>
+
+  <!-- Thông tin hành chính bệnh nhân dạng ngang 4 cột -->
+  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px;" c-name="div" c-id="bill_pat_box">
+    <div style="display: grid; grid-template-columns: 2fr 0.8fr 0.8fr 1.4fr; gap: 12px;" c-name="div" c-id="bill_pat_r1">
+      <Textarea v-model="data.patientName" label="Họ và tên bệnh nhân:" line c-name="Textarea" c-id="bill_p_name" />
+      <Textarea v-model="data.age" label="Tuổi:" line c-name="Textarea" c-id="bill_p_age" />
+      <Textarea v-model="data.gender" label="Giới tính:" line c-name="Textarea" c-id="bill_p_gen" />
+      <Textarea v-model="data.insuranceNo" label="Mã thẻ BHYT:" line c-name="Textarea" c-id="bill_p_ins" />
+    </div>
+    <div style="display: grid; grid-template-columns: 2fr 1.5fr 1.5fr; gap: 12px; margin-top: 6px;" c-name="div" c-id="bill_pat_r2">
+      <Textarea v-model="data.address" label="Địa chỉ:" line c-name="Textarea" c-id="bill_p_addr" />
+      <Textarea v-model="data.diagnosis" label="Chẩn đoán xác định:" line c-name="Textarea" c-id="bill_p_diag" />
+      <DatePicker v-model="data.billDate" label="Ngày lập phiếu:" placeholder="DD/MM/YYYY" format="DD/MM/YYYY" c-name="DatePicker" c-id="bill_p_date" />
+    </div>
+  </div>
+
+  <!-- Bảng kê danh mục chi tiết -->
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 12px;" border="1" bordercolor="#cbd5e1" c-name="table" c-id="bill_tbl">
+    <thead>
+      <tr style="background: #e0f2fe; color: #0369a1; font-weight: bold; text-align: center;" c-name="tr" c-id="bill_th_r">
+        <th style="padding: 6px 4px; width: 40px;" c-name="th" c-id="th_stt">STT</th>
+        <th style="padding: 6px 8px; text-align: left;" c-name="th" c-id="th_name">Tên dịch vụ / Thuốc / Vật tư kỹ thuật</th>
+        <th style="padding: 6px 4px; width: 80px;" c-name="th" c-id="th_unit">Đơn vị</th>
+        <th style="padding: 6px 4px; width: 60px;" c-name="th" c-id="th_qty">Số lượng</th>
+        <th style="padding: 6px 8px; width: 120px; text-align: right;" c-name="th" c-id="th_price">Đơn giá (VNĐ)</th>
+        <th style="padding: 6px 8px; width: 130px; text-align: right;" c-name="th" c-id="th_total">Thành tiền (VNĐ)</th>
+        <th style="padding: 6px 8px; width: 110px; text-align: right;" c-name="th" c-id="th_ins">BHYT trả (80%)</th>
+        <th style="padding: 6px 8px; width: 120px; text-align: right;" c-name="th" c-id="th_pay">Bệnh nhân trả</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(item, idx) in (data.services || [])" :key="idx" style="background: #ffffff;" c-name="tr" c-id="bill_tr_item">
+        <td style="padding: 5px 4px; text-align: center;" c-name="td" c-id="td_idx">{{ idx + 1 }}</td>
+        <td style="padding: 5px 8px; font-weight: 500;" c-name="td" c-id="td_name">{{ item.name }}</td>
+        <td style="padding: 5px 4px; text-align: center; color: #64748b;" c-name="td" c-id="td_unit">{{ item.unit }}</td>
+        <td style="padding: 5px 4px; text-align: center; font-weight: bold;" c-name="td" c-id="td_qty">{{ item.quantity }}</td>
+        <td style="padding: 5px 8px; text-align: right; color: #334155;" c-name="td" c-id="td_price">{{ formatMoney(item.price) }}</td>
+        <td style="padding: 5px 8px; text-align: right; font-weight: 600;" c-name="td" c-id="td_total">{{ formatMoney(item.quantity * item.price) }}</td>
+        <td style="padding: 5px 8px; text-align: right; color: #0284c7;" c-name="td" c-id="td_ins">{{ formatMoney(item.insuranceCover) }}</td>
+        <td style="padding: 5px 8px; text-align: right; font-weight: bold; color: #b45309;" c-name="td" c-id="td_pay">{{ formatMoney(item.patientPay) }}</td>
+      </tr>
+      <!-- Tổng cộng -->
+      <tr style="background: #f1f5f9; font-weight: bold;" c-name="tr" c-id="bill_total_r">
+        <td colspan="5" style="padding: 6px 10px; text-align: right; text-transform: uppercase; color: #0f172a;" c-name="td" c-id="td_tlabel">TỔNG CỘNG VIỆN PHÍ:</td>
+        <td style="padding: 6px 8px; text-align: right; color: #0f172a; font-size: 13px;" c-name="td" c-id="td_grand">{{ formatMoney(totalAmount) }}</td>
+        <td style="padding: 6px 8px; text-align: right; color: #0284c7; font-size: 13px;" c-name="td" c-id="td_t_ins">{{ formatMoney(totalInsurance) }}</td>
+        <td style="padding: 6px 8px; text-align: right; color: #b45309; font-size: 14px;" c-name="td" c-id="td_t_pat">{{ formatMoney(totalPatient) }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Tóm tắt số tiền bằng chữ -->
+  <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 6px 12px; margin-bottom: 12px; font-size: 12.5px;" c-name="div" c-id="bill_words_box">
+    <span>Số tiền người bệnh thanh toán (bằng chữ): <b style="color: #b45309;">{{ totalWords || 'Một triệu năm trăm hai mươi nghìn đồng chẵn.' }}</b></span>
+  </div>
+
+  <!-- 3 Chữ ký xác nhận ngang 3 cột -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; text-align: center;" c-name="div" c-id="bill_sig_wrap">
+    <div c-name="div" c-id="sig_col1">
+      <div style="font-weight: bold; font-size: 12px; text-transform: uppercase; color: #0f172a;" c-name="div" c-id="s1_t">NGƯỜI BỆNH / THÂN NHÂN</div>
+      <div style="font-style: italic; font-size: 11px; color: #64748b;" c-name="div" c-id="s1_sub">(Ký và ghi rõ họ tên)</div>
+      <div style="margin-top: 6px;" c-name="div" c-id="s1_pbox">
+        <Paint style="width: 220px; height: 80px; margin: 0 auto; border: 1px dashed #cbd5e1; border-radius: 4px; background: #fff;" v-model="data.patientSig" c-name="Paint" c-id="s1_p" />
+      </div>
+      <div style="font-weight: bold; margin-top: 4px; font-size: 12px; color: #0f172a;" c-name="div" c-id="s1_n">{{ data.patientName || 'Nguyễn Thị Hoa' }}</div>
+    </div>
+
+    <div c-name="div" c-id="sig_col2">
+      <div style="font-weight: bold; font-size: 12px; text-transform: uppercase; color: #0369a1;" c-name="div" c-id="s2_t">NGƯỜI LẬP PHIẾU THU</div>
+      <div style="font-style: italic; font-size: 11px; color: #64748b;" c-name="div" c-id="s2_sub">(Ký và ghi rõ họ tên)</div>
+      <div style="margin-top: 6px;" c-name="div" c-id="s2_pbox">
+        <Paint style="width: 220px; height: 80px; margin: 0 auto; border: 1px dashed #93c5fd; border-radius: 4px; background: #fff;" v-model="data.creatorSig" c-name="Paint" c-id="s2_p" />
+      </div>
+      <div style="font-weight: bold; margin-top: 4px; font-size: 12px; color: #0369a1;" c-name="div" c-id="s2_n">{{ data.creatorName || 'KTV. Đỗ Thu Trang' }}</div>
+    </div>
+
+    <div c-name="div" c-id="sig_col3">
+      <div style="font-style: italic; font-size: 11px; color: #475569;" c-name="div" c-id="s3_date">Hà Nội, ngày 28 tháng 08 năm 2026</div>
+      <div style="font-weight: bold; font-size: 12px; text-transform: uppercase; color: #0369a1; margin-top: 2px;" c-name="div" c-id="s3_t">TRƯỞNG PHÒNG TÀI CHÍNH</div>
+      <div style="margin-top: 6px;" c-name="div" c-id="s3_pbox">
+        <Paint style="width: 220px; height: 80px; margin: 0 auto; border: 1px dashed #93c5fd; border-radius: 4px; background: #fff;" v-model="data.leaderSig" c-name="Paint" c-id="s3_p" />
+      </div>
+      <div style="font-weight: bold; margin-top: 4px; font-size: 12px; color: #0369a1;" c-name="div" c-id="s3_n">{{ data.leaderName || 'ThS. Nguyễn Thành Nam' }}</div>
+    </div>
+  </div>
+</PageA4>`,
+      script: `// 📜 Logic Bảng Kê Chi Phí Viện Phí A4 Ngang
+const data = reactive($context.data || {});
+
+// Hàm format tiền tệ VNĐ
+const formatMoney = (val) => {
+  if (!val && val !== 0) return '0 đ';
+  return Number(val).toLocaleString('vi-VN') + ' đ';
+};
+
+// Computed: Tính tổng thành tiền dịch vụ
+const totalAmount = computed(() => {
+  if (!Array.isArray(data.services)) return 0;
+  return data.services.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+});
+
+// Computed: Tính tổng tiền BHYT chi trả
+const totalInsurance = computed(() => {
+  if (!Array.isArray(data.services)) return 0;
+  return data.services.reduce((sum, item) => sum + (item.insuranceCover || 0), 0);
+});
+
+// Computed: Tính tổng tiền bệnh nhân cùng chi trả
+const totalPatient = computed(() => {
+  if (!Array.isArray(data.services)) return 0;
+  return data.services.reduce((sum, item) => sum + (item.patientPay || 0), 0);
+});
+
+return {
+  data,
+  formatMoney,
+  totalAmount,
+  totalInsurance,
+  totalPatient,
+  totalWords: 'Một triệu tám trăm bốn mươi nghìn đồng chẵn.'
+};`,
+      context: {
+        data: {
+          billCode: 'VP-2026-8899',
+          patientName: 'Nguyễn Thị Hoa',
+          age: '42',
+          gender: 'Nữ',
+          insuranceNo: 'DN 4 01 01 23456789',
+          address: 'Tổ 12, Phường Khương Đình, Thanh Xuân, Hà Nội',
+          diagnosis: 'Thoái hóa khớp gối hai bên (M17) / Tăng huyết áp (I10)',
+          billDate: '28/08/2026',
+          services: [
+            { name: 'Khám chuyên khoa Cơ Xương Khớp', unit: 'Lần', quantity: 1, price: 200000, insuranceCover: 160000, patientPay: 40000 },
+            { name: 'Chụp X-Quang khớp gối thẳng nghiêng 2 bên', unit: 'Lần', quantity: 2, price: 220000, insuranceCover: 352000, patientPay: 88000 },
+            { name: 'Siêu âm khớp gối màu 2 bên', unit: 'Lần', quantity: 1, price: 250000, insuranceCover: 200000, patientPay: 50000 },
+            { name: 'Xét nghiệm Acid Uric, Định lượng Calci', unit: 'Gói', quantity: 1, price: 180000, insuranceCover: 144000, patientPay: 36000 },
+            { name: 'Thuốc Glucosamin sulfate 500mg (Hộp 60 viên)', unit: 'Hộp', quantity: 2, price: 450000, insuranceCover: 0, patientPay: 900000 },
+            { name: 'Vật lý trị liệu - Siêu âm điều trị giảm đau khớp', unit: 'Lần', quantity: 5, price: 150000, insuranceCover: 600000, patientPay: 150000 }
+          ],
+          patientSig: '',
+          creatorSig: '',
+          leaderSig: '',
+          creatorName: 'KTV. Đỗ Thu Trang',
+          leaderName: 'ThS. Nguyễn Thành Nam'
+        }
+      }
+    },
+
+    // =========================================================================
+    // 📑 TEMPLATE 5: Phiếu Chỉ Định Cận Lâm Sàng & Xét Nghiệm (Page A5 Ngang)
+    // =========================================================================
+    {
+      id: 'lab-order-a5-landscape',
+      name: 'Chỉ định CLS (A5 Ngang)',
+      badge: 'A5 Ngang',
+      icon: '📑',
+      description: 'Mẫu phiếu chỉ định dịch vụ cận lâm sàng & xét nghiệm khổ A5 Ngang (Landscape): Danh mục nhóm xét nghiệm, CĐHA, tự động đếm số dịch vụ chỉ định và chữ ký bác sĩ',
+      template: `<PageA5 :landscape="true" style="padding: 5mm 8mm; font-family: 'Times New Roman', Times, serif; color: #1e293b;" c-name="PageA5" c-id="cls_root">
+  <!-- Header -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1.5px solid #0284c7; padding-bottom: 4px; margin-bottom: 6px;" c-name="div" c-id="cls_hdr">
+    <div style="text-align: left;" c-name="div" c-id="cls_hleft">
+      <div style="font-weight: bold; font-size: 11px; text-transform: uppercase; color: #0369a1;" c-name="div" c-id="cls_h1">SỞ Y TẾ TP. HÀ NỘI - BV ĐA KHOA QUỐC TẾ MEDIC</div>
+      <div style="font-size: 9.5px; color: #64748b;" c-name="div" c-id="cls_h2">Khoa Khám Bệnh - Hotline: 1900 6868</div>
+    </div>
+    <div style="text-align: right;" c-name="div" c-id="cls_hright">
+      <div style="font-size: 9.5px; font-weight: bold; color: #0369a1;" c-name="div" c-id="cls_code_lbl">MÃ PHIẾU:</div>
+      <span style="font-family: monospace; font-size: 11px; font-weight: bold; color: #0284c7; background: #e0f2fe; padding: 1px 6px; border-radius: 3px; border: 1px solid #7dd3fc;" c-name="span" c-id="cls_code_val">{{ data.orderCode || 'CLS-2026-088' }}</span>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div style="text-align: center; margin-bottom: 6px;" c-name="div" c-id="cls_t_wrap">
+    <h3 style="margin: 0; font-size: 15px; font-weight: bold; text-transform: uppercase; color: #0369a1; letter-spacing: 0.5px;" c-name="h3" c-id="cls_title">PHIẾU CHỈ ĐỊNH DỊCH VỤ CẬN LÂM SÀNG</h3>
+    <div style="font-style: italic; font-size: 10px; color: #64748b;" c-name="div" c-id="cls_sub">(Định dạng khổ giấy A5 Ngang - Landscape)</div>
+  </div>
+
+  <!-- Thông tin hành chính 4 cột -->
+  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 8px; margin-bottom: 6px;" c-name="div" c-id="cls_pat_box">
+    <div style="display: grid; grid-template-columns: 2fr 0.8fr 0.8fr 1.4fr; gap: 8px;" c-name="div" c-id="cls_pat_r1">
+      <Textarea v-model="data.patientName" label="1. Họ và tên:" line c-name="Textarea" c-id="cls_p_n" />
+      <Textarea v-model="data.age" label="2. Tuổi:" line c-name="Textarea" c-id="cls_p_ag" />
+      <Textarea v-model="data.gender" label="3. Giới tính:" line c-name="Textarea" c-id="cls_p_ge" />
+      <Textarea v-model="data.room" label="4. Phòng khám:" line c-name="Textarea" c-id="cls_p_rm" />
+    </div>
+    <div style="display: grid; grid-template-columns: 2.2fr 1.8fr; gap: 8px; margin-top: 3px;" c-name="div" c-id="cls_pat_r2">
+      <Textarea v-model="data.diagnosis" label="5. Chẩn đoán sơ bộ:" line c-name="Textarea" c-id="cls_p_dx" />
+      <DatePicker v-model="data.orderDate" mode="datetime" label="6. Thời gian chỉ định:" placeholder="HH:mm DD/MM/YYYY" format="HH:mm DD/MM/YYYY" :minute-step="15" c-name="DatePicker" c-id="cls_p_dt" />
+    </div>
+  </div>
+
+  <!-- Danh mục chỉ định 3 cột nhóm dịch vụ -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px;" c-name="div" c-id="cls_grid_services">
+    <!-- Cột 1: Xét nghiệm Huyết học & Sinh hóa -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 6px;" c-name="div" c-id="cls_g1">
+      <div style="font-weight: bold; font-size: 11px; color: #0284c7; border-bottom: 1px dashed #cbd5e1; padding-bottom: 2px; margin-bottom: 3px;" c-name="div" c-id="g1_t">
+        🩸 I. XÉT NGHIỆM MÁU
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px;" c-name="div" c-id="g1_items">
+        <Checkbox v-model="data.testCBC" :native="true" afterText="Tổng phân tích tế bào máu" size="sm" c-name="Checkbox" c-id="chk_cbc" />
+        <Checkbox v-model="data.testGlucose" :native="true" afterText="Định lượng Glucose máu" size="sm" c-name="Checkbox" c-id="chk_glu" />
+        <Checkbox v-model="data.testUreCreatinin" :native="true" afterText="Ure, Creatinin (Thận)" size="sm" c-name="Checkbox" c-id="chk_ure" />
+        <Checkbox v-model="data.testLiver" :native="true" afterText="Men gan AST / ALT (Gan)" size="sm" c-name="Checkbox" c-id="chk_liv" />
+        <Checkbox v-model="data.testLipid" :native="true" afterText="Bộ mỡ máu (Lipid panel)" size="sm" c-name="Checkbox" c-id="chk_lip" />
+      </div>
+    </div>
+
+    <!-- Cột 2: Chẩn đoán hình ảnh -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 6px;" c-name="div" c-id="cls_g2">
+      <div style="font-weight: bold; font-size: 11px; color: #0284c7; border-bottom: 1px dashed #cbd5e1; padding-bottom: 2px; margin-bottom: 3px;" c-name="div" c-id="g2_t">
+        📷 II. CHẨN ĐOÁN HÌNH ẢNH
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px;" c-name="div" c-id="g2_items">
+        <Checkbox v-model="data.testChestXRay" :native="true" afterText="X-Quang ngực thẳng" size="sm" c-name="Checkbox" c-id="chk_xray" />
+        <Checkbox v-model="data.testAbdomenEcho" :native="true" afterText="Siêu âm ổ bụng tổng quát" size="sm" c-name="Checkbox" c-id="chk_echo" />
+        <Checkbox v-model="data.testThyroidEcho" :native="true" afterText="Siêu âm Tuyến giáp" size="sm" c-name="Checkbox" c-id="chk_thy" />
+        <Checkbox v-model="data.testHeartEcho" :native="true" afterText="Siêu âm Tim Doppler màu" size="sm" c-name="Checkbox" c-id="chk_hecho" />
+        <Checkbox v-model="data.testECG" :native="true" afterText="Điện tâm đồ (ECG 12 CĐ)" size="sm" c-name="Checkbox" c-id="chk_ecg" />
+      </div>
+    </div>
+
+    <!-- Cột 3: Nội soi & Thăm dò chức năng -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 6px;" c-name="div" c-id="cls_g3">
+      <div style="font-weight: bold; font-size: 11px; color: #0284c7; border-bottom: 1px dashed #cbd5e1; padding-bottom: 2px; margin-bottom: 3px;" c-name="div" c-id="g3_t">
+        🔬 III. THĂM DÒ & KHÁC
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px;" c-name="div" c-id="g3_items">
+        <Checkbox v-model="data.testUrine" :native="true" afterText="Tổng phân tích Nước tiểu" size="sm" c-name="Checkbox" c-id="chk_uri" />
+        <Checkbox v-model="data.testENT" :native="true" afterText="Nội soi Tai Mũi Họng" size="sm" c-name="Checkbox" c-id="chk_ent" />
+        <Checkbox v-model="data.testStomach" :native="true" afterText="Nội soi Thực quản - Dạ dày" size="sm" c-name="Checkbox" c-id="chk_sto" />
+        <Checkbox v-model="data.testHba1c" :native="true" afterText="Định lượng HbA1c" size="sm" c-name="Checkbox" c-id="chk_hba" />
+        <Checkbox v-model="data.testElectrolyte" :native="true" afterText="Điện giải đồ (Na, K, Cl)" size="sm" c-name="Checkbox" c-id="chk_ele" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer: Tổng chỉ định & 2 Chữ ký -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 4px 10px;" c-name="div" c-id="cls_foot">
+    <div style="font-size: 10px; color: #166534;" c-name="div" c-id="cls_note">
+      <div>👉 Tổng số chỉ định đã chọn: <b style="font-size: 12px; color: #047857;">{{ selectedTestsCount }} dịch vụ</b></div>
+      <div style="margin-top: 2px; font-style: italic; color: #475569;">* Người bệnh nhịn ăn sáng đối với xét nghiệm đường máu và siêu âm bụng.</div>
+    </div>
+    <div style="text-align: center; width: 170px;" c-name="div" c-id="cls_sig">
+      <div style="font-weight: bold; font-size: 10.5px; text-transform: uppercase; color: #0369a1;" c-name="div" c-id="cls_sig_t">BÁC SĨ CHỈ ĐỊNH</div>
+      <div style="margin-top: 2px;" c-name="div" c-id="cls_pnt_box">
+        <Paint style="width: 160px; height: 50px; border: 1px dashed #93c5fd; border-radius: 3px; background: #fff;" v-model="data.doctorSignature" c-name="Paint" c-id="cls_pnt" />
+      </div>
+      <div style="font-weight: bold; font-size: 10px; color: #0f172a; margin-top: 1px;" c-name="div" c-id="cls_doc_n">{{ data.doctorName || 'BS. CKI Hoàng Minh Tuấn' }}</div>
+    </div>
+  </div>
+</PageA5>`,
+      script: `// 📜 Logic Phiếu Chỉ Định Cận Lâm Sàng (A5 Ngang)
+const data = reactive($context.data || {});
+
+// Computed: Tự động đếm tổng số dịch vụ xét nghiệm/CLS đã được đánh dấu chọn
+const selectedTestsCount = computed(() => {
+  const keys = [
+    'testCBC', 'testGlucose', 'testUreCreatinin', 'testLiver', 'testLipid',
+    'testChestXRay', 'testAbdomenEcho', 'testThyroidEcho', 'testHeartEcho', 'testECG',
+    'testUrine', 'testENT', 'testStomach', 'testHba1c', 'testElectrolyte'
+  ];
+  return keys.filter(k => !!data[k]).length;
+});
+
+return {
+  data,
+  selectedTestsCount
+};`,
+      context: {
+        data: {
+          orderCode: 'CLS-2026-088',
+          patientName: 'Phạm Thanh Hương',
+          age: '35',
+          gender: 'Nữ',
+          room: 'Phòng 204 - Khám Nội Tổng Quát',
+          diagnosis: 'Theo dõi Hội chứng Rối loạn Tiêu hóa / Tăng men gan nhẹ',
+          orderDate: '08:30 28/08/2026',
+          testCBC: true,
+          testGlucose: true,
+          testUreCreatinin: false,
+          testLiver: true,
+          testLipid: true,
+          testChestXRay: false,
+          testAbdomenEcho: true,
+          testThyroidEcho: false,
+          testHeartEcho: false,
+          testECG: true,
+          testUrine: true,
+          testENT: false,
+          testStomach: false,
+          testHba1c: false,
+          testElectrolyte: false,
+          doctorName: 'BS. CKI Hoàng Minh Tuấn',
+          doctorSignature: ''
         }
       }
     }
