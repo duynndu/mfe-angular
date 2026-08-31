@@ -62,7 +62,7 @@ export const templateCategories: TemplateCategory[] = [
       {
         label: 'Select (Hộp chọn)',
         icon: 'fa fa-caret-square-o-down',
-        template: '<Select v-model="data.category" label="Danh mục:" :options="categoryList" valueField="id" labelField="name" />',
+        template: '<Select v-model="data.category" label="Danh mục:" :items="categoryList" bind-label="name" bind-value="id" />',
       },
       {
         label: 'Checkbox (Hộp kiểm)',

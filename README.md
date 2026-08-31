@@ -92,14 +92,17 @@ import { TemplateEditor } from '../../components/template-editor/template-editor
   templateUrl: './home.html'
 })
 export class Home {
-  // 1. Dữ liệu động 2 chiều
-  data: any = {
-    name: 'Nguyễn Văn An',
-    age: '25',
-    birthday: '15/08/1999',
-    category: 'tech',
-    tags: ['vue', 'typescript'],
-    signature: ''
+  // 1. Context dữ liệu 2 chiều (chứa data & metadata truyền cho Vue Sandbox)
+  context: any = {
+    data: {
+      name: 'Nguyễn Văn An',
+      age: '25',
+      birthday: '15/08/1999',
+      category: 'tech',
+      tags: ['vue', 'typescript'],
+      signature: '',
+      ip: ''
+    }
   };
 
   // 2. Mẫu biểu in HTML
@@ -111,10 +114,14 @@ export class Home {
     <Paint v-model="data.signature" style="width: 400px; height: 120px;" />
   </PageA4>`;
 
-  // 3. Script logic bổ sung (Hỗ trợ top-level await)
-  script = `// Lấy IP client hoặc dữ liệu từ API bất đồng bộ
+  // 3. Script logic bổ sung (Hỗ trợ top-level await & Vue Reactivity)
+  script = `// Khởi tạo reactive state từ $context
+const data = reactive($context.data || {});
+
+// Lấy IP client hoặc dữ liệu từ API bất đồng bộ (Top-Level await)
 try {
-  data.ip = await (await fetch('https://api.ipify.org')).text();
+  const res = await fetch('https://api.ipify.org');
+  data.ip = await res.text();
 } catch (e) {}
 
 const categoryList = [
@@ -123,6 +130,7 @@ const categoryList = [
 ];
 
 return {
+  data,
   categoryList
 };`;
 
@@ -134,13 +142,13 @@ return {
 
 ```html
 <!-- Input trên Angular Cha -->
-<input [(ngModel)]="data.name" placeholder="Gõ họ tên ở Angular..." />
+<input [(ngModel)]="context.data.name" placeholder="Gõ họ tên ở Angular..." />
 
 <!-- Component Editor truyền 2 chiều -->
 <template-editor
   [(template)]="template"
   [(script)]="script"
-  [(data)]="data"
+  [(context)]="context"
   [(editMode)]="editMode"
 ></template-editor>
 ```
