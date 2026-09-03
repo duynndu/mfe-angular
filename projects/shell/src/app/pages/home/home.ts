@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TemplateEditor } from '../../components/template-editor/template-editor';
+import { AiAssistantModal } from '../../components/ai-assistant-modal/ai-assistant-modal';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -16,7 +17,7 @@ export interface TemplateItemConfig {
 
 @Component({
   selector: 'app-shell-home',
-  imports: [FormsModule, CommonModule, TemplateEditor],
+  imports: [FormsModule, CommonModule, TemplateEditor, AiAssistantModal],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
@@ -908,6 +909,7 @@ return {
 
   selectedTemplateIndex = 0;
   editMode = true;
+  showAIModal = false;
 
   get currentTemplateConfig(): TemplateItemConfig {
     return this.templates[this.selectedTemplateIndex] || this.templates[0];
@@ -943,5 +945,25 @@ return {
   selectTemplate(index: number) {
     if (index < 0 || index >= this.templates.length) return;
     this.selectedTemplateIndex = index;
+  }
+
+  onApplyAITemplate(payload: { template: string; script: string; context: any }) {
+    const newTemplateId = 'ai-gen-' + Date.now();
+    const newTemplateItem: TemplateItemConfig = {
+      id: newTemplateId,
+      name: 'AI: ' + (payload.context?.data?.patientName || payload.context?.data?.customerName || payload.context?.data?.name || 'Mẫu mới'),
+      badge: 'AI',
+      icon: '✨',
+      description: 'Mẫu biểu được sinh bởi AI Copilot & Designer',
+      template: payload.template,
+      script: payload.script,
+      context: payload.context
+    };
+    this.templates.unshift(newTemplateItem);
+    this.selectedTemplateIndex = 0;
+  }
+
+  onApplyAIContext(newContext: any) {
+    this.context = newContext;
   }
 }

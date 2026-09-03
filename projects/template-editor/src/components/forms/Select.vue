@@ -34,7 +34,7 @@
         <span
           v-for="(item, i) in selectedItems"
           :key="i"
-          class="tag"
+          class="tag multiple-tag"
         >
           {{ getItemLabel(item) }}
           <span
@@ -58,7 +58,7 @@
         <div
           v-for="(item, i) in selectedItems"
           :key="i"
-          class="tag"
+          class="tag single-tag"
           :style="singleSelectedTagStyle"
           v-show="!showSingleInput && !search.length"
         >
@@ -459,6 +459,16 @@ export default {
   padding: 0;
   border-radius: 2px;
   box-sizing: border-box;
+  position: relative;
+  white-space: nowrap;
+}
+
+.multiple-tag {
+  margin-right: 14px;
+}
+
+.single-tag {
+  max-width: 100%;
 }
 
 .label-spacer {
@@ -467,17 +477,31 @@ export default {
 }
 
 .remove {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
   margin-left: 2px;
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.12s ease;
   pointer-events: none;
   font-size: 8px;
+  line-height: 1;
+  user-select: none;
+  z-index: 2;
 }
 
+.select-wrapper:hover .remove,
 .tag:hover .remove {
   opacity: 1;
   pointer-events: auto;
+}
+
+@media print {
+  .remove {
+    display: none !important;
+  }
 }
 
 .input {

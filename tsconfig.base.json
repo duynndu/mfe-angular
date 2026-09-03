@@ -36,6 +36,12 @@
       ],
       "shared/constants/*": [
         "projects/shared/constants/*"
+      ],
+      "shared/services": [
+        "projects/shared/services"
+      ],
+      "shared/services/*": [
+        "projects/shared/services/*"
       ]
     },
   },

@@ -16,7 +16,15 @@ import { PreviewMountInstance } from 'shared/types';
 @Component({
   selector: 'template-editor',
   standalone: true,
-  template: `<div #container id="template-editor"></div>`,
+  template: `<div #container class="template-editor-host" style="width: 100%; height: 100%; display: flex; flex-direction: column;"></div>`,
+  styles: [`
+    :host {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
+  `]
 })
 export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
   @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLDivElement>;
@@ -40,7 +48,8 @@ export class TemplateEditor implements OnInit, OnChanges, OnDestroy {
   constructor(private vueLoader: VueLoader) {}
 
   async ngOnInit() {
-    const el = this.containerRef?.nativeElement || '#template-editor';
+    const el = this.containerRef?.nativeElement;
+    if (!el) return;
     this.previewInstance = await this.vueLoader.mountPreview(el, {
       template: this.template,
       script: this.script,

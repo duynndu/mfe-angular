@@ -855,8 +855,8 @@ export default {
 <style scoped>
 .preview-editor-layout {
   display: flex;
-  height: 100vh;
-  max-height: 100vh;
+  height: 100%;
+  max-height: 100%;
   width: 100%;
   position: relative;
   overflow: hidden;

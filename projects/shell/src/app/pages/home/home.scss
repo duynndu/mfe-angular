@@ -47,6 +47,32 @@
   }
 }
 
+.ai-shell-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3.5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid #7dd3fc;
+  background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    background: linear-gradient(135deg, #0369a1 0%, #4f46e5 100%);
+  }
+
+  .btn-icon {
+    font-size: 12px;
+  }
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;

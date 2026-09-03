@@ -10,12 +10,12 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ command, mode }) => ({
   base: mode === 'demo'
     ? '/ngx-vue-template-editor/template-editor/'
-    : mode === 'shell'
-    ? '/template-editor/'
-    : '/',
+    : (command === 'serve' && mode !== 'shell')
+    ? '/'
+    : '/template-editor/',
   plugins: [
     vue(),
     vueDevTools(),

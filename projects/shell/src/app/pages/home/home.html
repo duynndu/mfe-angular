@@ -11,6 +11,15 @@
       <span class="btn-text">{{ editMode ? 'Khóa' : 'Thiết kế' }}</span>
     </button>
 
+    <button
+      class="ai-shell-btn"
+      (click)="showAIModal = true"
+      title="Mở trợ lý AI thiết kế biểu mẫu (Ctrl + Shift + A)"
+    >
+      <span class="btn-icon">✨</span>
+      <span class="btn-text">AI Thiết kế</span>
+    </button>
+
     <div class="status-badge" [class.editing]="editMode">
       <span class="status-dot"></span>
       <span class="status-label">{{ editMode ? 'Edit' : 'Preview' }}</span>
@@ -71,3 +80,12 @@
     [(editMode)]="editMode"
   ></template-editor>
 </div>
+
+<app-ai-assistant-modal
+  [(visible)]="showAIModal"
+  [currentTemplate]="template"
+  [currentScript]="script"
+  [currentContext]="context"
+  (applyTemplate)="onApplyAITemplate($event)"
+  (applyContext)="onApplyAIContext($event)"
+></app-ai-assistant-modal>
