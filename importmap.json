@@ -1,20 +1,24 @@
 {
   "imports": {
-    "@angular/common": "_angular_common.vuRrSduNCb.js",
-    "@angular/common/http": "_angular_common_http.7Lb27loWZ7.js",
-    "@angular/core": "_angular_core.h_d0mJ9-di.js",
-    "@angular/core/primitives/di": "_angular_core_primitives_di.YAHwttBAzX.js",
-    "@angular/core/primitives/signals": "_angular_core_primitives_signals.cOFY91oeCU.js",
-    "@angular/forms": "_angular_forms.jhg3rSw9yP.js",
-    "@angular/platform-browser": "_angular_platform_browser.yFns6c3LfC.js",
-    "@angular/router": "_angular_router.zfUbM_RzTG.js",
-    "rxjs": "rxjs.0p_SkF0CGc.js",
-    "rxjs/operators": "rxjs_operators.t8bZgRubfa.js",
-    "tslib": "tslib.l65S-bSjKD.js",
+    "@angular/common": "_angular_common.oXwHbgTeD1.js",
+    "@angular/common/http": "_angular_common_http.RPmLp1jA_f.js",
+    "@angular/core": "_angular_core.f0CnIv2dfM.js",
+    "@angular/core/primitives/di": "_angular_core_primitives_di.8wfPILhUnV.js",
+    "@angular/core/primitives/signals": "_angular_core_primitives_signals.JERKm4DDdj.js",
+    "@angular/forms": "_angular_forms.3rNgOkkN-l.js",
+    "@angular/platform-browser": "_angular_platform_browser.7qY5N-cWZo.js",
+    "@angular/router": "_angular_router.X2tUxgCtA1.js",
+    "@vue/compiler-core": "_vue_compiler_core.V-fWMh6f-L.js",
+    "@vue/compiler-dom": "_vue_compiler_dom.6bYLvplAmZ.js",
+    "js-beautify": "js_beautify._xfco7mBtH.js",
+    "rxjs": "rxjs.nMLUQKEJXF.js",
+    "rxjs/operators": "rxjs_operators.Toia118FwT.js",
+    "tslib": "tslib.MLve2hcEHe.js",
+    "chunk-MLE27JPY.js": "chunk-MLE27JPY.js",
     "chunk-TTBQUPVX.js": "chunk-TTBQUPVX.js",
     "chunk-RQJ252K2.js": "chunk-RQJ252K2.js",
     "chunk-LUJOJIVH.js": "chunk-LUJOJIVH.js",
-    "chunk-SUTR7LBN.js": "chunk-SUTR7LBN.js",
-    "chunk-4CLCTAJ7.js": "chunk-4CLCTAJ7.js"
+    "chunk-SVPBZH3V.js": "chunk-SVPBZH3V.js",
+    "chunk-6MDQTQU3.js": "chunk-6MDQTQU3.js"
   }
 }
