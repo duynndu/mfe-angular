@@ -105,7 +105,8 @@ export default defineComponent({
 }
 
 .sidebar-header {
-  height: 38px;
+  height: 42px;
+  box-sizing: border-box;
   padding: 0 10px;
   background: #0f172a;
   border-bottom: 1px solid #1e293b;
@@ -116,6 +117,8 @@ export default defineComponent({
 }
 
 .sidebar-header.is-collapsed {
+  height: 42px;
+  box-sizing: border-box;
   justify-content: center;
   padding: 0;
 }

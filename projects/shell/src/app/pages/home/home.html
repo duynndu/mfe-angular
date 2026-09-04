@@ -1,21 +1,13 @@
 <div class="shell-control-panel">
   <!-- Left section: Mode toggle & Status -->
   <div class="panel-left">
-    <button 
-      class="mode-toggle-btn" 
-      [class.active]="editMode" 
-      (click)="editMode = !editMode"
-      [title]="editMode ? 'Nhấn để chuyển sang chế độ Chỉ xem & Điền form' : 'Nhấn để chuyển sang chế độ Thiết kế mẫu biểu'"
-    >
+    <button class="mode-toggle-btn" [class.active]="editMode" (click)="editMode = !editMode"
+      [title]="editMode ? 'Nhấn để chuyển sang chế độ Chỉ xem & Điền form' : 'Nhấn để chuyển sang chế độ Thiết kế mẫu biểu'">
       <span class="btn-icon">{{ editMode ? '🔒' : '✏️' }}</span>
       <span class="btn-text">{{ editMode ? 'Khóa' : 'Thiết kế' }}</span>
     </button>
 
-    <button
-      class="ai-shell-btn"
-      (click)="showAIModal = true"
-      title="Mở trợ lý AI thiết kế biểu mẫu (Ctrl + Shift + A)"
-    >
+    <button class="ai-shell-btn" (click)="showAIModal = true" title="Mở trợ lý AI thiết kế biểu mẫu (Ctrl + Shift + A)">
       <span class="btn-icon">✨</span>
       <span class="btn-text">AI Thiết kế</span>
     </button>
@@ -30,23 +22,20 @@
   <div class="panel-center">
     <div class="template-tabs">
       @for (tpl of templates; track tpl.id; let i = $index) {
-        <button 
-          type="button"
-          class="template-tab-btn" 
-          [class.active]="selectedTemplateIndex === i"
-          (click)="selectTemplate(i)"
-          [title]="tpl.name + ' (' + tpl.badge + '): ' + tpl.description"
-        >
-          <span class="tpl-icon">{{ tpl.icon }}</span>
-          <span class="tpl-name">{{ tpl.name }}</span>
-          <span class="tpl-badge" [class.badge-a5]="tpl.badge.includes('A5')" [class.badge-landscape]="tpl.badge.includes('Ngang')" [class.badge-ui]="tpl.badge === 'UI'">{{ tpl.badge }}</span>
-        </button>
+      <button type="button" class="template-tab-btn" [class.active]="selectedTemplateIndex === i"
+        (click)="selectTemplate(i)" [title]="tpl.name + ' (' + tpl.badge + '): ' + tpl.description">
+        <span class="tpl-icon">{{ tpl.icon }}</span>
+        <span class="tpl-name">{{ tpl.name }}</span>
+        <span class="tpl-badge" [class.badge-a5]="tpl.badge.includes('A5')"
+          [class.badge-landscape]="tpl.badge.includes('Ngang')" [class.badge-ui]="tpl.badge === 'UI'">{{ tpl.badge
+          }}</span>
+      </button>
       }
     </div>
   </div>
 
   <!-- Right section: Live 2-way Angular input & IP status -->
-  <div class="panel-right">
+  <!-- <div class="panel-right">
     @if (context?.data?.name !== undefined) {
       <div class="angular-input-group">
         <span class="input-tag">🅰️ Cha</span>
@@ -69,27 +58,16 @@
         <span class="ip-value">{{ context.data.ip }}</span>
       </div>
     }
-  </div>
+  </div> -->
 </div>
 
 <div class="editor-wrapper">
-  <template-editor 
-    [(template)]="template" 
-    [(script)]="script" 
-    [(context)]="context" 
-    [(editMode)]="editMode"
-  ></template-editor>
+  <template-editor [(template)]="template" [(script)]="script" [(context)]="context"
+    [(editMode)]="editMode"></template-editor>
 </div>
 
-<app-ai-assistant-modal
-  [(visible)]="showAIModal"
-  [currentTemplate]="template"
-  [currentScript]="script"
-  [currentContext]="context"
-  [currentTemplateName]="currentTemplateConfig.name"
-  [currentTemplateBadge]="currentTemplateConfig.badge"
-  [currentTemplateIcon]="currentTemplateConfig.icon"
-  [currentTemplateDescription]="currentTemplateConfig.description"
-  (applyTemplate)="onApplyAITemplate($event)"
-  (applyContext)="onApplyAIContext($event)"
-></app-ai-assistant-modal>
+<app-ai-assistant-modal [(visible)]="showAIModal" [currentTemplate]="template" [currentScript]="script"
+  [currentContext]="context" [currentTemplateName]="currentTemplateConfig.name"
+  [currentTemplateBadge]="currentTemplateConfig.badge" [currentTemplateIcon]="currentTemplateConfig.icon"
+  [currentTemplateDescription]="currentTemplateConfig.description" (applyTemplate)="onApplyAITemplate($event)"
+  (applyContext)="onApplyAIContext($event)"></app-ai-assistant-modal>

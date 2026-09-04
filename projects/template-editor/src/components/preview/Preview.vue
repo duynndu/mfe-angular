@@ -917,11 +917,14 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
+  height: 42px;
+  box-sizing: border-box;
+  padding: 0 16px;
   background: #0f172a;
   border-bottom: 1px solid #1e293b;
   color: #f8fafc;
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .preview-title {
