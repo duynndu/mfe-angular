@@ -25,9 +25,11 @@ export interface AIProviderConfig {
 export interface AIGeneratorRequest {
   prompt: string;
   mode: 'prompt' | 'image' | 'tweak' | 'mock-data';
+  templateType?: 'document' | 'ui';
+  screenType?: 'login' | 'dashboard' | 'form' | 'custom';
   pageSize?: 'A4' | 'A5';
   orientation?: 'portrait' | 'landscape';
-  theme?: 'medical' | 'corporate' | 'modern' | 'classic';
+  theme?: 'medical' | 'modern' | 'classic' | 'dark' | 'glassmorphism';
   imageData?: string; // base64 data url
   currentTemplate?: string;
   currentScript?: string;
@@ -47,10 +49,12 @@ export interface AIGeneratorResult {
 export interface AIPresetPrompt {
   id: string;
   title: string;
-  category: 'medical' | 'corporate' | 'general';
+  category: 'medical' | 'general' | 'ui';
   badge: string;
   icon: string;
   prompt: string;
-  pageSize: 'A4' | 'A5';
-  orientation: 'portrait' | 'landscape';
+  templateType?: 'document' | 'ui';
+  pageSize?: 'A4' | 'A5';
+  orientation?: 'portrait' | 'landscape';
+  screenType?: 'login' | 'dashboard' | 'form' | 'custom';
 }

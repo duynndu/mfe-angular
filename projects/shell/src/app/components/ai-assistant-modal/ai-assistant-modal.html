@@ -1,24 +1,46 @@
 @if (visible) {
 <div class="ai-modal-backdrop" (click)="close()">
   <div class="ai-modal-container" [class.is-fullscreen]="isFullScreen" (click)="$event.stopPropagation()">
+    
     <!-- Modal Header -->
     <div class="ai-modal-header">
       <div class="header-left">
         <div class="ai-badge-icon">
           <i class="fa fa-magic"></i>
         </div>
-        <div>
-          <h3 class="modal-title">AI Template Designer</h3>
+        <div class="header-info">
+          <div class="modal-title-row">
+            <h3 class="modal-title">AI Template Designer</h3>
+            <span class="shortcut-pill" title="Phím tắt mở nhanh">Ctrl+Shift+A</span>
+          </div>
           <div class="modal-subtitle">
-            <span class="provider-pill active">
-              <span class="status-dot"></span>
-              OmniRoute Gateway
-            </span>
-            <span class="model-name">{{ config.model }}</span>
+            <span class="model-name"><i class="fa fa-microchip"></i> {{ config.model || 'auto' }}</span>
           </div>
         </div>
       </div>
+
+      <!-- Center: 2 Chế độ System Prompt -->
+      <div class="header-center">
+        <div class="type-switcher-bar">
+          <button type="button" class="type-tab-btn" [class.active]="templateType === 'ui'" (click)="setTemplateType('ui')">
+            <i class="fa fa-desktop"></i>
+            <span>Thiết kế Giao diện (Web/App)</span>
+          </button>
+          <button type="button" class="type-tab-btn" [class.active]="templateType === 'document'" (click)="setTemplateType('document')">
+            <i class="fa fa-file-text-o"></i>
+            <span>Thiết kế Mẫu phiếu (Bản in A4/A5)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Header Controls -->
       <div class="header-right">
+        <button class="icon-btn settings-btn" (click)="showSettingsModal = true" title="Cấu hình Mô hình &amp; API Key">
+          <i class="fa fa-sliders"></i>
+          @if (!config.apiKey) {
+            <span class="warning-dot"></span>
+          }
+        </button>
         <button class="icon-btn fullscreen-btn" (click)="isFullScreen = !isFullScreen"
           [title]="isFullScreen ? 'Thu nhỏ cửa sổ' : 'Phóng to toàn màn hình'">
           <i class="fa" [ngClass]="isFullScreen ? 'fa-compress' : 'fa-expand'"></i>
@@ -27,350 +49,315 @@
       </div>
     </div>
 
-    <!-- Main Layout: Navigation + Content -->
+    <!-- Main Body: 2-Column Split Screen (Copilot + Live Canvas) -->
     <div class="ai-modal-body">
-      <!-- Sidebar Navigation -->
-      <div class="ai-sidebar">
-        <button class="nav-item" [class.active]="currentTab === 'prompt'" (click)="currentTab = 'prompt'">
-          <i class="fa fa-pencil-square-o"></i>
-          <span>Tạo từ Prompt</span>
-        </button>
-        <button class="nav-item" [class.active]="currentTab === 'image'" (click)="currentTab = 'image'">
-          <i class="fa fa-file-image-o"></i>
-          <span>Scan Ảnh / PDF</span>
-        </button>
-        <button class="nav-item" [class.active]="currentTab === 'settings'" (click)="currentTab = 'settings'">
-          <i class="fa fa-sliders"></i>
-          <span>Cấu hình Model</span>
-          @if (!config.apiKey) {
-          <span class="warning-dot" title="Chưa nhập API Key">!</span>
+      
+      <!-- CỘT TRÁI: AI COPILOT CONTROLLER -->
+      <div class="ai-copilot-pane" (dragover)="$event.preventDefault()" (drop)="onDropImage($event)">
+        
+        <!-- Context Status Bar: Thông tin ngữ cảnh mẫu đang mở -->
+        <div class="context-status-bar">
+          @if (isWorkingOnExisting) {
+            <div class="status-badge editing">
+              <i class="fa fa-pencil-square-o"></i>
+              <span class="status-label">Đang sửa mẫu:</span>
+              <b class="status-val" [title]="currentTemplateName">{{ currentTemplateName || 'Mẫu hiện tại' }}</b>
+            </div>
+            <button type="button" class="action-link-btn" (click)="startNewBlank()" title="Bỏ ngữ cảnh mẫu hiện tại và thiết kế mẫu mới từ đầu">
+              <i class="fa fa-plus-circle"></i> Tạo mẫu trắng
+            </button>
+          } @else {
+            <div class="status-badge creating">
+              <i class="fa fa-sparkles"></i>
+              <span class="status-label">Đang tạo mẫu mới từ đầu</span>
+            </div>
+            @if (hasOriginalTemplate) {
+              <button type="button" class="action-link-btn" (click)="resetToOriginal()" title="Quay lại ngữ cảnh mẫu đang mở ở trang chủ">
+                <i class="fa fa-undo"></i> Về mẫu đang mở
+              </button>
+            }
           }
-        </button>
-      </div>
+        </div>
 
-      <!-- Content Area -->
-      <div class="ai-content-panel">
-        <!-- TAB 1: Prompt to Template -->
-        @if (currentTab === 'prompt') {
-        <div class="tab-pane">
-          <div class="form-group">
-            <label class="field-label">
-              <span>Mô tả yêu cầu biểu mẫu của bạn:</span>
-              <span class="field-hint">Mô tả bằng tiếng Việt tự nhiên</span>
-            </label>
-            <textarea [(ngModel)]="promptText" class="ai-textarea" rows="4"
-              placeholder="Ví dụ: Tạo mẫu Đơn thuốc ngoại trú khổ A5 dọc gồm thông tin bệnh nhân, bảng danh mục 3 loại thuốc, hướng dẫn liều dùng và chữ ký bác sĩ..."></textarea>
+        <!-- Attached Image Thumbnail (nếu có đính kèm) -->
+        @if (imageData) {
+        <div class="attached-image-card">
+          <div class="thumb-wrap">
+            <img [src]="imageData" alt="Attached preview" />
           </div>
+          <div class="thumb-info">
+            <span class="thumb-title"><i class="fa fa-file-image-o"></i> Ảnh biểu mẫu đính kèm</span>
+            <span class="thumb-sub">AI sẽ phân tích cấu trúc trực quan từ ảnh</span>
+          </div>
+          <button type="button" class="btn-remove-thumb" (click)="removeAttachedImage()" title="Xóa ảnh">✕</button>
+        </div>
+        }
 
-          <!-- Quick Presets -->
-          <div class="presets-section">
-            <div class="presets-title"><i class="fa fa-lightbulb-o"></i> Gợi ý mẫu nhanh:</div>
-            <div class="preset-chips">
-              @for (preset of presets; track preset.id) {
-              <button class="preset-chip" (click)="applyPreset(preset)">
-                <i [class]="preset.icon"></i>
-                <span>{{ preset.title }}</span>
+        <!-- Omnibox: Khung nhập liệu hợp nhất (Prompt + Attachment + Send) -->
+        <div class="omnibox-card">
+          <textarea
+            [(ngModel)]="promptText"
+            class="ai-omnibox-input"
+            rows="5"
+            (keydown)="onPromptKeydown($any($event))"
+            [placeholder]="templateType === 'ui'
+              ? 'Mô tả yêu cầu giao diện (Web/App) hoặc chi tiết cần sửa đổi...\nVí dụ: Tạo màn hình Dashboard quản trị doanh thu, thêm bảng danh sách tiếp đón và bộ lọc ngày. Hoặc: Đổi màu các nút sang xanh lá Emerald (#10b981)...\n\n(Nhấn Ctrl+Enter để gửi)'
+              : 'Mô tả yêu cầu mẫu biểu (Bản in) hoặc chi tiết cần sửa đổi...\nVí dụ: Tạo mẫu Đơn thuốc ngoại trú khổ A5 dọc có 3 mục thuốc, hướng dẫn liều dùng và ô ký tên Paint. Hoặc: Thêm ô DatePicker ngày hẹn tái khám...\n\n(Nhấn Ctrl+Enter để gửi)'"
+          ></textarea>
+
+          <input type="file" #fileInput accept="image/*,.pdf" class="hidden-file-input" (change)="onFileSelected($event)" />
+
+          <div class="omnibox-bottom-bar">
+            <div class="bottom-left-actions">
+              <button type="button" class="attach-btn" (click)="triggerFileInput()" title="Đính kèm ảnh chụp mẫu / scan biểu mẫu (hoặc kéo thả, dán Ctrl+V)">
+                <i class="fa fa-paperclip"></i>
+                <span>{{ imageData ? 'Đổi ảnh' : 'Đính kèm ảnh scan' }}</span>
               </button>
-              }
             </div>
-          </div>
-
-          <!-- Options Grid -->
-          <div class="options-grid">
-            <div class="option-item">
-              <label class="option-label">Khổ giấy:</label>
-              <div class="button-group">
-                <button type="button" class="toggle-btn" [class.active]="pageSize === 'A4'" (click)="pageSize = 'A4'">A4
-                  (Dọc/Ngang)</button>
-                <button type="button" class="toggle-btn" [class.active]="pageSize === 'A5'" (click)="pageSize = 'A5'">A5
-                  (Nhỏ gọn)</button>
-              </div>
-            </div>
-
-            <div class="option-item">
-              <label class="option-label">Hướng giấy:</label>
-              <div class="button-group">
-                <button type="button" class="toggle-btn" [class.active]="orientation === 'portrait'"
-                  (click)="orientation = 'portrait'">
-                  <i class="fa fa-file-text-o"></i> Dọc
-                </button>
-                <button type="button" class="toggle-btn" [class.active]="orientation === 'landscape'"
-                  (click)="orientation = 'landscape'">
-                  <i class="fa fa-file-o"></i> Ngang
-                </button>
-              </div>
-            </div>
-
-            <div class="option-item">
-              <label class="option-label">Phong cách thiết kế:</label>
-              <select [(ngModel)]="theme" class="ai-select">
-                <option value="medical">🏥 Y tế & Bệnh viện chuyên nghiệp</option>
-                <option value="corporate">🏢 Doanh nghiệp & Hành chính hiện đại</option>
-                <option value="modern">🎨 Tối giản & Tinh tế (Minimal)</option>
-                <option value="classic">📜 Cổ điển / Trang trọng</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Submit Button -->
-          <div class="action-row">
-            <button class="generate-btn" [disabled]="isGenerating || !promptText.trim()" (click)="onGeneratePrompt()">
-              @if (isGenerating) {
-              <i class="fa fa-spinner fa-spin"></i>
-              <span>AI đang thiết kế biểu mẫu...</span>
-              } @else {
-              <i class="fa fa-magic"></i>
-              <span>Tạo biểu mẫu ngay</span>
-              }
-            </button>
-          </div>
-        </div>
-        }
-
-        <!-- TAB 2: Image / PDF Scan to Template -->
-        @if (currentTab === 'image') {
-        <div class="tab-pane">
-          <div class="upload-zone" (dragover)="$event.preventDefault()" (drop)="onDropImage($event)"
-            (click)="triggerFileInput()">
-            <input type="file" #fileInput accept="image/*,.pdf" class="hidden-file-input"
-              (change)="onFileSelected($event)" />
-            @if (!imageData) {
-            <div class="upload-placeholder">
-              <div class="upload-icon"><i class="fa fa-cloud-upload"></i></div>
-              <div class="upload-text">Kéo thả ảnh chụp / scan biểu mẫu vào đây hoặc click để chọn tệp</div>
-              <div class="upload-subtext">Hỗ trợ PNG, JPG, JPEG, WEBP. AI (Gemini Vision) sẽ nhận diện cấu trúc và sinh
-                mã Vue DSL.</div>
-            </div>
-            } @else {
-            <div class="preview-uploaded-image">
-              <img [src]="imageData" alt="Scan preview" />
-              <button class="remove-img-btn" (click)="$event.stopPropagation(); imageData = ''"
-                title="Xóa ảnh">✕</button>
-            </div>
-            }
-          </div>
-
-          <div class="form-group" style="margin-top: 14px;">
-            <label class="field-label">Ghi chú bổ sung cho AI (tùy chọn):</label>
-            <input [(ngModel)]="imageNotePrompt" type="text" class="ai-input"
-              placeholder="Ví dụ: Giữ nguyên bảng ở giữa, chuyển ô chữ ký thành component Paint..." />
-          </div>
-
-          <div class="action-row">
-            <button class="generate-btn" [disabled]="isGenerating || !imageData" (click)="onGenerateImage()">
-              @if (isGenerating) {
-              <i class="fa fa-spinner fa-spin"></i>
-              <span>AI đang phân tích ảnh và dựng template...</span>
-              } @else {
-              <i class="fa fa-eye"></i>
-              <span>Bóc tách & Tạo Biểu mẫu</span>
-              }
-            </button>
-          </div>
-        </div>
-        }
-
-        <!-- TAB 4: Settings -->
-        @if (currentTab === 'settings') {
-        <div class="tab-pane">
-          <div class="settings-form">
-            <!-- OmniRoute Configuration -->
-            <div class="form-group">
-              <label class="field-label">OmniRoute Gateway Endpoint URL:</label>
-              <input [(ngModel)]="config.customEndpoint" (change)="onApiKeyOrEndpointChange()" type="text" class="ai-input"
-                placeholder="https://n8nz.io.vn/v1 hoặc http://localhost:5000/v1" />
-              <div class="field-hint" style="margin-top: 4px;">
-                Địa chỉ Endpoint kết nối tới OmniRoute Server (Local: <code>http://localhost:5000/v1</code> hoặc Tunnel: <code>https://n8nz.io.vn/v1</code>).
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="field-label">
-                <span>API Key / Secret Token (Dùng để xác thực và lọc Model):</span>
-              </label>
-              <div class="api-key-input-wrapper">
-                <input [type]="showApiKey ? 'text' : 'password'" [(ngModel)]="config.apiKey"
-                  (change)="onApiKeyOrEndpointChange()" (blur)="onApiKeyOrEndpointChange()" class="ai-input"
-                  placeholder="Mặc định: omniroute (Dán API Key để lọc đúng danh sách model của Key)" />
-                <button type="button" class="eye-btn" (click)="showApiKey = !showApiKey">
-                  <i class="fa" [ngClass]="showApiKey ? 'fa-eye-slash' : 'fa-eye'"></i>
-                </button>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <label class="field-label" style="margin-bottom: 0;">Mô hình AI (Theo API Key & Gateway):</label>
-                <button type="button" class="get-key-link" style="background: none; border: none; cursor: pointer;"
-                  [disabled]="isLoadingModels" (click)="loadModels()">
-                  <i class="fa" [ngClass]="isLoadingModels ? 'fa-spinner fa-spin' : 'fa-refresh'"></i>
-                  {{ isLoadingModels ? 'Đang tải...' : 'Làm mới danh sách theo Key' }}
-                </button>
-              </div>
-              <select [(ngModel)]="config.model" class="ai-select">
-                @for (m of availableModels; track m.id) {
-                <option [value]="m.id">{{ m.name }}</option>
+            <div class="bottom-right-actions">
+              <button class="send-prompt-btn" [disabled]="isGenerating || (!promptText.trim() && !imageData)" (click)="onSendPrompt()">
+                @if (isGenerating) {
+                  <i class="fa fa-spinner fa-spin"></i>
+                  <span>Đang xử lý...</span>
+                } @else {
+                  <i class="fa fa-paper-plane"></i>
+                  <span>{{ isWorkingOnExisting || result ? 'AI Cập nhật' : 'AI Thiết kế' }}</span>
                 }
-                @if (availableModels.length === 0) {
-                <option value="auto">🎯 auto (Mặc định)</option>
-                }
-                <option value="custom">✏️ Nhập mã Model ID tùy ý (Custom Model)...</option>
-              </select>
-              @if (loadModelsError) {
-              <div class="field-hint" style="color: #ef4444; margin-top: 4px;">
-                <i class="fa fa-exclamation-triangle"></i> Lỗi xác thực: {{ loadModelsError }} (Vui lòng tạo/dán đúng API Key từ OmniRoute Dashboard).
-              </div>
-              } @else {
-              <div class="field-hint" style="margin-top: 4px;">
-                Hiển thị {{ availableModels.length }} mô hình đã được kích hoạt & phân quyền cho API Key này.
-              </div>
-              }
-            </div>
-
-            @if (config.model === 'custom') {
-            <div class="form-group">
-              <label class="field-label">Nhập tên Model ID cụ thể:</label>
-              <input [(ngModel)]="customModelId" type="text" class="ai-input"
-                placeholder="Ví dụ: gemini-2.5-pro, claude-3-5-sonnet-20241022, deepseek-reasoner..." />
-            </div>
-            }
-
-            <div class="save-settings-row">
-              <button class="save-btn" (click)="saveConfig()">
-                <i class="fa fa-check"></i> Lưu cấu hình
               </button>
-              @if (saveSuccessMsg) {
-              <span class="save-success-text">
-                <i class="fa fa-check-circle"></i> {{ saveSuccessMsg }}
-              </span>
-              }
             </div>
           </div>
         </div>
-        }
 
-        <!-- STREAMING TERMINAL (While AI is generating) -->
+        <!-- Inline Streaming Status Console -->
         @if (isGenerating) {
         <div class="streaming-console-box">
           <div class="streaming-header">
             <div class="streaming-title">
               <span class="pulse-radar"></span>
-              <span>Đang nhận stream trực tiếp từ {{ config.model }}...</span>
+              <span>Đang kết nối và nhận dữ liệu từ {{ config.model }}...</span>
             </div>
             <div class="streaming-stats">
               <span class="stat-badge"><i class="fa fa-keyboard-o"></i> {{ streamingChars }} ký tự</span>
-              <span class="stat-badge live-pulse"><i class="fa fa-circle"></i> Streaming</span>
             </div>
           </div>
           <div class="streaming-body" #streamConsoleBody>
-            <pre
-              class="stream-code"><code>{{ streamingText || 'Đang kết nối API và khởi tạo luồng dữ liệu stream...' }}<span class="cursor-blink">▌</span></code></pre>
+            <pre class="stream-code"><code>{{ streamingText || 'Khởi tạo luồng xử lý...' }}<span class="cursor-blink">▌</span></code></pre>
           </div>
         </div>
         }
 
-        <!-- RESULT & PREVIEW SECTION -->
+        <!-- Result Summary & Reset Controls -->
         @if (result && !isGenerating) {
-        <div class="result-section">
-          <div class="result-header">
-            <div class="result-summary">
-              <i class="fa fa-check-circle-o result-icon"></i>
-              <span>{{ result.summary }}</span>
-            </div>
-            <div class="result-tabs">
-              <button class="result-tab-btn" [class.active]="resultViewTab === 'preview'"
-                (click)="resultViewTab = 'preview'">
-                <i class="fa fa-desktop"></i> Xem trước
+        <div class="result-summary-card">
+          <div class="summary-top">
+            <div class="summary-icon"><i class="fa fa-check-circle"></i></div>
+            <div class="summary-text">{{ result.summary }}</div>
+          </div>
+          <div class="summary-actions">
+            @if (hasOriginalTemplate) {
+              <button type="button" class="btn-revert" (click)="resetToOriginal()" title="Hủy các thay đổi AI và trở về mẫu gốc">
+                <i class="fa fa-undo"></i> Hoàn tác về bản gốc
               </button>
-              <button class="result-tab-btn" [class.active]="resultViewTab === 'template'"
-                (click)="resultViewTab = 'template'">
-                <i class="fa fa-code"></i> Mã Template
-              </button>
-              <button class="result-tab-btn" [class.active]="resultViewTab === 'script'"
-                (click)="resultViewTab = 'script'">
-                <i class="fa fa-file-code-o"></i> JS Script
-              </button>
-              <button class="result-tab-btn" [class.active]="resultViewTab === 'context'"
-                (click)="resultViewTab = 'context'">
-                <i class="fa fa-database"></i> Dữ liệu Mock
-              </button>
-            </div>
+            }
+          </div>
+        </div>
+        }
+
+      </div>
+
+      <!-- CỘT PHẢI: LIVE CANVAS & CODE VIEW -->
+      <div class="ai-canvas-pane">
+        
+        <!-- Canvas Topbar -->
+        <div class="canvas-topbar">
+          <div class="canvas-tabs">
+            <button class="canvas-tab-btn" [class.active]="resultViewTab === 'preview'" (click)="resultViewTab = 'preview'">
+              <i class="fa fa-television"></i> Xem trước
+            </button>
+            <button class="canvas-tab-btn" [class.active]="resultViewTab === 'template'" (click)="resultViewTab = 'template'">
+              <i class="fa fa-code"></i> HTML Template
+            </button>
+            <button class="canvas-tab-btn" [class.active]="resultViewTab === 'script'" (click)="resultViewTab = 'script'">
+              <i class="fa fa-file-code-o"></i> Script JS
+            </button>
+            <button class="canvas-tab-btn" [class.active]="resultViewTab === 'context'" (click)="resultViewTab = 'context'">
+              <i class="fa fa-database"></i> Dữ liệu Mock
+            </button>
           </div>
 
-          <!-- Result Body -->
-          <div class="result-body">
-            @if (resultViewTab === 'preview') {
-            <div class="ai-preview-interactive-container">
-              <div class="ai-preview-subbar">
-                <div class="subbar-info">
-                  <span class="preview-badge">
-                    <i class="fa fa-television"></i> Vue Template Live Preview
+          <div class="canvas-actions">
+            <button type="button" class="btn-copy-code" (click)="copyCurrentViewCode()" title="Sao chép nội dung đang xem">
+              <i class="fa fa-copy"></i> Sao chép
+            </button>
+            @if (copyToastMessage) {
+              <span class="copy-toast-inline"><i class="fa fa-check"></i> {{ copyToastMessage }}</span>
+            }
+
+            <!-- Nút Áp dụng -->
+            @if (displayTemplate) {
+              @if (isWorkingOnExisting) {
+                <button type="button" class="btn-primary-apply" (click)="applyToEditor(true)" title="Ghi đè cập nhật vào phiếu đang mở">
+                  <i class="fa fa-check"></i> Cập nhật phiếu này
+                </button>
+                <button type="button" class="btn-secondary-apply" (click)="applyToEditor(false)" title="Lưu thành một mẫu mới độc lập">
+                  <i class="fa fa-clone"></i> Lưu bản sao mới
+                </button>
+              } @else {
+                <button type="button" class="btn-primary-apply" (click)="applyToEditor(false)">
+                  <i class="fa fa-check-circle"></i> Áp dụng vào Editor
+                </button>
+              }
+            }
+          </div>
+        </div>
+
+        <!-- Canvas Content Area -->
+        <div class="canvas-content-viewport">
+          @if (resultViewTab === 'preview') {
+            @if (displayTemplate) {
+              <div class="preview-interactive-wrapper">
+                <div class="preview-mode-bar">
+                  <span class="mode-info">
+                    <i class="fa fa-eye"></i> Vue 3 Live Interactive Canvas
                   </span>
-                  <span class="preview-hint">Hiển thị chuẩn xác 100% linh kiện Vue (PageA4, PageA5, Paint, DatePicker, Select, Textarea...)</span>
-                </div>
-                <div class="subbar-controls">
-                  <div class="button-group compact">
-                    <button type="button" class="toggle-btn" [class.active]="!aiPreviewEditMode"
-                      (click)="aiPreviewEditMode = false" title="Chế độ điền và xem trước bản in thực tế">
-                      <i class="fa fa-eye"></i> Điền & Xem trước
+                  <div class="mode-toggles">
+                    <button type="button" class="mode-btn" [class.active]="!aiPreviewEditMode" (click)="aiPreviewEditMode = false">
+                      <i class="fa fa-play-circle"></i> Xem &amp; Điền thử
                     </button>
-                    <button type="button" class="toggle-btn" [class.active]="aiPreviewEditMode"
-                      (click)="aiPreviewEditMode = true" title="Chế độ thiết kế & chỉnh sửa cấu trúc DOM trực quan">
-                      <i class="fa fa-pencil"></i> Trình thiết kế
+                    <button type="button" class="mode-btn" [class.active]="aiPreviewEditMode" (click)="aiPreviewEditMode = true">
+                      <i class="fa fa-pencil"></i> Trình thiết kế DOM
                     </button>
                   </div>
                 </div>
+
+                <div class="preview-editor-mount">
+                  <template-editor
+                    [(template)]="displayTemplate"
+                    [(script)]="displayScript"
+                    [(context)]="displayContext"
+                    [(editMode)]="aiPreviewEditMode">
+                  </template-editor>
+                </div>
               </div>
-
-              <div class="ai-preview-mount-frame">
-                <template-editor
-                  [(template)]="result.template"
-                  [(script)]="result.script"
-                  [(context)]="result.context"
-                  [(editMode)]="aiPreviewEditMode">
-                </template-editor>
+            } @else {
+              <div class="canvas-empty-state">
+                <div class="empty-icon"><i class="fa fa-magic"></i></div>
+                <h4>Sẵn sàng thiết kế cùng AI</h4>
+                <p>Nhập yêu cầu vào khung bên trái (hoặc đính kèm ảnh chụp mẫu biểu) và nhấn <b>AI Thiết kế</b> để xem trước giao diện trực tiếp tại đây.</p>
               </div>
-            </div>
             }
+          }
 
-            @if (resultViewTab === 'template') {
+          @if (resultViewTab === 'template') {
             <div class="code-view-box">
-              <pre><code>{{ result.template }}</code></pre>
+              <pre><code>{{ displayTemplate }}</code></pre>
             </div>
-            }
+          }
 
-            @if (resultViewTab === 'script') {
+          @if (resultViewTab === 'script') {
             <div class="code-view-box">
-              <pre><code>{{ result.script }}</code></pre>
+              <pre><code>{{ displayScript }}</code></pre>
             </div>
-            }
+          }
 
-            @if (resultViewTab === 'context') {
+          @if (resultViewTab === 'context') {
             <div class="code-view-box">
-              <pre><code>{{ stringifyContext(result.context) }}</code></pre>
+              <pre><code>{{ stringifyContext(displayContext) }}</code></pre>
             </div>
-            }
-          </div>
-
-          <!-- Apply Actions Footer -->
-          <div class="result-actions-footer">
-            <div class="footer-left">
-              <button class="secondary-btn" (click)="copyCode(result.template)">
-                <i class="fa fa-copy"></i> Sao chép Template
-              </button>
-            </div>
-            <div class="footer-right">
-              <button class="secondary-btn" (click)="applyContextOnly()">
-                <i class="fa fa-database"></i> Chỉ nạp Mock Data
-              </button>
-              <button class="apply-primary-btn" (click)="applyToEditor()">
-                <i class="fa fa-check-circle"></i> Áp dụng vào Editor
-              </button>
-            </div>
-          </div>
+          }
         </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+}
+
+<!-- MODAL CẤU HÌNH AI MODEL (Settings Dialog) -->
+@if (showSettingsModal) {
+<div class="settings-modal-backdrop" (click)="showSettingsModal = false">
+  <div class="settings-modal-dialog" (click)="$event.stopPropagation()">
+    <div class="settings-dialog-header">
+      <div class="dialog-title">
+        <i class="fa fa-sliders"></i>
+        <span>Cấu hình OmniRoute Gateway &amp; Mô hình AI</span>
+      </div>
+      <button class="dialog-close-btn" (click)="showSettingsModal = false">✕</button>
+    </div>
+
+    <div class="settings-dialog-body">
+      <div class="setting-group">
+        <label class="setting-label">Gateway Endpoint URL:</label>
+        <input [(ngModel)]="config.customEndpoint" (change)="onApiKeyOrEndpointChange()" type="text" class="setting-input"
+          placeholder="https://n8nz.io.vn/v1 hoặc http://localhost:5000/v1" />
+        <div class="endpoint-quick-row">
+          <button type="button" class="quick-link" (click)="setQuickEndpoint('https://n8nz.io.vn/v1')">Cloud: n8nz.io.vn</button>
+          <button type="button" class="quick-link" (click)="setQuickEndpoint('http://localhost:5000/v1')">Local: localhost:5000</button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <label class="setting-label">API Key / Secret Token:</label>
+        <div class="input-with-eye">
+          <input [type]="showApiKey ? 'text' : 'password'" [(ngModel)]="config.apiKey"
+            (change)="onApiKeyOrEndpointChange()" class="setting-input"
+            placeholder="omniroute (hoặc nhập API Key để lấy đúng danh sách model)" />
+          <button type="button" class="eye-toggle" (click)="showApiKey = !showApiKey">
+            <i class="fa" [ngClass]="showApiKey ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="label-with-action">
+          <label class="setting-label">Mô hình AI (Model):</label>
+          <button type="button" class="btn-reload-models" [disabled]="isLoadingModels" (click)="loadModels()">
+            <i class="fa" [ngClass]="isLoadingModels ? 'fa-spinner fa-spin' : 'fa-refresh'"></i>
+            {{ isLoadingModels ? 'Đang tải...' : 'Làm mới' }}
+          </button>
+        </div>
+        <select [(ngModel)]="config.model" class="setting-select">
+          @for (m of availableModels; track m.id) {
+            <option [value]="m.id">{{ m.name }}</option>
+          }
+          @if (availableModels.length === 0) {
+            <option value="auto">🎯 auto (Mặc định)</option>
+          }
+          <option value="custom">✏️ Nhập mã Model ID tùy chỉnh...</option>
+        </select>
+        @if (loadModelsError) {
+          <div class="error-hint"><i class="fa fa-exclamation-triangle"></i> {{ loadModelsError }}</div>
         }
       </div>
+
+      @if (config.model === 'custom') {
+      <div class="setting-group">
+        <label class="setting-label">Nhập tên Model ID:</label>
+        <input [(ngModel)]="customModelId" type="text" class="setting-input" placeholder="Ví dụ: gemini-2.5-pro, claude-3-5-sonnet..." />
+      </div>
+      }
+
+      <div class="test-row">
+        <button type="button" class="btn-test-ping" [disabled]="testConnectionStatus === 'testing'" (click)="testConnection()">
+          <i class="fa fa-plug"></i> Kiểm tra kết nối
+        </button>
+        @if (testConnectionMessage) {
+          <span class="test-result" [class.success]="testConnectionStatus === 'success'" [class.error]="testConnectionStatus === 'failed'">
+            {{ testConnectionMessage }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="settings-dialog-footer">
+      @if (saveSuccessMsg) {
+        <span class="save-toast"><i class="fa fa-check"></i> {{ saveSuccessMsg }}</span>
+      }
+      <button type="button" class="btn-save-settings" (click)="saveConfig()">
+        <i class="fa fa-check"></i> Lưu &amp; Đóng
+      </button>
     </div>
   </div>
 </div>

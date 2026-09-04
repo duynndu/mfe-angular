@@ -39,7 +39,7 @@
         >
           <span class="tpl-icon">{{ tpl.icon }}</span>
           <span class="tpl-name">{{ tpl.name }}</span>
-          <span class="tpl-badge" [class.badge-a5]="tpl.badge.includes('A5')" [class.badge-landscape]="tpl.badge.includes('Ngang')">{{ tpl.badge }}</span>
+          <span class="tpl-badge" [class.badge-a5]="tpl.badge.includes('A5')" [class.badge-landscape]="tpl.badge.includes('Ngang')" [class.badge-ui]="tpl.badge === 'UI'">{{ tpl.badge }}</span>
         </button>
       }
     </div>
@@ -86,6 +86,10 @@
   [currentTemplate]="template"
   [currentScript]="script"
   [currentContext]="context"
+  [currentTemplateName]="currentTemplateConfig.name"
+  [currentTemplateBadge]="currentTemplateConfig.badge"
+  [currentTemplateIcon]="currentTemplateConfig.icon"
+  [currentTemplateDescription]="currentTemplateConfig.description"
   (applyTemplate)="onApplyAITemplate($event)"
   (applyContext)="onApplyAIContext($event)"
 ></app-ai-assistant-modal>

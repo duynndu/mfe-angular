@@ -20,7 +20,7 @@
       <!-- Top Action Bar (Script toggle & Tooling) -->
       <div class="preview-top-bar" v-if="editMode">
         <div class="top-bar-left">
-          <span class="preview-title"><i class="fa fa-file-text-o"></i> Xem trước Bản in</span>
+          <span class="preview-title"><i class="fa fa-television"></i> Xem trước Mẫu biểu & Giao diện</span>
         </div>
         <div class="top-bar-right">
           <button
@@ -270,13 +270,15 @@ export default {
       contextMenuOption: {
         x: 0,
         y: 0,
-        minWidth: 100
+        minWidth: 100,
+        zIndex: 100005
       },
       insertMenuVisible: false,
       insertMenuOption: {
         x: 0,
         y: 0,
-        minWidth: 180
+        minWidth: 180,
+        zIndex: 100005
       },
       elementCopied: null as VirtualNode | null,
       templateCategories: templateCategories,
@@ -320,6 +322,13 @@ export default {
       async handler(newVal, oldVal) {
         if (newVal !== oldVal) {
           await this.evalScript();
+        }
+      }
+    },
+    editMode: {
+      handler(newVal) {
+        if (this.$refs.container) {
+          this.attachEventListeners(this.$refs.container as HTMLElement);
         }
       }
     }
@@ -454,6 +463,25 @@ export default {
         this.app = createApp(DynamicComponent);
         this.app.config.compilerOptions.isCustomElement = (tag) => tag === 'Root' || tag === 'root';
         
+        this.app.config.errorHandler = (err: any, _instance, info) => {
+          console.error('[Preview Vue Error]:', err, info);
+          const errMsg = err?.message || String(err);
+          containerEl.innerHTML = `
+            <div style="padding: 24px; margin: 30px auto; max-width: 600px; background: #fff1f2; border: 1.5px solid #fca5a5; border-radius: 12px; color: #9f1239; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-weight: 700; font-size: 16px;">
+                <i class="fa fa-exclamation-triangle" style="font-size: 20px; color: #e11d48;"></i>
+                Không thể hiển thị Template do lỗi Runtime / Cú pháp
+              </div>
+              <div style="background: #ffffff; padding: 12px 14px; border-radius: 8px; border: 1px solid #fecdd3; font-family: monospace; font-size: 13px; color: #be123c; word-break: break-all; margin-bottom: 12px;">
+                ${errMsg}
+              </div>
+              <p style="margin: 0; font-size: 13px; color: #475569; line-height: 1.5;">
+                💡 <b>Gợi ý khắc phục:</b> Kiểm tra tab <b>Script</b> xem các biến hoặc hàm được gọi trong template (như biến điều kiện <code>v-if</code> hoặc binding mảng) đã được khai báo và return đầy đủ chưa.
+              </p>
+            </div>
+          `;
+        };
+
         if (onFieldChange) {
           this.app.provide('onFieldChange', onFieldChange);
         }
@@ -478,8 +506,20 @@ export default {
 
         this.attachEventListeners(containerEl);
 
-      } catch (e) {
+      } catch (e: any) {
         console.error('Render error:', e);
+        const errMsg = e?.message || String(e);
+        containerEl.innerHTML = `
+          <div style="padding: 24px; margin: 30px auto; max-width: 600px; background: #fff1f2; border: 1.5px solid #fca5a5; border-radius: 12px; color: #9f1239; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-weight: 700; font-size: 16px;">
+              <i class="fa fa-exclamation-circle" style="font-size: 20px; color: #e11d48;"></i>
+              Lỗi cú pháp Template / Không thể biên dịch
+            </div>
+            <div style="background: #ffffff; padding: 12px 14px; border-radius: 8px; border: 1px solid #fecdd3; font-family: monospace; font-size: 13px; color: #be123c; word-break: break-all;">
+              ${errMsg}
+            </div>
+          </div>
+        `;
       }
     },
 
@@ -1292,7 +1332,7 @@ export default {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
+  z-index: 100002;
   animation: fadeIn 0.2s ease-in-out;
 }
 

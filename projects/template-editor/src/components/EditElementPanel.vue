@@ -349,7 +349,7 @@ export default {
   background: white;
   border-left: 1px solid #ddd;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 100003;
   display: flex;
   flex-direction: column;
 }

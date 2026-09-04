@@ -904,6 +904,456 @@ return {
           doctorSignature: ''
         }
       }
+    },
+
+    // =========================================================================
+    // 🔐 TEMPLATE 5: Giao diện Đăng nhập & Xác thực 2FA (100% Native HTML & CSS)
+    // =========================================================================
+    {
+      id: 'native-login-screen',
+      name: 'Giao diện Đăng nhập',
+      badge: 'UI',
+      icon: '🔐',
+      description: 'Mẫu màn hình Đăng nhập hiện đại được xây dựng hoàn toàn bằng 100% THẺ HTML THUẦN (div, form, input, button, select...): Thẻ Card căn giữa, ô nhập tài khoản/mật khẩu, mã OTP 2FA 6 ô số, checkbox ghi nhớ, nút bấm gradient, reactive script xử lý đăng nhập',
+      template: `<div style="width: 100%; max-width: 440px; margin: 24px auto; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <!-- Header / Logo & Tiêu đề -->
+  <div style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); padding: 30px 24px; text-align: center; color: #ffffff;">
+    <div style="width: 52px; height: 52px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(4px); border-radius: 12px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+      <i class="fa fa-hospital-o"></i>
+    </div>
+    <h2 style="margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -0.3px;">Cổng Thông Tin Y Tế</h2>
+    <p style="margin: 6px 0 0; font-size: 13px; opacity: 0.9;">Đăng nhập hệ thống quản trị & điều hành khám chữa bệnh</p>
+  </div>
+
+  <!-- Form Body -->
+  <div style="padding: 26px 24px;">
+    <!-- Trường Tên đăng nhập -->
+    <div style="margin-bottom: 16px;">
+      <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">
+        <i class="fa fa-user-circle" style="color: #0284c7; margin-right: 5px;"></i> Tên đăng nhập hoặc Email:
+      </label>
+      <input
+        type="text"
+        v-model="data.username"
+        placeholder="Nhập tài khoản hoặc email..."
+        style="width: 100%; box-sizing: border-box; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; outline: none; transition: border-color 0.2s;"
+      />
+    </div>
+
+    <!-- Trường Mật khẩu -->
+    <div style="margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <label style="font-size: 13px; font-weight: 600; color: #334155;">
+          <i class="fa fa-lock" style="color: #0284c7; margin-right: 5px;"></i> Mật khẩu:
+        </label>
+        <a href="javascript:void(0)" style="font-size: 12px; color: #0284c7; text-decoration: none; font-weight: 500;">Quên mật khẩu?</a>
+      </div>
+      <input
+        type="password"
+        v-model="data.password"
+        placeholder="••••••••"
+        style="width: 100%; box-sizing: border-box; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; outline: none;"
+      />
+    </div>
+
+    <!-- Mã xác thực 2FA OTP (Tạo bằng 6 thẻ input thuần) -->
+    <div style="margin-bottom: 18px; padding: 12px 14px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-size: 12.5px; font-weight: 600; color: #475569;">
+          <i class="fa fa-shield" style="color: #10b981; margin-right: 5px;"></i> Mã bảo mật 2FA (6 chữ số):
+        </span>
+        <span style="font-size: 11px; color: #64748b;">Gửi về SMS / App</span>
+      </div>
+      <div style="display: flex; gap: 8px; justify-content: space-between;">
+        <input v-model="data.otp1" type="text" maxlength="1" style="width: 44px; height: 44px; text-align: center; font-size: 18px; font-weight: bold; border: 1.5px solid #cbd5e1; border-radius: 8px; outline: none; background: #fff;" />
+        <input v-model="data.otp2" type="text" maxlength="1" style="width: 44px; height: 44px; text-align: center; font-size: 18px; font-weight: bold; border: 1.5px solid #cbd5e1; border-radius: 8px; outline: none; background: #fff;" />
+        <input v-model="data.otp3" type="text" maxlength="1" style="width: 44px; height: 44px; text-align: center; font-size: 18px; font-weight: bold; border: 1.5px solid #cbd5e1; border-radius: 8px; outline: none; background: #fff;" />
+        <input v-model="data.otp4" type="text" maxlength="1" style="width: 44px; height: 44px; text-align: center; font-size: 18px; font-weight: bold; border: 1.5px solid #cbd5e1; border-radius: 8px; outline: none; background: #fff;" />
+        <input v-model="data.otp5" type="text" maxlength="1" style="width: 44px; height: 44px; text-align: center; font-size: 18px; font-weight: bold; border: 1.5px solid #cbd5e1; border-radius: 8px; outline: none; background: #fff;" />
+        <input v-model="data.otp6" type="text" maxlength="1" style="width: 44px; height: 44px; text-align: center; font-size: 18px; font-weight: bold; border: 1.5px solid #cbd5e1; border-radius: 8px; outline: none; background: #fff;" />
+      </div>
+    </div>
+
+    <!-- Tùy chọn ghi nhớ đăng nhập -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: #475569;">
+        <input type="checkbox" v-model="data.rememberMe" style="width: 16px; height: 16px; accent-color: #0284c7; cursor: pointer;" />
+        Ghi nhớ đăng nhập trên thiết bị này
+      </label>
+    </div>
+
+    <!-- Nút Đăng nhập -->
+    <button
+      type="button"
+      @click="handleLogin"
+      style="width: 100%; padding: 12px; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff; border: none; border-radius: 8px; font-size: 14.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);"
+    >
+      <i class="fa fa-sign-in"></i> Đăng nhập hệ thống
+    </button>
+
+    <!-- Thông báo kết quả đăng nhập (Reactive) -->
+    <div
+      v-if="loginStatus"
+      :style="{
+        marginTop: '14px',
+        padding: '10px 14px',
+        borderRadius: '8px',
+        fontSize: '13px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        background: loginSuccess ? '#f0fdf4' : '#fef2f2',
+        color: loginSuccess ? '#166534' : '#991b1b',
+        border: '1px solid ' + (loginSuccess ? '#bbf7d0' : '#fecaca')
+      }"
+    >
+      <i class="fa" :class="loginSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'"></i>
+      <span>{{ loginStatus }}</span>
+    </div>
+
+    <!-- Đăng nhập mạng xã hội / SSO -->
+    <div style="margin-top: 22px; text-align: center; position: relative;">
+      <div style="height: 1px; background: #e2e8f0; margin-bottom: -10px;"></div>
+      <span style="background: #fff; padding: 0 12px; font-size: 12px; color: #94a3b8; position: relative;">HOẶC ĐĂNG NHẬP VỚI</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px;">
+      <button type="button" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #334155; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <i class="fa fa-google" style="color: #ea4335;"></i> Google SSO
+      </button>
+      <button type="button" style="padding: 9px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #334155; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <i class="fa fa-id-card-o" style="color: #0284c7;"></i> Thẻ Y Tế (VNeID)
+      </button>
+    </div>
+
+    <div style="margin-top: 20px; text-align: center; font-size: 12.5px; color: #64748b;">
+      Chưa có tài khoản truy cập? <a href="javascript:void(0)" style="color: #0284c7; font-weight: 600; text-decoration: none;">Đăng ký tài khoản bác sĩ</a>
+    </div>
+  </div>
+</div>`,
+      script: `// 📜 Logic Giao Diện Đăng Nhập & 2FA (100% Native HTML)
+const data = reactive($context.data || {});
+const loginStatus = ref('');
+const loginSuccess = ref(false);
+
+const fullOtp = computed(() => {
+  return [data.otp1, data.otp2, data.otp3, data.otp4, data.otp5, data.otp6].join('');
+});
+
+const handleLogin = () => {
+  if (!data.username || !data.password) {
+    loginSuccess.value = false;
+    loginStatus.value = 'Vui lòng nhập đầy đủ Tên đăng nhập và Mật khẩu!';
+    return;
+  }
+  if (fullOtp.value.length < 6) {
+    loginSuccess.value = false;
+    loginStatus.value = 'Vui lòng nhập đủ 6 số mã xác thực 2FA OTP!';
+    return;
+  }
+  loginSuccess.value = true;
+  loginStatus.value = 'Đăng nhập thành công! Xin chào ' + data.username + ' (OTP: ' + fullOtp.value + ')';
+};
+
+return {
+  data,
+  loginStatus,
+  loginSuccess,
+  fullOtp,
+  handleLogin
+};`,
+      context: {
+        data: {
+          username: 'bs.nguyenhaidang@hospital.vn',
+          password: 'password123',
+          otp1: '8',
+          otp2: '6',
+          otp3: '2',
+          otp4: '9',
+          otp5: '0',
+          otp6: '4',
+          rememberMe: true
+        }
+      }
+    },
+
+    // =========================================================================
+    // 📊 TEMPLATE 6: Dashboard Quản trị & Thống kê Y tế (100% Native HTML & CSS)
+    // =========================================================================
+    {
+      id: 'native-admin-dashboard',
+      name: 'Dashboard Quản trị',
+      badge: 'UI',
+      icon: '📊',
+      description: 'Mẫu Bảng điều khiển Quản trị & Thống kê Y tế chuyên nghiệp bằng 100% THẺ HTML THUẦN (div, table, input, select, button): 4 Thẻ KPI số liệu, thanh lọc ngày tháng/chuyên khoa, bảng dữ liệu tiếp đón gần đây có badge trạng thái và danh sách bác sĩ trực ca',
+      template: `<div style="width: 100%; max-width: 1180px; margin: 0 auto; padding: 22px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; border-radius: 14px; border: 1px solid #e2e8f0; color: #1e293b;">
+  <!-- 1. Thanh tiêu đề & Công cụ tìm kiếm / Bộ lọc nhanh -->
+  <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 16px 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); flex-wrap: wrap; gap: 14px;">
+    <div>
+      <h2 style="margin: 0; font-size: 19px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+        <i class="fa fa-dashboard" style="color: #0284c7;"></i> Bảng Điều Khiển Tiếp Đón & Quản Trị Khám Bệnh
+      </h2>
+      <p style="margin: 3px 0 0; font-size: 12.5px; color: #64748b;">Hệ thống giám sát chỉ số hoạt động thời gian thực (Real-time Healthcare Dashboard)</p>
+    </div>
+
+    <!-- Nhóm điều khiển bộ lọc thuần HTML -->
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 6px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 10px;">
+        <i class="fa fa-calendar" style="color: #0284c7; font-size: 13px;"></i>
+        <input type="date" v-model="data.filterDate" style="border: none; background: transparent; font-size: 13px; color: #334155; outline: none;" />
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 6px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 10px;">
+        <i class="fa fa-filter" style="color: #0284c7; font-size: 13px;"></i>
+        <select v-model="data.selectedDept" style="border: none; background: transparent; font-size: 13px; color: #334155; outline: none; cursor: pointer;">
+          <option value="all">Tất cả chuyên khoa</option>
+          <option value="Nội tổng quát">Nội tổng quát</option>
+          <option value="Tai Mũi Họng">Tai Mũi Họng</option>
+          <option value="Răng Hàm Mặt">Răng Hàm Mặt</option>
+          <option value="Nhi khoa">Nhi khoa</option>
+        </select>
+      </div>
+
+      <button type="button" @click="refreshData" style="padding: 7px 12px; background: #0284c7; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+        <i class="fa fa-refresh"></i> Làm mới
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. Hàng 4 Thẻ KPI Thống Kê (Metric Cards) -->
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px;">
+    <!-- Thẻ 1 -->
+    <div style="background: #ffffff; padding: 16px 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 12.5px; font-weight: 600; color: #64748b;">Tổng Tiếp Đón</span>
+        <div style="width: 34px; height: 34px; border-radius: 8px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+          <i class="fa fa-users"></i>
+        </div>
+      </div>
+      <div style="font-size: 26px; font-weight: 700; color: #0f172a; margin: 8px 0 3px;">{{ totalPatients }}</div>
+      <div style="font-size: 11.5px; color: #16a34a; font-weight: 600;"><i class="fa fa-arrow-up"></i> +14.2% so với hôm qua</div>
+    </div>
+
+    <!-- Thẻ 2 -->
+    <div style="background: #ffffff; padding: 16px 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 12.5px; font-weight: 600; color: #64748b;">Doanh Thu Hôm Nay</span>
+        <div style="width: 34px; height: 34px; border-radius: 8px; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+          <i class="fa fa-money"></i>
+        </div>
+      </div>
+      <div style="font-size: 24px; font-weight: 700; color: #0f172a; margin: 8px 0 3px;">{{ data.revenue || '48.650.000 đ' }}</div>
+      <div style="font-size: 11.5px; color: #16a34a; font-weight: 600;"><i class="fa fa-arrow-up"></i> +8.5% so với tuần trước</div>
+    </div>
+
+    <!-- Thẻ 3 -->
+    <div style="background: #ffffff; padding: 16px 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 12.5px; font-weight: 600; color: #64748b;">Chờ Khám Lâm Sàng</span>
+        <div style="width: 34px; height: 34px; border-radius: 8px; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+          <i class="fa fa-clock-o"></i>
+        </div>
+      </div>
+      <div style="font-size: 26px; font-weight: 700; color: #dc2626; margin: 8px 0 3px;">{{ waitingPatientsCount }}</div>
+      <div style="font-size: 11.5px; color: #475569;">Thời gian chờ TB: <b>12 phút</b></div>
+    </div>
+
+    <!-- Thẻ 4 -->
+    <div style="background: #ffffff; padding: 16px 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 12.5px; font-weight: 600; color: #64748b;">Hài Lòng Người Bệnh</span>
+        <div style="width: 34px; height: 34px; border-radius: 8px; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+          <i class="fa fa-heart"></i>
+        </div>
+      </div>
+      <div style="font-size: 26px; font-weight: 700; color: #16a34a; margin: 8px 0 3px;">98.6%</div>
+      <div style="font-size: 11.5px; color: #16a34a; font-weight: 600;"><i class="fa fa-smile-o"></i> 142 lượt đánh giá 5★</div>
+    </div>
+  </div>
+
+  <!-- 3. Nội dung chính: Bảng dữ liệu tiếp đón & Cột bác sĩ trực -->
+  <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px;">
+    <!-- Bảng dữ liệu thuần (Table Native) -->
+    <div style="background: #ffffff; padding: 18px 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div>
+          <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">Danh Sách Tiếp Đón Bệnh Nhân Gần Đây</h3>
+          <span style="font-size: 12px; color: #64748b;">Hiển thị theo chuyên khoa đã lọc: <b>{{ data.selectedDept === 'all' ? 'Tất cả' : data.selectedDept }}</b></span>
+        </div>
+        <div v-if="lastCalled" style="font-size: 12px; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 3px 8px; border-radius: 6px;">
+          <i class="fa fa-bullhorn"></i> Đang gọi: <b>{{ lastCalled }}</b>
+        </div>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+        <thead>
+          <tr style="border-bottom: 2px solid #f1f5f9; color: #64748b;">
+            <th style="padding: 10px 8px;">Mã BN</th>
+            <th style="padding: 10px 8px;">Họ và tên</th>
+            <th style="padding: 10px 8px;">Chuyên khoa</th>
+            <th style="padding: 10px 8px;">Bác sĩ</th>
+            <th style="padding: 10px 8px;">Giờ vào</th>
+            <th style="padding: 10px 8px;">Trạng thái</th>
+            <th style="padding: 10px 8px; text-align: center;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in filteredPatients" :key="item.id" style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 10px 8px; font-weight: 700; color: #0284c7;">{{ item.id }}</td>
+            <td style="padding: 10px 8px; font-weight: 600; color: #1e293b;">{{ item.name }}</td>
+            <td style="padding: 10px 8px; color: #475569;">{{ item.dept }}</td>
+            <td style="padding: 10px 8px; color: #475569;">{{ item.doctor }}</td>
+            <td style="padding: 10px 8px; color: #64748b; font-size: 12px;">{{ item.time }}</td>
+            <td style="padding: 10px 8px;">
+              <span
+                :style="{
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  fontSize: '11px',
+                  fontWeight: '700',
+                  background: item.statusColor + '20',
+                  color: item.statusColor
+                }"
+              >
+                {{ item.status }}
+              </span>
+            </td>
+            <td style="padding: 10px 8px; text-align: center;">
+              <button
+                type="button"
+                @click="callPatient(item)"
+                style="padding: 4px 8px; background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; border-radius: 5px; font-size: 11.5px; font-weight: 600; cursor: pointer;"
+              >
+                <i class="fa fa-volume-up"></i> Gọi số
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Cột bên phải: Bác sĩ trực & Tỷ lệ tiếp đón -->
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <!-- Card Bác sĩ trực -->
+      <div style="background: #ffffff; padding: 16px 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+        <h4 style="margin: 0 0 12px 0; font-size: 14px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+          <i class="fa fa-user-md" style="color: #0284c7;"></i> Bác Sĩ Đang Trực Ca
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div v-for="doc in (data.doctors || [])" :key="doc.name" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #475569;">
+                <i class="fa fa-user"></i>
+              </div>
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: #1e293b;">{{ doc.name }}</div>
+                <div style="font-size: 11px; color: #64748b;">{{ doc.dept }} (P.{{ doc.room }})</div>
+              </div>
+            </div>
+            <span
+              :style="{
+                fontSize: '11px',
+                fontWeight: '600',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                background: doc.online ? '#dcfce7' : '#f1f5f9',
+                color: doc.online ? '#15803d' : '#64748b'
+              }"
+            >
+              {{ doc.online ? 'Đang khám' : 'Nghỉ ca' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Tiến độ ca trực -->
+      <div style="background: #ffffff; padding: 16px 18px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+        <h4 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+          <i class="fa fa-pie-chart" style="color: #0284c7;"></i> Phân Bổ Tiếp Đón Ca Trực
+        </h4>
+        <div style="margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #475569; margin-bottom: 3px;">
+            <span>Ca Sáng (07:30 - 11:30)</span>
+            <b>76% (128 BN)</b>
+          </div>
+          <div style="height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+            <div style="width: 76%; height: 100%; background: #0284c7; border-radius: 4px;"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #475569; margin-bottom: 3px;">
+            <span>Ca Chiều (13:30 - 17:00)</span>
+            <b>42% (58 BN)</b>
+          </div>
+          <div style="height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+            <div style="width: 42%; height: 100%; background: #10b981; border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`,
+      script: `// 📜 Logic Dashboard Quản trị Y tế (100% Native HTML)
+const data = reactive($context.data || {});
+const lastCalled = ref('');
+
+const totalPatients = computed(() => {
+  return Array.isArray(data.patientList) ? data.patientList.length : 0;
+});
+
+const waitingPatientsCount = computed(() => {
+  if (!Array.isArray(data.patientList)) return 0;
+  return data.patientList.filter(p => p.status === 'Chờ khám' || p.status === 'Chờ kết quả').length;
+});
+
+const filteredPatients = computed(() => {
+  if (!Array.isArray(data.patientList)) return [];
+  if (!data.selectedDept || data.selectedDept === 'all') {
+    return data.patientList;
+  }
+  return data.patientList.filter(p => p.dept === data.selectedDept);
+});
+
+const callPatient = (patient) => {
+  lastCalled.value = patient.name + ' (' + patient.id + ')';
+  patient.status = 'Đang khám';
+  patient.statusColor = '#0284c7';
+};
+
+const refreshData = () => {
+  alert('Đã cập nhật dữ liệu Dashboard thời gian thực!');
+};
+
+return {
+  data,
+  lastCalled,
+  totalPatients,
+  waitingPatientsCount,
+  filteredPatients,
+  callPatient,
+  refreshData
+};`,
+      context: {
+        data: {
+          filterDate: '2026-09-04',
+          selectedDept: 'all',
+          revenue: '48.650.000 đ',
+          patientList: [
+            { id: 'BN-1029', name: 'Nguyễn Văn Hùng', dept: 'Nội tổng quát', doctor: 'BS. Tuấn', time: '08:15', status: 'Đang khám', statusColor: '#0284c7' },
+            { id: 'BN-1030', name: 'Trần Thị Mai', dept: 'Tai Mũi Họng', doctor: 'BS. Đăng', time: '08:25', status: 'Chờ khám', statusColor: '#dc2626' },
+            { id: 'BN-1031', name: 'Lê Hoàng Long', dept: 'Nội tổng quát', doctor: 'BS. Tuấn', time: '08:35', status: 'Chờ kết quả', statusColor: '#f59e0b' },
+            { id: 'BN-1032', name: 'Vũ Minh Khang', dept: 'Nhi khoa', doctor: 'BS. Lan', time: '08:45', status: 'Đã hoàn tất', statusColor: '#16a34a' },
+            { id: 'BN-1033', name: 'Hoàng Thu Trang', dept: 'Răng Hàm Mặt', doctor: 'BS. Phong', time: '09:00', status: 'Chờ khám', statusColor: '#dc2626' },
+            { id: 'BN-1034', name: 'Phạm Thanh Hương', dept: 'Nội tổng quát', doctor: 'BS. Tuấn', time: '09:10', status: 'Chờ khám', statusColor: '#dc2626' }
+          ],
+          doctors: [
+            { name: 'BS. CKI Hoàng Minh Tuấn', dept: 'Nội tổng quát', room: '204', online: true },
+            { name: 'BS. CKI Nguyễn Hải Đăng', dept: 'Tai Mũi Họng', room: '208', online: true },
+            { name: 'ThS. BS Trần Phương Lan', dept: 'Nhi khoa', room: '102', online: true },
+            { name: 'BS. Đỗ Minh Phong', dept: 'Răng Hàm Mặt', room: '305', online: false }
+          ]
+        }
+      }
     }
   ];
 
@@ -947,14 +1397,35 @@ return {
     this.selectedTemplateIndex = index;
   }
 
-  onApplyAITemplate(payload: { template: string; script: string; context: any }) {
+  onApplyAITemplate(payload: { template: string; script: string; context: any; isUpdateCurrent?: boolean }) {
+    if (payload.isUpdateCurrent && this.currentTemplateConfig) {
+      this.currentTemplateConfig.template = payload.template;
+      this.currentTemplateConfig.script = payload.script;
+      this.currentTemplateConfig.context = payload.context;
+      // Kích hoạt cập nhật editor ngay lập tức
+      this.template = payload.template;
+      this.script = payload.script;
+      this.context = payload.context;
+      return;
+    }
+
     const newTemplateId = 'ai-gen-' + Date.now();
+    const isUI = !payload.template.includes('<PageA4') && !payload.template.includes('<PageA5');
+    const autoTitle = payload.context?.data?.screenTitle ||
+      payload.context?.data?.title ||
+      payload.context?.data?.dashboardTitle ||
+      (payload.context?.data?.username ? 'Đăng nhập' : null) ||
+      payload.context?.data?.patientName ||
+      payload.context?.data?.customerName ||
+      payload.context?.data?.name ||
+      (isUI ? 'Giao diện Web' : 'Mẫu mới');
+
     const newTemplateItem: TemplateItemConfig = {
       id: newTemplateId,
-      name: 'AI: ' + (payload.context?.data?.patientName || payload.context?.data?.customerName || payload.context?.data?.name || 'Mẫu mới'),
-      badge: 'AI',
-      icon: '✨',
-      description: 'Mẫu biểu được sinh bởi AI Copilot & Designer',
+      name: 'AI: ' + autoTitle,
+      badge: isUI ? 'UI' : 'AI',
+      icon: isUI ? '💻' : '✨',
+      description: isUI ? 'Giao diện Web/App được thiết kế tự động bởi AI' : 'Mẫu biểu được sinh bởi AI Copilot & Designer',
       template: payload.template,
       script: payload.script,
       context: payload.context

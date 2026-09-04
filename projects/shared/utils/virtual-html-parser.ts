@@ -111,7 +111,12 @@ export class VirtualHTMLParser {
               }
 
               if (dir.modifiers && dir.modifiers.length > 0) {
-                key += '.' + dir.modifiers.join('.');
+                const modNames = dir.modifiers
+                  .map((m: any) => (typeof m === 'string' ? m : m.content || ''))
+                  .filter(Boolean);
+                if (modNames.length > 0) {
+                  key += '.' + modNames.join('.');
+                }
               }
 
               virtualEl.setAttribute(key, exp);
