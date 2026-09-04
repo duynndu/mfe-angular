@@ -1,0 +1,1 @@
+import{d as n}from"./chunk-PLBUCK57.js";var e={production:!1};console.log(e);n("federation.manifest.json").catch(o=>console.error(o)).then(o=>import("./chunk-CWHGJCIM.js")).catch(o=>console.error(o));
